@@ -1,6 +1,12 @@
+import 'dart:convert';
+
+import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart' as getX;
+import 'package:http/http.dart';
+import 'package:transmission_surgicals/Utils/shared_preferences.dart';
+import 'package:transmission_surgicals/Utils/urls.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -13,6 +19,9 @@ class _LoginState extends State<Login> {
   bool isPasswordHide=true;
   final user_id_controller=TextEditingController();
   final password_controller=TextEditingController();
+  bool isLogging=false;
+  FocusNode email_focus=FocusNode();
+  FocusNode password_focus=FocusNode();
 
 
   @override
@@ -30,7 +39,7 @@ class _LoginState extends State<Login> {
               width: 370,
               height: 400,
               decoration: BoxDecoration(
-                color: Color(0xff004080),
+                color: Color(0xff004080).withOpacity(0.9),
                 borderRadius: BorderRadius.circular(5)
               ),
               child: Column(
@@ -59,11 +68,15 @@ class _LoginState extends State<Login> {
                               border: Border.all(color: Colors.white70, width: 1)
                             ),
                             child: TextField(
+                              focusNode: email_focus,
                               controller: user_id_controller,
                               decoration: InputDecoration(
                                 isDense: true,
                                 border: InputBorder.none
                               ),
+                              onSubmitted: (v){
+                                password_focus.requestFocus();
+                              },
                               style: TextStyle(
                                   color: Colors.white
                               ),
@@ -96,6 +109,7 @@ class _LoginState extends State<Login> {
                               children: [
                                 Expanded(
                                   child: TextField(
+                                    focusNode: password_focus,
                                     controller: password_controller,
                                     decoration: InputDecoration(
                                         isDense: true,
@@ -105,6 +119,34 @@ class _LoginState extends State<Login> {
                                       color: Colors.white
                                     ),
                                     obscureText: isPasswordHide,
+                                    onSubmitted: (v){
+                                      if(user_id_controller.text.isEmpty){
+                                        Fluttertoast.showToast(
+                                            msg: "Please enter user id",
+                                            toastLength: Toast.LENGTH_SHORT,
+                                            gravity: ToastGravity.BOTTOM_RIGHT,
+                                            timeInSecForIosWeb: 1,
+                                            backgroundColor: Colors.red,
+                                            textColor: Colors.white,
+                                            webBgColor: "linear-gradient(to right, #C62828, #C62828)",
+                                            fontSize: 16.0
+                                        );
+                                      }else  if(password_controller.text.isEmpty){
+                                        Fluttertoast.showToast(
+                                            msg: "Please enter password",
+                                            toastLength: Toast.LENGTH_SHORT,
+                                            gravity: ToastGravity.BOTTOM_RIGHT,
+                                            timeInSecForIosWeb: 1,
+                                            backgroundColor: Colors.red,
+                                            textColor: Colors.white,
+                                            webBgColor: "linear-gradient(to right, #C62828, #C62828)",
+                                            fontSize: 16.0
+                                        );
+                                      }else{
+                                        ///Call api
+                                        userLogin();
+                                      }
+                                    },
                                   ),
                                 ),
                                 Padding(
@@ -132,7 +174,7 @@ class _LoginState extends State<Login> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       InkWell(
-                        onTap: (){
+                        onTap: isLogging?null:(){
                           if(user_id_controller.text.isEmpty){
                             Fluttertoast.showToast(
                                 msg: "Please enter user id",
@@ -157,18 +199,22 @@ class _LoginState extends State<Login> {
                             );
                           }else{
                             ///Call api
-                            getX.Get.toNamed("/dashboard");
+                            userLogin();
                           }
 
                         },
-                        child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 60, vertical: 7),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(3),
-                            color: Color(0xff0039e6)
-                          ),
-                          child: Center(
-                            child: Text("Login", style: TextStyle(color: Colors.white,fontSize: 16, fontWeight: FontWeight.w500),),
+                        child: Opacity(
+                          opacity: isLogging?0.7:1,
+                          child: Container(
+                            width: 150,
+                            height: 37,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(3),
+                              color: Color(0xff0039e6)
+                            ),
+                            child: Center(
+                              child: Text(isLogging?"Logging...":"Login", style: TextStyle(color: Colors.white,fontSize: 16, fontWeight: FontWeight.w500),),
+                            ),
                           ),
                         ),
                       )
@@ -183,5 +229,60 @@ class _LoginState extends State<Login> {
         ),
       ),
     );
+  }
+  userLogin() async {
+    setState(() {
+      isLogging=true;
+    });
+    var url = Uri.parse(user_login);
+    Map<String, String> body = {"email": user_id_controller.text.trim(),"password":md5.convert(utf8.encode(password_controller.text)).toString()};
+    Response response = await post(url, body: body);
+    if(response.statusCode==200){
+      String myData = response.body;
+      var jsonData=jsonDecode(myData);
+      if(jsonData['status']=="success"){
+        Fluttertoast.showToast(
+            msg: "Successfully logged in",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM_RIGHT,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            webBgColor: "linear-gradient(to right, #1da241, #1da241)",
+            fontSize: 16.0
+        );
+        writeSharedPreferences(ISLOGIN, "1");
+        writeSharedPreferences(USER_ID, jsonData['id']);
+        writeSharedPreferences(USER_EMAIL, jsonData['email']);
+        writeSharedPreferences(USER_NAME, jsonData['name']);
+        getX.Get.toNamed("/dashboard");
+
+      }else{
+        Fluttertoast.showToast(
+            msg: "Wrong user id or password",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM_RIGHT,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            webBgColor: "linear-gradient(to right, #C62828, #C62828)",
+            fontSize: 16.0
+        );
+      }
+    }else{
+      Fluttertoast.showToast(
+          msg: "Some error has occurred",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM_RIGHT,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          webBgColor: "linear-gradient(to right, #C62828, #C62828)",
+          fontSize: 16.0
+      );
+    }
+    setState(() {
+      isLogging=false;
+    });
   }
 }

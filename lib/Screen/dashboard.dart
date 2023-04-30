@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:transmission_surgicals/Utils/shared_preferences.dart';
 
 import 'Invoice/View/invoice_list.dart';
 
@@ -19,6 +20,9 @@ class _DashboardState extends State<Dashboard> {
   bool isRoadTaxSelected=false;
   bool isInvoiceSelected=false;
   bool isProductSelected=false;
+
+  String user_name="", user_email="";
+
 
   @override
   Widget build(BuildContext context) {
@@ -45,9 +49,9 @@ class _DashboardState extends State<Dashboard> {
                           child: SvgPicture.asset("assets/icon/profile.svg"),
                         ),
                         SizedBox(height: 15,),
-                        Text("Subrata Malik", style: TextStyle(color: Colors.white,fontWeight: FontWeight.w500,fontSize: 14),),
+                        Text(user_name, style: TextStyle(color: Colors.white,fontWeight: FontWeight.w500,fontSize: 14),),
                         SizedBox(height: 3,),
-                        Text("subratamalik1997@gmail.com", style: TextStyle(color: Colors.white,fontWeight: FontWeight.w400,fontSize: 12),),
+                        Text(user_email, style: TextStyle(color: Colors.white,fontWeight: FontWeight.w400,fontSize: 12),),
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 20),
                           child: Divider(
@@ -189,6 +193,12 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   void initState() {
+    readSharedPreferences(USER_NAME, "").then((value){
+      user_name=value;
+    });
+    readSharedPreferences(USER_EMAIL, "").then((value){
+      user_email=value;
+    });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       setState(() {
         placeHolder=dashboard();

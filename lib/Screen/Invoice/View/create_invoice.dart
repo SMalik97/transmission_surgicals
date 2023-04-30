@@ -167,6 +167,8 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
     paid_amount_controller.text="0.00";
     comment_controller.text="If you have any questions concerning this invoice, contact name, phone or amount please contact us at surgicaltrans@gmail.com";
 
+
+
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       List<noteditableInvoiceItem> a =[];
       noteditableInvoiceItem b=noteditableInvoiceItem(description: "description", quantity: "1", price: "78", totalAmount: "45");
@@ -174,8 +176,11 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
       a.add(b);
       a.add(b);
       a.add(b);
+      // setState(() {
+      //   placeHolder = invoiceView("748596", "30/04/2023", "Customer Name\nCustomer Address\nPhone : +91 1234567890\nEmail : example@mail.com", a, "23.20", "45.36", "12", "45.36", "45.36", "45.36", "23.00", "If you have any questions concerning this invoice, contact name, phone or amount please contact us at surgicaltrans@gmail.com");
+      // });
       setState(() {
-        placeHolder = invoiceView("748596", "30/04/2023", "Customer Name\nCustomer Address\nPhone : +91 1234567890\nEmail : example@mail.com", a, "23.20", "45.36", "12", "45.36", "45.36", "45.36", "23.00", "If you have any questions concerning this invoice, contact name, phone or amount please contact us at surgicaltrans@gmail.com");
+        placeHolder=createInvoiceView();
       });
     });
 
@@ -183,110 +188,95 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
   }
 
   Widget createInvoiceView(){
-    return Expanded(
-      child: Center(
-        child: Container(
-          width:800,
-          decoration: BoxDecoration(
-            color: Colors.white,
-          ),
+    return StatefulBuilder(
+      builder: (context, setState) {
+        return Expanded(
+          child: Center(
+            child: Container(
+              width:800,
+              decoration: BoxDecoration(
+                color: Colors.white,
+              ),
 
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal:60),
-            child: ScrollConfiguration(
-              behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
-              child: ListView(
-                shrinkWrap: true,
-                children: [
-                  SizedBox(height: 60,),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal:60),
+                child: ScrollConfiguration(
+                  behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+                  child: ListView(
+                    shrinkWrap: true,
                     children: [
-                      Column(
+                      SizedBox(height: 60,),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Image.asset("assets/logo/logo.png",width: 50,height:50,),
-                              SizedBox(width: 8,),
-                              Text("Transmission Surgicals", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20,color: Colors.lightBlue),),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Image.asset("assets/logo/logo.png",width: 50,height:50,),
+                                  SizedBox(width: 8,),
+                                  Text("Transmission Surgicals", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20,color: Colors.lightBlue),),
+                                ],
+                              ),
+                              SizedBox(height: 2,),
+                              Text("333 J.C. Bose Road, PallyShree\nSodepur, Kolkata - 700110 \nPhone : +91 0333335980722 / 7278360630 / 9836947573\nEmail : surgicaltrans@gmail.com",style: TextStyle(fontWeight: FontWeight.w500,fontSize: 14,color: Colors.black),),
+
                             ],
                           ),
-                          SizedBox(height: 2,),
-                          Text("333 J.C. Bose Road, PallyShree\nSodepur, Kolkata - 700110 \nPhone : +91 0333335980722 / 7278360630 / 9836947573\nEmail : surgicaltrans@gmail.com",style: TextStyle(fontWeight: FontWeight.w500,fontSize: 14,color: Colors.black),),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text("INVOICE",style: GoogleFonts.alata(fontSize: 20,fontWeight: FontWeight.bold,color: Colors.black),),
+                              SizedBox(height: 5,),
+                              Text("Invoice Number ########",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
+                              Text("Invoice Date #########",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
 
-                        ],
-                      ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text("INVOICE",style: GoogleFonts.alata(fontSize: 20,fontWeight: FontWeight.bold,color: Colors.black),),
-                          SizedBox(height: 5,),
-                          Text("Invoice Number ########",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
-                          Text("Invoice Date #########",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
-
-                        ],
-                      ),
-                    ],
-                  ),
-
-                  SizedBox(height: 30,),
-                  Text("TO :",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 18,color: Colors.black),),
-                  Row(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                        width:300,
-                        constraints: BoxConstraints(
-                          minHeight: 100,
-                        ),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(1),
-                          border: Border.all(color: Colors.blue.withOpacity(0.5),width: 1)
-                        ),
-                        child: TextField(
-                          controller: recipient_controller,
-                          decoration: InputDecoration(
-                            isDense: true,
-                            border: InputBorder.none,
-                            hintText: "Recipient Name\nRecipient Address\nRecipient Phone\nRecipient Email",
-                            hintStyle: TextStyle(fontSize: 14, color: Colors.grey),
+                            ],
                           ),
-                          maxLines: null,
-                          style: TextStyle(height: 1.2, color: Colors.black, fontSize: 14, fontWeight: FontWeight.w500),
-                        ),
+                        ],
                       ),
-                    ],
-                  ),
 
-                  SizedBox(height: 30,),
-
-                  Row(
-                    children: [
-                      Container(
-                        width: 60,
-                        height: 30,
-                        decoration: BoxDecoration(
-                            border: Border(
-                              left: BorderSide(color: Colors.blue, width: 1),
-                              top: BorderSide(color: Colors.blue, width: 1),
-                              bottom: BorderSide(color: Colors.blue, width: 1),
+                      SizedBox(height: 30,),
+                      Text("TO :",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 18,color: Colors.black),),
+                      Row(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                            width:300,
+                            constraints: BoxConstraints(
+                              minHeight: 100,
                             ),
-                            color: Colors.blue.withOpacity(0.3)
-                        ),
-                        child: Center(
-                            child: Text("Sl. No.", style: TextStyle(color: Colors.blue, fontSize: 15, fontWeight: FontWeight.w600),)
-                        ),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(1),
+                                border: Border.all(color: Colors.blue.withOpacity(0.5),width: 1)
+                            ),
+                            child: TextField(
+                              controller: recipient_controller,
+                              decoration: InputDecoration(
+                                isDense: true,
+                                border: InputBorder.none,
+                                hintText: "Recipient Name\nRecipient Address\nRecipient Phone\nRecipient Email",
+                                hintStyle: TextStyle(fontSize: 14, color: Colors.grey),
+                              ),
+                              maxLines: null,
+                              style: TextStyle(height: 1.2, color: Colors.black, fontSize: 14, fontWeight: FontWeight.w500),
+                            ),
+                          ),
+                        ],
                       ),
-                      Expanded(
-                          flex: 5,
-                          child: Container(
-                            width: 80,
+
+                      SizedBox(height: 30,),
+
+                      Row(
+                        children: [
+                          Container(
+                            width: 60,
                             height: 30,
                             decoration: BoxDecoration(
                                 border: Border(
@@ -297,382 +287,406 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                 color: Colors.blue.withOpacity(0.3)
                             ),
                             child: Center(
-                                child: Text("Description", style: TextStyle(color: Colors.blue, fontSize: 16, fontWeight: FontWeight.w600),)
+                                child: Text("Sl. No.", style: TextStyle(color: Colors.blue, fontSize: 15, fontWeight: FontWeight.w600),)
                             ),
-                          )),
-
-                      Expanded(
-                          flex: 3,
-                          child: Container(
-                            width: 80,
-                            height: 30,
-                            decoration: BoxDecoration(
-                                border: Border(
-                                  left: BorderSide(color: Colors.blue, width: 1),
-                                  top: BorderSide(color: Colors.blue, width: 1),
-                                  bottom: BorderSide(color: Colors.blue, width: 1),
-                                ),
-                                color: Colors.blue.withOpacity(0.3)
-                            ),
-                            child: Center(
-                                child: Text("Price", style: TextStyle(color: Colors.blue, fontSize: 16, fontWeight: FontWeight.w600),)
-                            ),
-                          )),
-
-                      Expanded(
-                          flex: 3,
-                          child: Container(
-                            width: 80,
-                            height: 30,
-                            decoration: BoxDecoration(
-                                border: Border(
-                                  left: BorderSide(color: Colors.blue, width: 1),
-                                  top: BorderSide(color: Colors.blue, width: 1),
-                                  bottom: BorderSide(color: Colors.blue, width: 1),
-                                ),
-                                color: Colors.blue.withOpacity(0.3)
-                            ),
-                            child: Center(
-                                child: Text("Quantity", style: TextStyle(color: Colors.blue, fontSize: 16, fontWeight: FontWeight.w600),)
-                            ),
-                          )),
-
-                      Expanded(
-                          flex: 3,
-                          child: Container(
-                            width: 80,
-                            height: 30,
-                            decoration: BoxDecoration(
-                                border: Border(
-                                  left: BorderSide(color: Colors.blue, width: 1),
-                                  right: BorderSide(color: Colors.blue, width: 1),
-                                  top: BorderSide(color: Colors.blue, width: 1),
-                                  bottom: BorderSide(color: Colors.blue, width: 1),
-                                ),
-                                color: Colors.blue.withOpacity(0.3)
-                            ),
-                            child: Center(
-                                child: Text("Total", style: TextStyle(color: Colors.blue, fontSize: 16, fontWeight: FontWeight.w600),)
-                            ),
-                          )),
-                    ],
-                  ),
-                  ListView.builder(
-                      itemCount: invoice_data.length,
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, index){
-                        return Row(
-                          children: [
-                            Container(
-                              width: 60,
-                              constraints: BoxConstraints(
-                                  minHeight: 30
-                              ),
-                              decoration: BoxDecoration(
-                                border: Border(
-                                  left: BorderSide(color: Colors.blue, width: 1),
-                                  bottom: BorderSide(color: Colors.blue, width: 1),
-                                ),
-                              ),
-                              child: Center(
-                                  child: Text((index+1).toString()+".", style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w600),)
-                              ),
-                            ),
-
-                            Expanded(
-                                flex: 5,
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 7),
-                                  width: 80,
-                                  constraints: BoxConstraints(
-                                    minHeight: 30
-                                  ),
-                                  decoration: BoxDecoration(
+                          ),
+                          Expanded(
+                              flex: 5,
+                              child: Container(
+                                width: 80,
+                                height: 30,
+                                decoration: BoxDecoration(
                                     border: Border(
                                       left: BorderSide(color: Colors.blue, width: 1),
+                                      top: BorderSide(color: Colors.blue, width: 1),
                                       bottom: BorderSide(color: Colors.blue, width: 1),
                                     ),
-                                  ),
-                                  child: TextField(
-                                    controller: invoice_data[index].des_controller,
-                                    decoration: InputDecoration(
-                                      isDense: true,
-                                      border: InputBorder.none
-                                    ),
-                                    onChanged: (v){
-                                      invoice_data[index].description = invoice_data[index].des_controller!.text;
-                                    },
-                                  ),
-                                )),
+                                    color: Colors.blue.withOpacity(0.3)
+                                ),
+                                child: Center(
+                                    child: Text("Description", style: TextStyle(color: Colors.blue, fontSize: 16, fontWeight: FontWeight.w600),)
+                                ),
+                              )),
 
-                            Expanded(
-                                flex: 3,
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 7),
-                                  width: 80,
-                                  constraints: BoxConstraints(
-                                      minHeight: 30
-                                  ),
-                                  decoration: BoxDecoration(
+                          Expanded(
+                              flex: 3,
+                              child: Container(
+                                width: 80,
+                                height: 30,
+                                decoration: BoxDecoration(
                                     border: Border(
                                       left: BorderSide(color: Colors.blue, width: 1),
+                                      top: BorderSide(color: Colors.blue, width: 1),
                                       bottom: BorderSide(color: Colors.blue, width: 1),
                                     ),
-                                  ),
-                                  child: TextField(
-                                    controller: invoice_data[index].price_controller,
-                                    inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*$'))],
-                                    decoration: InputDecoration(
-                                        isDense: true,
-                                        border: InputBorder.none
-                                    ),
-                                    onChanged: (v){
-                                      invoice_data[index].price = double.parse(invoice_data[index].price_controller!.text);
-                                      if(invoice_data[index].price_controller!.text.isEmpty || invoice_data[index].quantity_controller!.text.isEmpty){
-                                        setState(() {
-                                          invoice_data[index].totalAmount = 0.00;
-                                        });
-                                      }else{
-                                        double r = double.parse(invoice_data[index].price_controller!.text) * double.parse(invoice_data[index].quantity_controller!.text);
-                                        setState(() {
-                                          invoice_data[index].totalAmount =r;
-                                        });
-                                      }
-                                      calculateInvoice();
-                                    },
-                                  ),
-                                )),
+                                    color: Colors.blue.withOpacity(0.3)
+                                ),
+                                child: Center(
+                                    child: Text("Price", style: TextStyle(color: Colors.blue, fontSize: 16, fontWeight: FontWeight.w600),)
+                                ),
+                              )),
 
-                            Expanded(
-                                flex: 3,
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 7),
-                                  width: 80,
-                                  constraints: BoxConstraints(
-                                      minHeight: 30
-                                  ),
-                                  decoration: BoxDecoration(
+                          Expanded(
+                              flex: 3,
+                              child: Container(
+                                width: 80,
+                                height: 30,
+                                decoration: BoxDecoration(
                                     border: Border(
                                       left: BorderSide(color: Colors.blue, width: 1),
+                                      top: BorderSide(color: Colors.blue, width: 1),
                                       bottom: BorderSide(color: Colors.blue, width: 1),
                                     ),
+                                    color: Colors.blue.withOpacity(0.3)
+                                ),
+                                child: Center(
+                                    child: Text("Quantity", style: TextStyle(color: Colors.blue, fontSize: 16, fontWeight: FontWeight.w600),)
+                                ),
+                              )),
 
-                                  ),
-                                  child: TextField(
-                                    controller: invoice_data[index].quantity_controller,
-                                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                                    decoration: InputDecoration(
-                                        isDense: true,
-                                        border: InputBorder.none
-                                    ),
-                                    onChanged: (v){
-                                      invoice_data[index].quantity = int.parse(invoice_data[index].price_controller!.text);
-                                      if(invoice_data[index].price_controller!.text.isEmpty || invoice_data[index].quantity_controller!.text.isEmpty){
-                                        setState(() {
-                                          invoice_data[index].totalAmount = 0.00;
-                                        });
-                                      }else{
-                                        double r = double.parse(invoice_data[index].price_controller!.text) * double.parse(invoice_data[index].quantity_controller!.text);
-                                        setState(() {
-                                          invoice_data[index].totalAmount =r;
-                                        });
-                                      }
-                                      calculateInvoice();
-                                    },
-                                  ),
-                                )),
-
-                            Expanded(
-                                flex: 3,
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 7),
-                                  width: 80,
-                                  constraints: BoxConstraints(
-                                      minHeight: 30
-                                  ),
-                                  decoration: BoxDecoration(
+                          Expanded(
+                              flex: 3,
+                              child: Container(
+                                width: 80,
+                                height: 30,
+                                decoration: BoxDecoration(
                                     border: Border(
                                       left: BorderSide(color: Colors.blue, width: 1),
                                       right: BorderSide(color: Colors.blue, width: 1),
+                                      top: BorderSide(color: Colors.blue, width: 1),
                                       bottom: BorderSide(color: Colors.blue, width: 1),
                                     ),
-
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      Text(invoice_data[index].totalAmount!.toStringAsFixed(2), style: TextStyle(fontSize: 16, color: Colors.black,fontWeight: FontWeight.w500),textAlign: TextAlign.right,),
-                                    ],
-                                  ),
-                                )),
-                          ],
-                        );
-                      }
-                  ),
-                  SizedBox(height: 5,),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(top: 5),
-                        child: InkWell(
-                          onTap: (){
-                            editableInvoiceItem eii=editableInvoiceItem(description: "", quantity: 0, price: 0.00, totalAmount: 0.00, des_controller: TextEditingController(), price_controller: TextEditingController(), quantity_controller: TextEditingController());
-                            setState(() {
-                              invoice_data.add(eii);
-                            });
-                          },
-                          child: Row(
-                            children: [
-                              Icon(Icons.add,color: Colors.blue,size: 18,),
-                              SizedBox(width: 3,),
-                              Text("Add new row", style: TextStyle(color: Colors.blue,fontSize: 14,fontWeight: FontWeight.w500),)
-                            ],
-                          ),
-                        ),
+                                    color: Colors.blue.withOpacity(0.3)
+                                ),
+                                child: Center(
+                                    child: Text("Total", style: TextStyle(color: Colors.blue, fontSize: 16, fontWeight: FontWeight.w600),)
+                                ),
+                              )),
+                        ],
                       ),
+                      ListView.builder(
+                          itemCount: invoice_data.length,
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemBuilder: (context, index){
+                            return Row(
+                              children: [
+                                Container(
+                                  width: 60,
+                                  constraints: BoxConstraints(
+                                      minHeight: 30
+                                  ),
+                                  decoration: BoxDecoration(
+                                    border: Border(
+                                      left: BorderSide(color: Colors.blue, width: 1),
+                                      bottom: BorderSide(color: Colors.blue, width: 1),
+                                    ),
+                                  ),
+                                  child: Center(
+                                      child: Text((index+1).toString()+".", style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w600),)
+                                  ),
+                                ),
+
+                                Expanded(
+                                    flex: 5,
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(horizontal: 7),
+                                      width: 80,
+                                      constraints: BoxConstraints(
+                                          minHeight: 30
+                                      ),
+                                      decoration: BoxDecoration(
+                                        border: Border(
+                                          left: BorderSide(color: Colors.blue, width: 1),
+                                          bottom: BorderSide(color: Colors.blue, width: 1),
+                                        ),
+                                      ),
+                                      child: TextField(
+                                        controller: invoice_data[index].des_controller,
+                                        decoration: InputDecoration(
+                                            isDense: true,
+                                            border: InputBorder.none
+                                        ),
+                                        onChanged: (v){
+                                          invoice_data[index].description = invoice_data[index].des_controller!.text;
+                                        },
+                                      ),
+                                    )),
+
+                                Expanded(
+                                    flex: 3,
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(horizontal: 7),
+                                      width: 80,
+                                      constraints: BoxConstraints(
+                                          minHeight: 30
+                                      ),
+                                      decoration: BoxDecoration(
+                                        border: Border(
+                                          left: BorderSide(color: Colors.blue, width: 1),
+                                          bottom: BorderSide(color: Colors.blue, width: 1),
+                                        ),
+                                      ),
+                                      child: TextField(
+                                        controller: invoice_data[index].price_controller,
+                                        inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*$'))],
+                                        decoration: InputDecoration(
+                                            isDense: true,
+                                            border: InputBorder.none
+                                        ),
+                                        onChanged: (v){
+                                          if(invoice_data[index].price_controller!.text.isNotEmpty){
+                                            invoice_data[index].price = double.parse(invoice_data[index].price_controller!.text);
+                                          }
+
+                                          if(invoice_data[index].price_controller!.text.isEmpty || invoice_data[index].quantity_controller!.text.isEmpty){
+                                            setState(() {
+                                              invoice_data[index].totalAmount = 0.00;
+                                            });
+                                          }else{
+                                            double r = double.parse(invoice_data[index].price_controller!.text) * double.parse(invoice_data[index].quantity_controller!.text);
+                                            setState(() {
+                                              invoice_data[index].totalAmount =r;
+                                            });
+                                          }
+                                          calculateInvoice();
+                                        },
+                                      ),
+                                    )),
+
+                                Expanded(
+                                    flex: 3,
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(horizontal: 7),
+                                      width: 80,
+                                      constraints: BoxConstraints(
+                                          minHeight: 30
+                                      ),
+                                      decoration: BoxDecoration(
+                                        border: Border(
+                                          left: BorderSide(color: Colors.blue, width: 1),
+                                          bottom: BorderSide(color: Colors.blue, width: 1),
+                                        ),
+
+                                      ),
+                                      child: TextField(
+                                        controller: invoice_data[index].quantity_controller,
+                                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                        decoration: InputDecoration(
+                                            isDense: true,
+                                            border: InputBorder.none
+                                        ),
+                                        onChanged: (v){
+                                          if(invoice_data[index].quantity_controller!.text.isNotEmpty){
+                                            invoice_data[index].quantity = int.parse(invoice_data[index].price_controller!.text);
+                                          }
+                                          if(invoice_data[index].price_controller!.text.isEmpty || invoice_data[index].quantity_controller!.text.isEmpty){
+                                            setState(() {
+                                              invoice_data[index].totalAmount = 0.00;
+                                            });
+                                          }else{
+                                            double r = double.parse(invoice_data[index].price_controller!.text) * double.parse(invoice_data[index].quantity_controller!.text);
+                                            setState(() {
+                                              invoice_data[index].totalAmount =r;
+                                            });
+                                          }
+                                          calculateInvoice();
+                                        },
+                                      ),
+                                    )),
+
+                                Expanded(
+                                    flex: 3,
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(horizontal: 7),
+                                      width: 80,
+                                      constraints: BoxConstraints(
+                                          minHeight: 30
+                                      ),
+                                      decoration: BoxDecoration(
+                                        border: Border(
+                                          left: BorderSide(color: Colors.blue, width: 1),
+                                          right: BorderSide(color: Colors.blue, width: 1),
+                                          bottom: BorderSide(color: Colors.blue, width: 1),
+                                        ),
+
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.end,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          Text(invoice_data[index].totalAmount!.toStringAsFixed(2), style: TextStyle(fontSize: 16, color: Colors.black,fontWeight: FontWeight.w500),textAlign: TextAlign.right,),
+                                        ],
+                                      ),
+                                    )),
+                              ],
+                            );
+                          }
+                      ),
+                      SizedBox(height: 5,),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Subtotal", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
+                          Padding(
+                            padding: EdgeInsets.only(top: 5),
+                            child: InkWell(
+                              onTap: (){
+                                editableInvoiceItem eii=editableInvoiceItem(description: "", quantity: 0, price: 0.00, totalAmount: 0.00, des_controller: TextEditingController(), price_controller: TextEditingController(), quantity_controller: TextEditingController());
+                                setState(() {
+                                  invoice_data.add(eii);
+                                });
+                              },
+                              child: Row(
                                 children: [
-                                  Text("GST (", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                                  Container(
-                                    margin: EdgeInsets.only(top: 3),
-                                    width: 20,
-                                    height: 15,
-                                    child: TextField(
-                                      controller: gst_controller,
-                                      decoration: InputDecoration(
-                                        isDense: true,border: InputBorder.none
-                                      ),
-                                      style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),
-                                      onChanged: (v){
-                                        calculateInvoice();
-                                      },
-                                    ),
-                                  ),
-                                  Text("%)", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
+                                  Icon(Icons.add,color: Colors.blue,size: 18,),
+                                  SizedBox(width: 3,),
+                                  Text("Add new row", style: TextStyle(color: Colors.blue,fontSize: 14,fontWeight: FontWeight.w500),)
                                 ],
                               ),
-                              Text("Other Charges", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                              Text("Grand Total", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                              Text("Paid Amount", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                              Text("Due Amount", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                            ],
+                            ),
                           ),
-                          Column(
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(" : ", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                              Text(" : ", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                              Text(" : ", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                              Text(" : ", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                              Text(" : ", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                              Text(" : ", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                            ],
-                          ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text("Subtotal", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Text("GST (", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
+                                      Container(
+                                        margin: EdgeInsets.only(top: 3),
+                                        width: 20,
+                                        height: 15,
+                                        child: TextField(
+                                          controller: gst_controller,
+                                          decoration: InputDecoration(
+                                              isDense: true,border: InputBorder.none
+                                          ),
+                                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),
+                                          onChanged: (v){
+                                            calculateInvoice();
+                                          },
+                                        ),
+                                      ),
+                                      Text("%)", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
+                                    ],
+                                  ),
+                                  Text("Other Charges", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
+                                  Text("Grand Total", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
+                                  Text("Paid Amount", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
+                                  Text("Due Amount", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
+                                ],
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(" : ", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
+                                  Text(" : ", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
+                                  Text(" : ", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
+                                  Text(" : ", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
+                                  Text(" : ", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
+                                  Text(" : ", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
+                                ],
+                              ),
 
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text(subtotal.toStringAsFixed(2), style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                              Text(gst.toStringAsFixed(2), style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                              Transform.translate(
-                                offset: Offset(2, 0),
-                                child: Container(
-                                  margin: EdgeInsets.only(top: 3),
-                                  width: 80,
-                                  height: 15,
-                                  child: TextField(
-                                    controller: other_charges_controller,
-                                    decoration: InputDecoration(
-                                        isDense: true,border: InputBorder.none
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(subtotal.toStringAsFixed(2), style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
+                                  Text(gst.toStringAsFixed(2), style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
+                                  Transform.translate(
+                                    offset: Offset(2, 0),
+                                    child: Container(
+                                      margin: EdgeInsets.only(top: 3),
+                                      width: 80,
+                                      height: 15,
+                                      child: TextField(
+                                        controller: other_charges_controller,
+                                        decoration: InputDecoration(
+                                            isDense: true,border: InputBorder.none
+                                        ),
+                                        textAlign: TextAlign.right,
+                                        style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),
+                                        onChanged: (v){
+                                          calculateInvoice();
+                                        },
+                                      ),
                                     ),
-                                    textAlign: TextAlign.right,
-                                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),
-                                    onChanged: (v){
-                                      calculateInvoice();
-                                    },
                                   ),
-                                ),
-                              ),
-                              Text(grand_total.toStringAsFixed(2), style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                              Transform.translate(
-                                offset: Offset(2, 0),
-                                child: Container(
-                                  margin: EdgeInsets.only(top: 3),
-                                  width: 80,
-                                  height: 15,
-                                  child: TextField(
-                                    controller: paid_amount_controller,
-                                    decoration: InputDecoration(
-                                        isDense: true,border: InputBorder.none
+                                  Text(grand_total.toStringAsFixed(2), style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
+                                  Transform.translate(
+                                    offset: Offset(2, 0),
+                                    child: Container(
+                                      margin: EdgeInsets.only(top: 3),
+                                      width: 80,
+                                      height: 15,
+                                      child: TextField(
+                                        controller: paid_amount_controller,
+                                        decoration: InputDecoration(
+                                            isDense: true,border: InputBorder.none
+                                        ),
+                                        textAlign: TextAlign.right,
+                                        style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),
+                                        onChanged: (v){
+                                          calculateInvoice();
+                                        },
+                                      ),
                                     ),
-                                    textAlign: TextAlign.right,
-                                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),
-                                    onChanged: (v){
-                                      calculateInvoice();
-                                    },
                                   ),
-                                ),
+                                  Text(due_amount.toStringAsFixed(2), style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
+                                ],
                               ),
-                              Text(due_amount.toStringAsFixed(2), style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
                             ],
                           ),
                         ],
                       ),
+                      SizedBox(height: 50,),
+
+                      Text("COMMENTS OR SPECIAL INSTRUCTIONS:",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 14,color: Colors.black),),
+                      SizedBox(height: 3,),
+                      Container(
+                          padding: EdgeInsets.symmetric(horizontal: 5,vertical: 2),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.blue,width: 1),
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                          child: TextField(
+                            controller: comment_controller,
+                            decoration: InputDecoration(
+                              isDense: true,
+                              border: InputBorder.none,
+                            ),
+                            style: TextStyle(color: Colors.black, fontSize: 14),
+                            maxLines: null,
+                          )
+                      ),
+
+                      SizedBox(height: 30,),
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text("THANK YOU FOR YOUR BUSINESS!",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16,color: Colors.black),),
+
+                        ],
+                      ),
+
+                      SizedBox(height: 80,),
                     ],
                   ),
-                  SizedBox(height: 50,),
-
-                  Text("COMMENTS OR SPECIAL INSTRUCTIONS:",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 14,color: Colors.black),),
-                  SizedBox(height: 3,),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 5,vertical: 2),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.blue,width: 1),
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                      child: TextField(
-                        controller: comment_controller,
-                        decoration: InputDecoration(
-                          isDense: true,
-                          border: InputBorder.none,
-                        ),
-                        style: TextStyle(color: Colors.black, fontSize: 14),
-                        maxLines: null,
-                      )
-                  ),
-
-                  SizedBox(height: 30,),
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text("THANK YOU FOR YOUR BUSINESS!",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16,color: Colors.black),),
-
-                    ],
-                  ),
-
-                  SizedBox(height: 80,),
-                ],
+                ),
               ),
+
             ),
           ),
-
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -714,11 +728,17 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
     }
     String invoice_item_list=jsonEncode(invoice_items);
     var url = Uri.parse(create_invoice);
-    Map<String, String> body = {"customer_details": recipient_controller.text.trim(),"subtotal":subtotal.toStringAsFixed(2), "gst":gst.toStringAsFixed(2), "grand_total":grand_total.toStringAsFixed(2),"paid":paid_amount_controller.text.toString(),"due":due_amount.toStringAsFixed(2),"custom_note":comment_controller.text.trim(),"description":invoice_item_list};
+    Map<String, String> body = {"customer_details": recipient_controller.text.trim(),"subtotal":subtotal.toStringAsFixed(2), "gst":gst.toStringAsFixed(2), "grand_total":grand_total.toStringAsFixed(2),"paid":paid_amount_controller.text.toString(),"due":due_amount.toStringAsFixed(2),"custom_note":comment_controller.text.trim(),"other_charges":other_charges_controller.text,"descriptions":invoice_item_list};
     Response response = await post(url, body: body);
     if(response.statusCode==200){
       String myData = response.body;
+      print(myData);
       var jsonData=jsonDecode(myData);
+      if(jsonData['status']=="success"){
+        String invoice_no=jsonData['invoice_no'];
+      }else{
+
+      }
     }else{
       Fluttertoast.showToast(
           msg: "Some error has occurred",

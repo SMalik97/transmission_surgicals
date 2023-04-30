@@ -1,3 +1,4 @@
-const domain="https://controlpanel.transmissionsurgicals.com/";
-const api_bade_path=domain+"api";
-const create_invoice=api_bade_path+"create_invoice";
+const domain="https://transmissionsurgicals.com/api/";
+const api_base_path=domain+"api/";
+const create_invoice=api_base_path+"create_invoice";
+const user_login=api_base_path+"login";

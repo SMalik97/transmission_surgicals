@@ -2,6 +2,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 String ISLOGIN="isLogin"; //1 - logged in   0 - not login
 String USER_ID="userId";
+String USER_NAME="userName";
+String USER_EMAIL="userEmail";
 
 
 
