@@ -1,16 +1,18 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart';
+import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:get/get.dart' as getX;
 import '../../../Utils/urls.dart';
 import '../Model/editable_invoice_item.dart';
 import '../Model/noteditable_invoice_item.dart';
+import 'dart:html' as html;
+
 
 class InvoiceCreate extends StatefulWidget {
   const InvoiceCreate({Key? key}) : super(key: key);
@@ -22,6 +24,7 @@ class InvoiceCreate extends StatefulWidget {
 class _InvoiceCreateState extends State<InvoiceCreate> {
 
   final pdf = pw.Document();
+  late Uint8List pdf_bytes;
   List<editableInvoiceItem> invoice_data=[];
   final recipient_controller=TextEditingController();
   final gst_controller=TextEditingController();
@@ -35,6 +38,8 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
   bool isGenerating=false;
 
   double subtotal=0.00, gst=0.00, grand_total=0.00, due_amount=0.00;
+
+  String invoice_no="";
 
   @override
   Widget build(BuildContext context) {
@@ -107,14 +112,37 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                         ),
                         SizedBox(width: 15,),
                         if(isDownloadViewShowing==true)
-                        Container(
-                          height: 30,
-                          padding: EdgeInsets.symmetric(horizontal: 10),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(3),
-                              color: Color(0xff00802b)
+                        InkWell(
+                          onTap: (){
+                            final blob = html.Blob([pdf_bytes], 'application/pdf');
+                            final url = html.Url.createObjectUrlFromBlob(blob);
+                            final anchor = html.document.createElement('a') as html.AnchorElement
+                              ..href = url
+                              ..download = "Invoice$invoice_no.pdf";
+                            html.document.body?.children.add(anchor);
+                            anchor.click();
+                            html.document.body?.children.remove(anchor);
+                            html.Url.revokeObjectUrl(url);
+                            Fluttertoast.showToast(
+                                msg: "Downloading...",
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.BOTTOM_RIGHT,
+                                timeInSecForIosWeb: 1,
+                                backgroundColor: Colors.red,
+                                textColor: Colors.white,
+                                webBgColor: "linear-gradient(to right, #1da241, #1da241)",
+                                fontSize: 16.0
+                            );
+                          },
+                          child: Container(
+                            height: 30,
+                            padding: EdgeInsets.symmetric(horizontal: 10),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(3),
+                                color: Color(0xff00802b)
+                            ),
+                            child: Center(child: Text("Download Invoice", style: TextStyle(color: Colors.white,fontSize: 14, fontWeight: FontWeight.w500),)),
                           ),
-                          child: Center(child: Text("Download Invoice", style: TextStyle(color: Colors.white,fontSize: 14, fontWeight: FontWeight.w500),)),
                         ),
                         SizedBox(width: 25,),
                         InkWell(
@@ -170,15 +198,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
 
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      List<noteditableInvoiceItem> a =[];
-      noteditableInvoiceItem b=noteditableInvoiceItem(description: "description", quantity: "1", price: "78", totalAmount: "45");
-      a.add(b);
-      a.add(b);
-      a.add(b);
-      a.add(b);
-      // setState(() {
-      //   placeHolder = invoiceView("748596", "30/04/2023", "Customer Name\nCustomer Address\nPhone : +91 1234567890\nEmail : example@mail.com", a, "23.20", "45.36", "12", "45.36", "45.36", "45.36", "23.00", "If you have any questions concerning this invoice, contact name, phone or amount please contact us at surgicaltrans@gmail.com");
-      // });
+
       setState(() {
         placeHolder=createInvoiceView();
       });
@@ -235,7 +255,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                               Text("INVOICE",style: GoogleFonts.alata(fontSize: 20,fontWeight: FontWeight.bold,color: Colors.black),),
                               SizedBox(height: 5,),
                               Text("Invoice Number ########",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
-                              Text("Invoice Date #########",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
+                              Text("Invoice Date "+DateFormat('dd/MM/yyyy').format(DateTime.now()),style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
 
                             ],
                           ),
@@ -723,21 +743,35 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
     });
     List<noteditableInvoiceItem> invoice_items=[];
     for(int i =0; i<invoice_data.length; i++){
-      noteditableInvoiceItem a = noteditableInvoiceItem(description: invoice_data[i].description.toString(),quantity: invoice_data[i].quantity.toString(),price: invoice_data[i].price.toString(),totalAmount: invoice_data[i].totalAmount.toString());
+      noteditableInvoiceItem a = noteditableInvoiceItem(description: invoice_data[i].description.toString(),quantity: invoice_data[i].quantity.toString(),price: invoice_data[i].price!.toStringAsFixed(2),totalAmount: invoice_data[i].totalAmount!.toStringAsFixed(2));
       invoice_items.add(a);
     }
     String invoice_item_list=jsonEncode(invoice_items);
     var url = Uri.parse(create_invoice);
-    Map<String, String> body = {"customer_details": recipient_controller.text.trim(),"subtotal":subtotal.toStringAsFixed(2), "gst":gst.toStringAsFixed(2), "grand_total":grand_total.toStringAsFixed(2),"paid":paid_amount_controller.text.toString(),"due":due_amount.toStringAsFixed(2),"custom_note":comment_controller.text.trim(),"other_charges":other_charges_controller.text,"descriptions":invoice_item_list};
+    Map<String, String> body = {"customer_details": recipient_controller.text.trim(),"subtotal":subtotal.toStringAsFixed(2), "gst_percentage":gst_controller.text, "gst":gst.toStringAsFixed(2), "grand_total":grand_total.toStringAsFixed(2),"paid":paid_amount_controller.text.toString(),"due":due_amount.toStringAsFixed(2),"custom_note":comment_controller.text.trim(),"other_charges":other_charges_controller.text,"descriptions":invoice_item_list};
     Response response = await post(url, body: body);
     if(response.statusCode==200){
       String myData = response.body;
       print(myData);
       var jsonData=jsonDecode(myData);
       if(jsonData['status']=="success"){
-        String invoice_no=jsonData['invoice_no'];
-      }else{
+        invoice_no=jsonData['invoice_no'];
+        generatePdf(invoice_no, recipient_controller.text.trim(), invoice_items, subtotal.toStringAsFixed(2), gst_controller.text, gst.toStringAsFixed(2), other_charges_controller.text, grand_total.toStringAsFixed(2), paid_amount_controller.text.toString(), due_amount.toStringAsFixed(2),comment_controller.text.trim());
+        setState(() {
+          placeHolder=invoiceView(invoice_no, recipient_controller.text.trim(), invoice_items, subtotal.toStringAsFixed(2), gst_controller.text, gst.toStringAsFixed(2), other_charges_controller.text, grand_total.toStringAsFixed(2), paid_amount_controller.text.toString(), due_amount.toStringAsFixed(2),comment_controller.text.trim());
 
+        });
+      }else{
+        Fluttertoast.showToast(
+            msg: "Some error has occurred",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM_RIGHT,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            webBgColor: "linear-gradient(to right, #C62828, #C62828)",
+            fontSize: 16.0
+        );
       }
     }else{
       Fluttertoast.showToast(
@@ -751,15 +785,13 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
           fontSize: 16.0
       );
     }
-    setState(() {
-      isGenerating = false;
-    });
+
 
 
   }
 
 
-  Widget invoiceView(String invoice_number, String invoice_date, String customer_details, List<noteditableInvoiceItem> invoice_item_details, String subtotal, String gst, String gst_percentage, String other_charges, String grand_total, String paid, String due, String comments){
+  Widget invoiceView(String invoice_number, String customer_details, List<noteditableInvoiceItem> invoice_item_details, String subtotal, String gst_percentage, String gst, String other_charges, String grand_total, String paid, String due, String comments){
     return Expanded(
       child: ListView(
         shrinkWrap: true,
@@ -812,7 +844,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                               Text("INVOICE",style: GoogleFonts.alata(fontSize: 20,fontWeight: FontWeight.bold,color: Colors.black),),
                               SizedBox(height: 5,),
                               Text("Invoice Number : "+invoice_number,style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
-                              Text("Invoice Date : "+invoice_date,style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
+                              Text("Invoice Date : "+DateFormat('dd/MM/yyyy').format(DateTime.now()),style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
 
                             ],
                           ),
@@ -1107,4 +1139,182 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
     );
   }
 
+
+
+
+  generatePdf(String invoice_no, String recipient_details,  List<noteditableInvoiceItem> invoice_items, String subtotal, String gst_percentage, String gst, String other_charges, String grand_total, String paid, String due, String comments) async {
+    final invoiceLogo = await getAssetsImage("assets/logo/logo.png");
+    List<pw.Widget> widgets = [];
+
+
+    widgets.add(pw.SizedBox(height: 60,),);
+
+    widgets.add(pw.Row(
+      mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: [
+        pw.Column(
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          mainAxisAlignment: pw.MainAxisAlignment.start,
+          children: [
+            pw.Row(
+              crossAxisAlignment: pw.CrossAxisAlignment.center,
+              mainAxisAlignment: pw.MainAxisAlignment.start,
+              children: [
+                pw.Image(pw.MemoryImage(invoiceLogo), width: 50,height: 50),
+                pw.SizedBox(width: 8,),
+                pw. Text("Transmission Surgicals", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 18,color: PdfColors.lightBlue),),
+              ],
+            ),
+            pw.SizedBox(height: 2,),
+            pw.Text("333 J.C. Bose Road, PallyShree\nSodepur, Kolkata - 700110 \nPhone : +91 0333335980722 / 7278360630 / 9836947573\nEmail : surgicaltrans@gmail.com",style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 10,color: PdfColors.black),),
+
+          ],
+        ),
+        pw.Column(
+          mainAxisAlignment: pw.MainAxisAlignment.start,
+          crossAxisAlignment: pw.CrossAxisAlignment.end,
+          children: [
+            pw.Text("INVOICE",style: pw.TextStyle(fontSize: 18,fontWeight:pw.FontWeight.bold,color: PdfColors.black),),
+            pw.SizedBox(height: 5,),
+            pw.Text("Invoice Number $invoice_no",style: pw.TextStyle(fontSize: 12,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
+            pw.Text("Invoice Date "+DateFormat('dd/MM/yyyy').format(DateTime.now()),style: pw.TextStyle(fontSize: 12,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
+          ],
+        ),
+      ],
+    ));
+
+
+    widgets.add( pw.SizedBox(height: 30,),);
+
+    widgets.add(pw.Text("TO :",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 13,color: PdfColors.black),),);
+    widgets.add(pw.Text(recipient_details,style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 13,color: PdfColors.black),),);
+    widgets.add(pw.SizedBox(height: 30,),);
+
+
+
+
+    widgets.add(pw.Table.fromTextArray(
+        data: [
+          ['Sl. No.','Description', 'Quantity', 'Price', 'Total'],
+          ...invoice_items.asMap().entries.map((item) => [
+            (item.key+1).toString()+".",
+            item.value.description.toString(),
+            item.value.quantity.toString(),
+            item.value.price.toString(),
+            item.value.totalAmount.toString(),
+          ]).toList(),
+        ],
+        cellAlignment: pw.Alignment.centerRight,
+        cellStyle: pw.TextStyle(fontWeight: pw.FontWeight.normal),
+        headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+        border: pw.TableBorder.all(width: 1, color: PdfColors.blue),
+        headerDecoration: pw.BoxDecoration(
+          color: PdfColors.blue100,
+        ),
+        columnWidths: {
+          0:pw.FlexColumnWidth(1),
+          1:pw.FlexColumnWidth(3),
+          2:pw.FlexColumnWidth(2),
+          3:pw.FlexColumnWidth(2),
+          4:pw.FlexColumnWidth(2),
+        }
+    ),);
+
+
+    widgets.add(pw.SizedBox(height: 5,),);
+
+    widgets.add(pw.Row(
+      mainAxisAlignment: pw.MainAxisAlignment.end,
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: [
+        pw.Column(
+          crossAxisAlignment:pw. CrossAxisAlignment.start,
+          children: [
+            pw.Text("Subtotal", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+            pw.Text("GST ($gst_percentage%)", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+            pw.Text("Other charges", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+            pw.Text("Grand Total", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+            pw.Text("Paid", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+            pw.Text("Due", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+          ],
+        ),
+        pw.Column(
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            pw.Text(" : ", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+            pw.Text(" : ", style: pw.TextStyle(fontWeight:pw. FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+            pw.Text(" : ", style:pw. TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+            pw.Text(" : ", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+            pw.Text(" : ", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+            pw.Text(" : ", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+          ],
+        ),
+
+        pw.Column(
+          crossAxisAlignment: pw.CrossAxisAlignment.end,
+          children: [
+            pw.Text(subtotal, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+            pw.Text(gst, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+            pw.Text(other_charges, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+            pw.Text(grand_total, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+            pw.Text(paid, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+            pw.Text(due, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+          ],
+        ),
+      ],
+    ),);
+
+    widgets.add(pw.SizedBox(height: 50,),);
+
+    widgets.add(pw.Text("COMMENTS OR SPECIAL INSTRUCTIONS:",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 12,color: PdfColors.black),),);
+    widgets.add(pw.SizedBox(height: 3,),);
+    widgets.add(pw.Text(comments,style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 11,color: PdfColors.black),),);
+    widgets.add(pw.SizedBox(height: 30,),);
+    widgets.add(pw.Row(
+      mainAxisAlignment: pw.MainAxisAlignment.center,
+      crossAxisAlignment: pw.CrossAxisAlignment.end,
+      children: [
+        pw.Text("THANK YOU FOR YOUR BUSINESS!",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 14,color:PdfColors.black),),
+
+      ],
+    ),);
+
+    widgets.add(pw.SizedBox(height: 80,),);
+
+
+    pdf.addPage(
+      pw.MultiPage(
+        pageFormat: PdfPageFormat.a4,
+        build: (context) => widgets,
+      ),
+    );
+
+    pdf_bytes=await pdf.save();
+
+
+    setState(() {
+      isGenerating = false;
+      isGenerateViewShowing=false;
+      isDownloadViewShowing=true;
+    });
+
+    Fluttertoast.showToast(
+        msg: "Invoice Generated!",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM_RIGHT,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        webBgColor: "linear-gradient(to right, #1da241, #1da241)",
+        fontSize: 16.0
+    );
+  }
+
+
+
+  Future<Uint8List> getAssetsImage(String imagePath) async {
+    final ByteData data = await rootBundle.load(imagePath);
+    return data.buffer.asUint8List();
+  }
 }

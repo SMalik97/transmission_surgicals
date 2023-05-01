@@ -44,6 +44,7 @@ dependencies:
   pdf: ^3.10.1
   crypto: ^3.0.1
   encrypt: ^5.0.1
+  intl: ^0.18.1
 
 dev_dependencies:
   flutter_test:
