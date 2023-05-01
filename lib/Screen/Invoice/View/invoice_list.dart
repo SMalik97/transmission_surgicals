@@ -1,6 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart' as getX;
+import 'package:http/http.dart';
+import 'package:intl/intl.dart';
+
+import '../../../Utils/urls.dart';
+import '../Model/invoice_model.dart';
 
 class InvoiceList extends StatefulWidget {
   const InvoiceList({Key? key}) : super(key: key);
@@ -10,6 +18,9 @@ class InvoiceList extends StatefulWidget {
 }
 
 class _InvoiceListState extends State<InvoiceList> {
+
+  List<InvoiceModel> invoice_list=[];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,7 +95,7 @@ class _InvoiceListState extends State<InvoiceList> {
                             child: ListView.builder(
                                 shrinkWrap: true,
                                 padding: EdgeInsets.zero,
-                                itemCount: 5,
+                                itemCount: invoice_list.length,
                                 itemBuilder: (context, index){
                                   return Container(
                                     margin: EdgeInsets.all(5),
@@ -100,8 +111,8 @@ class _InvoiceListState extends State<InvoiceList> {
                                         Row(
                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
-                                            Text("Invoice No. #78965412", style: TextStyle(fontWeight: FontWeight.w500, color: Colors.white, fontSize: 14),),
-                                            Text("30 April 2023", style: TextStyle(fontWeight: FontWeight.w500, color: Colors.white, fontSize: 11),),
+                                            Text("Invoice No. #"+invoice_list[index].invoiceNo.toString(), style: TextStyle(fontWeight: FontWeight.w500, color: Colors.white, fontSize: 14),),
+                                            Text(formattedDate(invoice_list[index].date.toString()), style: TextStyle(fontWeight: FontWeight.w500, color: Colors.white, fontSize: 11),),
                                           ],
                                         ),
                                         SizedBox(height: 15,),
@@ -111,18 +122,13 @@ class _InvoiceListState extends State<InvoiceList> {
                                             Column(
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
-                                                Text("Subrata Malik", style: TextStyle(fontWeight: FontWeight.w500, color: Colors.white.withOpacity(0.90), fontSize: 13),),
-                                                SizedBox(height: 2,),
-                                                Text("Recipient's Address", style: TextStyle(fontWeight: FontWeight.w500, color: Colors.white.withOpacity(0.90), fontSize: 13),),
-                                                SizedBox(height: 2,),
-                                                Text("Recipient's Contact", style: TextStyle(fontWeight: FontWeight.w500, color: Colors.white.withOpacity(0.90), fontSize: 13),),
-
+                                                Text(invoice_list[index].recipientDetails.toString(), style: TextStyle(fontWeight: FontWeight.w500, color: Colors.white.withOpacity(0.90), fontSize: 13),),
                                               ],
                                             ),
                                             Column(
                                               mainAxisAlignment: MainAxisAlignment.center,
                                               children: [
-                                                Text("₹1458", style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),)
+                                                Text("₹"+invoice_list[index].grandTotal.toString(), style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),)
                                               ],
                                             )
                                           ],
@@ -227,6 +233,11 @@ class _InvoiceListState extends State<InvoiceList> {
     );
   }
 
+  @override
+  void initState() {
+    fetch_invoice_list();
+    super.initState();
+  }
 
 
   Widget invoiceView(){
@@ -533,6 +544,47 @@ class _InvoiceListState extends State<InvoiceList> {
       ),
 
     );
+  }
+
+
+
+  fetch_invoice_list() async {
+    var url = Uri.parse(fetch_invoice);
+    Response response = await post(url);
+    if(response.statusCode==200){
+      String myData = response.body;
+      var jsonData=jsonDecode(myData);
+      jsonData['invoice_list'].forEach((jsonResponse) {
+        InvoiceModel obj = new InvoiceModel.fromJson(jsonResponse);
+        setState(() {
+          invoice_list.add(obj);
+        });
+      });
+    }else{
+      Fluttertoast.showToast(
+          msg: "Some error has occurred!",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM_RIGHT,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          webBgColor: "linear-gradient(to right, #C62828, #C62828)",
+          fontSize: 16.0
+      );
+    }
+  }
+
+
+  String formattedDate(String inputDate) {
+    try {
+      DateFormat format = DateFormat("yyyy-MM-dd");
+      var inDate = format.parse(inputDate);
+      final DateFormat formatter = DateFormat('dd MMM yyyy');
+      final String formatted = formatter.format(inDate);
+      return formatted;
+    } catch (e) {
+      return inputDate;
+    }
   }
 
 
