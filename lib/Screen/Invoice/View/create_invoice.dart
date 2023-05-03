@@ -12,10 +12,11 @@ import '../../../Utils/urls.dart';
 import '../Model/editable_invoice_item.dart';
 import '../Model/noteditable_invoice_item.dart';
 import 'dart:html' as html;
+import 'package:get/get.dart' as getX;
 
 
 class InvoiceCreate extends StatefulWidget {
-  const InvoiceCreate({Key? key}) : super(key: key);
+  InvoiceCreate({Key? key}) : super(key: key);
 
   @override
   State<InvoiceCreate> createState() => _InvoiceCreateState();
@@ -41,6 +42,9 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
 
   String invoice_no="";
 
+
+  List<noteditableInvoiceItem> invoice_details_list=[];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,7 +64,25 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         if(isGenerateViewShowing==true)
-                        InkWell(
+                          (getX.Get.arguments!=null && getX.Get.arguments[0]=="edit") ?
+                          InkWell(
+                            onTap: (){
+
+                            },
+                            child: Opacity(
+                              opacity: isGenerating==true? 0.7:1,
+                              child: Container(
+                                height: 30,
+                                padding: EdgeInsets.symmetric(horizontal: 10),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(3),
+                                    color: Color(0xff00802b)
+                                ),
+                                child: Center(child: Text(isGenerating==true ? "Saving..." :"Save Invoice", style: TextStyle(color: Colors.white,fontSize: 14, fontWeight: FontWeight.w500),)),
+                              ),
+                            ),
+                          ):
+                          InkWell(
                           onTap: isGenerating==true? null : (){
                             if(recipient_controller.text.isEmpty){
                               Fluttertoast.showToast(
@@ -110,6 +132,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                             ),
                           ),
                         ),
+
                         SizedBox(width: 15,),
                         if(isDownloadViewShowing==true)
                         InkWell(
@@ -147,7 +170,22 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                         SizedBox(width: 25,),
                         InkWell(
                           onTap: (){
-                            getX.Get.offAndToNamed("/create-invoice");
+                            if(getX.Get.arguments == null){
+                              getX.Get.offAndToNamed("/create-invoice");
+                            }else{
+                              getX.Get.offAndToNamed("/create-invoice", arguments: [getX.Get.arguments[0],getX.Get.arguments[1]]);
+                            }
+                            Fluttertoast.showToast(
+                                msg: "Refreshing...",
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.BOTTOM_RIGHT,
+                                timeInSecForIosWeb: 1,
+                                backgroundColor: Colors.red,
+                                textColor: Colors.white,
+                                webBgColor: "linear-gradient(to right, #1da241, #1da241)",
+                                fontSize: 16.0
+                            );
+
                           },
                           child: Container(
                             width: 30, height: 30,
@@ -187,24 +225,114 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
 
   @override
   void initState() {
-    editableInvoiceItem eii=editableInvoiceItem(description: "", quantity: 0, price: 0.00, totalAmount: 0.00, des_controller: TextEditingController(), price_controller: TextEditingController(), quantity_controller: TextEditingController());
-    invoice_data.add(eii);
+    if(getX.Get.arguments==null){
+      editableInvoiceItem eii=editableInvoiceItem(description: "", quantity: 0, price: 0.00, totalAmount: 0.00, des_controller: TextEditingController(), price_controller: TextEditingController(), quantity_controller: TextEditingController());
+      invoice_data.add(eii);
 
-    gst_controller.text="18";
-    other_charges_controller.text="0.00";
-    paid_amount_controller.text="0.00";
-    comment_controller.text="If you have any questions concerning this invoice, contact name, phone or amount please contact us at surgicaltrans@gmail.com";
+      gst_controller.text="18";
+      other_charges_controller.text="0.00";
+      paid_amount_controller.text="0.00";
+      comment_controller.text="If you have any questions concerning this invoice, contact name, phone or amount please contact us at surgicaltrans@gmail.com";
 
 
 
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-
-      setState(() {
-        placeHolder=createInvoiceView();
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        setState(() {
+          placeHolder=createInvoiceView();
+        });
       });
-    });
+    }else{
+      placeHolder=Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: 25,height: 25,
+              child: CircularProgressIndicator(),
+            ),
+            SizedBox(height: 5,),
+            Text("Getting ready...", style: TextStyle(color: Colors.green, fontWeight: FontWeight.w600,fontSize: 15),)
+          ],
+        ),
+      );
+
+
+      fetchInvoiceDetails(getX.Get.arguments[1]);
+
+
+    }
+
 
     super.initState();
+  }
+
+  fetchInvoiceDetails(String invoice_id) async {
+    var url = Uri.parse(fetch_invoice_details);
+    Map<String, String> body = {"invoice_id": invoice_id};
+    Response response = await post(url, body: body);
+    if(response.statusCode==200){
+      String myData = response.body;
+      var jsonData=jsonDecode(myData);
+      if(jsonData['status']=="Success"){
+        // selectedInvoiceId=jsonData['invoice_id'];
+        // selectedInvoiceNumber=jsonData['invoice_no'];
+        recipient_controller.text=jsonData['customer_details'];
+        subtotal=double.parse(jsonData['subtotal']);
+        gst=double.parse(jsonData['gst']);
+        other_charges_controller.text=jsonData['other_charges'];
+        grand_total=double.parse(jsonData['grand_total']);
+        paid_amount_controller.text=jsonData['paid'];
+        due_amount=double.parse(jsonData['due']);
+        // selectedInvoiceDate=jsonData['date'];
+        comment_controller.text=jsonData['custom_note'];
+        gst_controller.text=jsonData['gst_percentage'];
+
+
+        invoice_details_list.clear();
+        jsonData['details'].forEach((jsonResponse) {
+          noteditableInvoiceItem obj = new noteditableInvoiceItem.fromJson(jsonResponse);
+          invoice_details_list.add(obj);
+        });
+
+
+
+        for(int i =0; i<invoice_details_list.length; i++){
+          editableInvoiceItem eii=editableInvoiceItem(description: invoice_details_list[i].description.toString(), quantity: int.parse(invoice_details_list[i].quantity.toString()), price: double.parse(invoice_details_list[i].price.toString()), totalAmount: double.parse(invoice_details_list[i].totalAmount.toString()), des_controller: TextEditingController(), price_controller: TextEditingController(), quantity_controller: TextEditingController());
+          invoice_data.add(eii);
+          invoice_data[i].des_controller!.text=invoice_details_list[i].description.toString();
+          invoice_data[i].price_controller!.text=invoice_details_list[i].price.toString();
+          invoice_data[i].quantity_controller!.text=invoice_details_list[i].quantity.toString();
+        }
+
+        setState(() {});
+      }else{
+        Fluttertoast.showToast(
+            msg: "Error while loading",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM_RIGHT,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            webBgColor: "linear-gradient(to right, #C62828, #C62828)",
+            fontSize: 16.0
+        );
+      }
+    }else{
+      Fluttertoast.showToast(
+          msg: "Some error has occurred",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM_RIGHT,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          webBgColor: "linear-gradient(to right, #C62828, #C62828)",
+          fontSize: 16.0
+      );
+    }
+    setState(() {
+      placeHolder=createInvoiceView();
+    });
+
   }
 
   Widget createInvoiceView(){

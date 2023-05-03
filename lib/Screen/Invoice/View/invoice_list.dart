@@ -71,13 +71,34 @@ class _InvoiceListState extends State<InvoiceList> {
                           ),
                         ),
                         SizedBox(width: 25,),
-                        Container(
-                          width: 30, height: 30,
-                          decoration: BoxDecoration(
-                              color: Colors.green,
-                            shape: BoxShape.circle
+                        InkWell(
+                          onTap: (){
+                            fetch_invoice_list();
+                            setState(() {
+                              isListLoading=true;
+                              isInvoiceLoading=false;
+                              selectedIndex=0;
+                              selectedInvoiceId="";
+                            });
+                            Fluttertoast.showToast(
+                                msg: "Refreshing...",
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.BOTTOM_RIGHT,
+                                timeInSecForIosWeb: 1,
+                                backgroundColor: Colors.red,
+                                textColor: Colors.white,
+                                webBgColor: "linear-gradient(to right, #1da241, #1da241)",
+                                fontSize: 16.0
+                            );
+                          },
+                          child: Container(
+                            width: 30, height: 30,
+                            decoration: BoxDecoration(
+                                color: Colors.green,
+                              shape: BoxShape.circle
+                            ),
+                            child: Icon(Icons.refresh, color: Colors.white, size: 18,),
                           ),
-                          child: Icon(Icons.refresh, color: Colors.white, size: 18,),
                         ),
                       ],
                     )
@@ -251,28 +272,38 @@ class _InvoiceListState extends State<InvoiceList> {
                                   child: Text("Invoice #"+selectedInvoiceNumber, style: TextStyle(fontWeight: FontWeight.w600,color: Colors.black, fontSize: 16),)
                               ),
                               SizedBox(width: 20,),
-                              Container(
-                                  width: 150,
-                                  height: 35,
-                                  decoration: BoxDecoration(
-                                      color: Color(0xff006666),
-                                      borderRadius: BorderRadius.circular(20)
-                                  ),
-                                  child: Center(
-                                      child: Text("Edit Invoice", style: TextStyle(fontWeight: FontWeight.w500,color: Colors.white),)
-                                  )
+                              InkWell(
+                                onTap: (){
+                                  getX.Get.toNamed("/create-invoice", arguments: ["edit",selectedInvoiceId]);
+                                },
+                                child: Container(
+                                    width: 150,
+                                    height: 35,
+                                    decoration: BoxDecoration(
+                                        color: Color(0xff006666),
+                                        borderRadius: BorderRadius.circular(20)
+                                    ),
+                                    child: Center(
+                                        child: Text("Edit Invoice", style: TextStyle(fontWeight: FontWeight.w500,color: Colors.white),)
+                                    )
+                                ),
                               ),
                               SizedBox(width: 20,),
-                              Container(
-                                  width: 150,
-                                  height: 35,
-                                  decoration: BoxDecoration(
-                                      color: Color(0xff003366),
-                                      borderRadius: BorderRadius.circular(20)
-                                  ),
-                                  child: Center(
-                                      child: Text("Copy Invoice", style: TextStyle(fontWeight: FontWeight.w500,color: Colors.white),)
-                                  )
+                              InkWell(
+                                onTap: (){
+                                  getX.Get.toNamed("/create-invoice", arguments: ["copy",selectedInvoiceId]);
+                                },
+                                child: Container(
+                                    width: 150,
+                                    height: 35,
+                                    decoration: BoxDecoration(
+                                        color: Color(0xff003366),
+                                        borderRadius: BorderRadius.circular(20)
+                                    ),
+                                    child: Center(
+                                        child: Text("Copy Invoice", style: TextStyle(fontWeight: FontWeight.w500,color: Colors.white),)
+                                    )
+                                ),
                               ),
                               SizedBox(width: 20,),
                               InkWell(
