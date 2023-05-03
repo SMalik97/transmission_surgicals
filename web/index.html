@@ -14,22 +14,22 @@
     This is a placeholder for base href that will be replaced by the value of
     the `--base-href` argument provided to `flutter build`.
   -->
-  <base href="$FLUTTER_BASE_HREF">
+  <base href="/">
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="Control Panel of Transmission Surgicals">
+  <meta name="description" content="Transmission Surgicals">
 
   <!-- iOS meta tags & icons -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="transmission_surgicals">
+  <meta name="apple-mobile-web-app-title" content="Transmission Surgicals">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title>transmission_surgicals</title>
+  <title>Transmission Surgicals</title>
   <link rel="manifest" href="manifest.json">
 
   <script>
@@ -38,22 +38,28 @@
   </script>
   <!-- This script adds the flutter initialization JS code -->
   <script src="flutter.js" defer></script>
+
+  <div class="center">
+    <img src="favicon.png" alt="Image" class="center" height="150" />
+  </div>
+
+  <style>
+    .center{
+        position: relative
+    }
+    .center{
+        margin:0;
+        position: absolute;
+        top:50%;
+        left:50%;
+        margin-right: -50%;
+        transform: translate(-50%, -50%);
+    }
+
+  </style>
+
 </head>
 <body>
-  <script>
-    window.addEventListener('load', function(ev) {
-      // Download main.dart.js
-      _flutter.loader.loadEntrypoint({
-        serviceWorker: {
-          serviceWorkerVersion: serviceWorkerVersion,
-        },
-        onEntrypointLoaded: function(engineInitializer) {
-          engineInitializer.initializeEngine().then(function(appRunner) {
-            appRunner.runApp();
-          });
-        }
-      });
-    });
-  </script>
+<script src="main.dart.js?version=1" type="application/javascript"></script>
 </body>
 </html>
