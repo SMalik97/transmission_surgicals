@@ -273,8 +273,9 @@ class _InvoiceListState extends State<InvoiceList> {
                               ),
                               SizedBox(width: 20,),
                               InkWell(
-                                onTap: (){
-                                  getX.Get.toNamed("/create-invoice", arguments: ["edit",selectedInvoiceId]);
+                                onTap: () async {
+                                  await getX.Get.toNamed("/create-invoice?purpose=edit&id=$selectedInvoiceId");
+                                  fetch_invoice_list();
                                 },
                                 child: Container(
                                     width: 150,
@@ -290,8 +291,10 @@ class _InvoiceListState extends State<InvoiceList> {
                               ),
                               SizedBox(width: 20,),
                               InkWell(
-                                onTap: (){
-                                  getX.Get.toNamed("/create-invoice", arguments: ["copy",selectedInvoiceId]);
+                                onTap: () async {
+                                 await getX.Get.toNamed("/create-invoice?purpose=copy&id=$selectedInvoiceId");
+                                  fetch_invoice_list();
+
                                 },
                                 child: Container(
                                     width: 150,
@@ -574,6 +577,15 @@ class _InvoiceListState extends State<InvoiceList> {
           invoice_list.add(obj);
         });
       });
+      if(selectedInvoiceId.isNotEmpty){
+        setState(() {
+          isInvoiceLoading=true;
+          selectedInvoiceId=invoice_list[selectedIndex].invoiceId.toString();
+          selectedInvoiceNumber=invoice_list[selectedIndex].invoiceNo.toString();
+        });
+        fetchInvoiceDetails(selectedInvoiceId);
+      }
+
     }else{
       Fluttertoast.showToast(
           msg: "Some error has occurred!",

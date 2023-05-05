@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:transmission_surgicals/Screen/dashboard.dart';
+import 'package:transmission_surgicals/Screen/Dashboard/dashboard.dart';
 import 'package:transmission_surgicals/Screen/login.dart';
 import '../Screen/Invoice/View/create_invoice.dart';
 import '../Screen/Invoice/View/invoice_list.dart';

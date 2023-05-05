@@ -32,6 +32,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
   final other_charges_controller=TextEditingController();
   final paid_amount_controller=TextEditingController();
   final comment_controller=TextEditingController();
+  final date_controller=TextEditingController();
   Widget placeHolder=Container();
 
   bool isGenerateViewShowing=true;
@@ -40,7 +41,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
 
   double subtotal=0.00, gst=0.00, grand_total=0.00, due_amount=0.00;
 
-  String invoice_no="";
+  String invoice_no="",invoice_id="",invoice_date="", purpose="";
 
 
   List<noteditableInvoiceItem> invoice_details_list=[];
@@ -64,10 +65,43 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         if(isGenerateViewShowing==true)
-                          (getX.Get.arguments!=null && getX.Get.arguments[0]=="edit") ?
+                          (getX.Get.parameters['id'] !=null && purpose=="edit") ?
                           InkWell(
                             onTap: (){
-
+                              if(recipient_controller.text.isEmpty){
+                                Fluttertoast.showToast(
+                                    msg: "Please enter recipient address",
+                                    toastLength: Toast.LENGTH_SHORT,
+                                    gravity: ToastGravity.BOTTOM_RIGHT,
+                                    timeInSecForIosWeb: 1,
+                                    backgroundColor: Colors.red,
+                                    textColor: Colors.white,
+                                    webBgColor: "linear-gradient(to right, #C62828, #C62828)",
+                                    fontSize: 16.0
+                                );
+                              }else{
+                                bool isError=false;
+                                for(int i = 0 ; i<invoice_data.length; i++){
+                                  if(invoice_data[i].des_controller!.text.isEmpty || invoice_data[i].price_controller!.text.isEmpty || invoice_data[i].quantity_controller!.text.isEmpty){
+                                    isError =true;
+                                  }
+                                }
+                                if(isError==true){
+                                  Fluttertoast.showToast(
+                                      msg: "Please enter all field correctly",
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.BOTTOM_RIGHT,
+                                      timeInSecForIosWeb: 1,
+                                      backgroundColor: Colors.red,
+                                      textColor: Colors.white,
+                                      webBgColor: "linear-gradient(to right, #C62828, #C62828)",
+                                      fontSize: 16.0
+                                  );
+                                }else{
+                                  ///call api
+                                  updateInvoice();
+                                }
+                              }
                             },
                             child: Opacity(
                               opacity: isGenerating==true? 0.7:1,
@@ -115,7 +149,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                 );
                               }else{
                                 ///call api
-                                createNewInvoice();
+                                updateInvoice();
                               }
                             }
                           },
@@ -170,10 +204,10 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                         SizedBox(width: 25,),
                         InkWell(
                           onTap: (){
-                            if(getX.Get.arguments == null){
+                            if(getX.Get.parameters['id'] == null){
                               getX.Get.offAndToNamed("/create-invoice");
                             }else{
-                              getX.Get.offAndToNamed("/create-invoice", arguments: [getX.Get.arguments[0],getX.Get.arguments[1]]);
+                              getX.Get.offAndToNamed("/create-invoice?purpose=$purpose&id=$invoice_id",);
                             }
                             Fluttertoast.showToast(
                                 msg: "Refreshing...",
@@ -225,7 +259,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
 
   @override
   void initState() {
-    if(getX.Get.arguments==null){
+    if(getX.Get.parameters['id']==null){
       editableInvoiceItem eii=editableInvoiceItem(description: "", quantity: 0, price: 0.00, totalAmount: 0.00, des_controller: TextEditingController(), price_controller: TextEditingController(), quantity_controller: TextEditingController());
       invoice_data.add(eii);
 
@@ -242,22 +276,26 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
         });
       });
     }else{
-      placeHolder=Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: 25,height: 25,
-              child: CircularProgressIndicator(),
-            ),
-            SizedBox(height: 5,),
-            Text("Getting ready...", style: TextStyle(color: Colors.green, fontWeight: FontWeight.w600,fontSize: 15),)
-          ],
+      purpose=getX.Get.parameters['purpose']!;
+      invoice_id=getX.Get.parameters['id']!;
+      placeHolder=Expanded(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: 25,height: 25,
+                child: CircularProgressIndicator(),
+              ),
+              SizedBox(height: 5,),
+              Text("Getting ready...", style: TextStyle(color: Colors.green, fontWeight: FontWeight.w600,fontSize: 15),)
+            ],
+          ),
         ),
       );
 
 
-      fetchInvoiceDetails(getX.Get.arguments[1]);
+      fetchInvoiceDetails(invoice_id);
 
 
     }
@@ -274,8 +312,8 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
       String myData = response.body;
       var jsonData=jsonDecode(myData);
       if(jsonData['status']=="Success"){
-        // selectedInvoiceId=jsonData['invoice_id'];
-        // selectedInvoiceNumber=jsonData['invoice_no'];
+        invoice_no=jsonData['invoice_no'];
+        invoice_date=jsonData['date'];
         recipient_controller.text=jsonData['customer_details'];
         subtotal=double.parse(jsonData['subtotal']);
         gst=double.parse(jsonData['gst']);
@@ -283,10 +321,10 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
         grand_total=double.parse(jsonData['grand_total']);
         paid_amount_controller.text=jsonData['paid'];
         due_amount=double.parse(jsonData['due']);
-        // selectedInvoiceDate=jsonData['date'];
         comment_controller.text=jsonData['custom_note'];
         gst_controller.text=jsonData['gst_percentage'];
 
+        date_controller.text=formattedDate(invoice_date);
 
         invoice_details_list.clear();
         jsonData['details'].forEach((jsonResponse) {
@@ -382,8 +420,31 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                             children: [
                               Text("INVOICE",style: GoogleFonts.alata(fontSize: 20,fontWeight: FontWeight.bold,color: Colors.black),),
                               SizedBox(height: 5,),
-                              Text("Invoice Number ########",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
-                              Text("Invoice Date "+DateFormat('dd/MM/yyyy').format(DateTime.now()),style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
+                              purpose=="edit"?
+                              Text("Invoice Number $invoice_no",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),)
+                              : Text("Invoice Number ########",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
+                              purpose=="edit"?
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Text("Invoice Date ",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black)),
+                                  Container(
+                                    width: 70,
+                                    child: TextField(
+                                      controller: date_controller,
+                                      decoration: InputDecoration(
+                                        isDense: true,
+                                        border: InputBorder.none,
+                                        hintText: "DD/MM/YYYY",
+                                        hintStyle: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.grey)
+                                      ),
+                                      style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),
+
+                                    ),
+                                  )
+                                ],
+                              )
+                              : Text("Invoice Date "+DateFormat('dd/MM/yyyy').format(DateTime.now()),style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
 
                             ],
                           ),
@@ -626,7 +687,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                         ),
                                         onChanged: (v){
                                           if(invoice_data[index].quantity_controller!.text.isNotEmpty){
-                                            invoice_data[index].quantity = int.parse(invoice_data[index].price_controller!.text);
+                                            invoice_data[index].quantity = int.parse(invoice_data[index].quantity_controller!.text);
                                           }
                                           if(invoice_data[index].price_controller!.text.isEmpty || invoice_data[index].quantity_controller!.text.isEmpty){
                                             setState(() {
@@ -865,6 +926,57 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
   }
 
 
+  updateInvoice() async {
+    setState(() {
+      isGenerating = true;
+    });
+    List<noteditableInvoiceItem> invoice_items=[];
+    for(int i =0; i<invoice_data.length; i++){
+      noteditableInvoiceItem a = noteditableInvoiceItem(description: invoice_data[i].description.toString(),quantity: invoice_data[i].quantity.toString(),price: invoice_data[i].price!.toStringAsFixed(2),totalAmount: invoice_data[i].totalAmount!.toStringAsFixed(2));
+      invoice_items.add(a);
+    }
+    String invoice_item_list=jsonEncode(invoice_items);
+    var url = Uri.parse(update_invoice);
+    Map<String, String> body = {"invoice_id":invoice_id,"date":formattedDate2(date_controller.text),"customer_details": recipient_controller.text.trim(),"subtotal":subtotal.toStringAsFixed(2), "gst_percentage":gst_controller.text, "gst":gst.toStringAsFixed(2), "grand_total":grand_total.toStringAsFixed(2),"paid":paid_amount_controller.text.toString(),"due":due_amount.toStringAsFixed(2),"custom_note":comment_controller.text.trim(),"other_charges":other_charges_controller.text,"descriptions":invoice_item_list};
+    Response response = await post(url, body: body);
+    if(response.statusCode==200){
+      String myData = response.body;
+
+      var jsonData=jsonDecode(myData);
+      if(jsonData['status']=="success"){
+        generatePdf(invoice_no, recipient_controller.text.trim(), invoice_items, subtotal.toStringAsFixed(2), gst_controller.text, gst.toStringAsFixed(2), other_charges_controller.text, grand_total.toStringAsFixed(2), paid_amount_controller.text.toString(), due_amount.toStringAsFixed(2),comment_controller.text.trim());
+        setState(() {
+          placeHolder=invoiceView(invoice_no, recipient_controller.text.trim(), invoice_items, subtotal.toStringAsFixed(2), gst_controller.text, gst.toStringAsFixed(2), other_charges_controller.text, grand_total.toStringAsFixed(2), paid_amount_controller.text.toString(), due_amount.toStringAsFixed(2),comment_controller.text.trim());
+        });
+      }else{
+        Fluttertoast.showToast(
+            msg: "Some error has occurred",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM_RIGHT,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            webBgColor: "linear-gradient(to right, #C62828, #C62828)",
+            fontSize: 16.0
+        );
+      }
+    }else{
+      Fluttertoast.showToast(
+          msg: "Some error has occurred",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM_RIGHT,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          webBgColor: "linear-gradient(to right, #C62828, #C62828)",
+          fontSize: 16.0
+      );
+    }
+
+
+
+  }
+
   createNewInvoice() async {
     setState(() {
       isGenerating = true;
@@ -875,7 +987,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
       invoice_items.add(a);
     }
     String invoice_item_list=jsonEncode(invoice_items);
-    var url = Uri.parse(create_invoice);
+    var url = Uri.parse(update_invoice);
     Map<String, String> body = {"customer_details": recipient_controller.text.trim(),"subtotal":subtotal.toStringAsFixed(2), "gst_percentage":gst_controller.text, "gst":gst.toStringAsFixed(2), "grand_total":grand_total.toStringAsFixed(2),"paid":paid_amount_controller.text.toString(),"due":due_amount.toStringAsFixed(2),"custom_note":comment_controller.text.trim(),"other_charges":other_charges_controller.text,"descriptions":invoice_item_list};
     Response response = await post(url, body: body);
     if(response.statusCode==200){
@@ -1111,7 +1223,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                       child: Row(
                                         crossAxisAlignment: CrossAxisAlignment.center,
                                         children: [
-                                          Text(invoice_item_details[index].description.toString(),style: TextStyle(fontSize: 14, color: Colors.black,fontWeight: FontWeight.w500),),
+                                          Expanded(child: Text(invoice_item_details[index].description.toString(),style: TextStyle(fontSize: 14, color: Colors.black,fontWeight: FontWeight.w500,),softWrap: true, overflow: TextOverflow.fade,)),
                                         ],
                                       ),
                                     )),
@@ -1445,4 +1557,23 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
     final ByteData data = await rootBundle.load(imagePath);
     return data.buffer.asUint8List();
   }
+
+
+  String formattedDate(String inputDate){
+    DateFormat format = DateFormat("yyyy-MM-dd");
+    var inDate = format.parse(inputDate);
+    final DateFormat formatter = DateFormat('dd/MM/yyyy');
+    final String formatted = formatter.format(inDate);
+    return formatted;
+  }
+
+  String formattedDate2(String inputDate){
+    DateFormat format = DateFormat("dd/MM/yyyy");
+    var inDate = format.parse(inputDate);
+    final DateFormat formatter = DateFormat('yyyy-MM-dd');
+    final String formatted = formatter.format(inDate);
+    return formatted;
+  }
+
+
 }

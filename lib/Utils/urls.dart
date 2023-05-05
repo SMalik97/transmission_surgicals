@@ -5,3 +5,5 @@ const user_login=api_base_path+"login";
 const fetch_invoice=api_base_path+"allinvoice";
 const fetch_invoice_details=api_base_path+"get_invoice";
 const delete_invoice=api_base_path+"delete_invoice";
+const update_invoice=api_base_path+"edit_invoice";
+const dashboard_invoice=api_base_path+"invoice_dashboard";
