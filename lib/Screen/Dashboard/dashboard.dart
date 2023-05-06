@@ -8,6 +8,7 @@ import 'package:transmission_surgicals/Utils/shared_preferences.dart';
 
 import '../../Utils/urls.dart';
 import '../Invoice/View/invoice_list.dart';
+import '../RoadChallan/View/challan_list.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({Key? key}) : super(key: key);
@@ -22,7 +23,7 @@ class _DashboardState extends State<Dashboard> {
 
   bool isDrawerSelected=true;
   bool isQuotationSelected=false;
-  bool isRoadTaxSelected=false;
+  bool isRoadChallanSelected=false;
   bool isInvoiceSelected=false;
   bool isProductSelected=false;
 
@@ -74,7 +75,7 @@ class _DashboardState extends State<Dashboard> {
                             setState(() {
                               isDrawerSelected=true;
                               isQuotationSelected=false;
-                              isRoadTaxSelected=false;
+                              isRoadChallanSelected=false;
                               isInvoiceSelected=false;
                               isProductSelected=false;
 
@@ -89,7 +90,7 @@ class _DashboardState extends State<Dashboard> {
                             setState(() {
                               isDrawerSelected=false;
                               isQuotationSelected=true;
-                              isRoadTaxSelected=false;
+                              isRoadChallanSelected=false;
                               isInvoiceSelected=false;
                               isProductSelected=false;
                             });
@@ -99,28 +100,14 @@ class _DashboardState extends State<Dashboard> {
                         SizedBox(height: 5,),
                         InkWell(
                             onTap: (){
-                              setState(() {
-                                isDrawerSelected=false;
-                                isQuotationSelected=false;
-                                isRoadTaxSelected=true;
-                                isInvoiceSelected=false;
-                                isProductSelected=false;
-                              });
+                              selectChallan();
                             },
-                            child: drawerItem(isRoadTaxSelected, "Road Tax", Icons.taxi_alert)
+                            child: drawerItem(isRoadChallanSelected, "Road Challan", Icons.taxi_alert)
                         ),
                         SizedBox(height: 5,),
                         InkWell(
                             onTap: (){
-                              setState(() {
-                                isDrawerSelected=false;
-                                isQuotationSelected=false;
-                                isRoadTaxSelected=false;
-                                isInvoiceSelected=true;
-                                isProductSelected=false;
-
-                                placeHolder = InvoiceList();
-                              });
+                              selectInvoice();
                             },
                             child: drawerItem(isInvoiceSelected, "Invoice", Icons.sticky_note_2_outlined)
                         ),
@@ -130,7 +117,7 @@ class _DashboardState extends State<Dashboard> {
                               setState(() {
                                 isDrawerSelected=false;
                                 isQuotationSelected=false;
-                                isRoadTaxSelected=false;
+                                isRoadChallanSelected=false;
                                 isInvoiceSelected=false;
                                 isProductSelected=true;
                               });
@@ -217,17 +204,21 @@ class _DashboardState extends State<Dashboard> {
 
 
   Widget drawerItem(bool isSelect, String title, IconData icon){
-    return Container(
-      color: isSelect==true ? Color(0xff6666ff).withOpacity(0.2) : Colors.transparent,
-      height: 40,
-      child: Row(
-        children: [
-          SizedBox(width: 10,),
-          Icon(icon,color: Colors.white,size: 20,),
-          SizedBox(width: 10,),
-          Text(title, style: TextStyle(color: Colors.white,fontSize: 14, fontWeight: FontWeight.w500),)
-        ],
-      ),
+    return StatefulBuilder(
+      builder: (context, setState) {
+        return Container(
+          color: isSelect==true ? Color(0xff6666ff).withOpacity(0.2) : Colors.transparent,
+          height: 40,
+          child: Row(
+            children: [
+              SizedBox(width: 10,),
+              Icon(icon,color: Colors.white,size: 20,),
+              SizedBox(width: 10,),
+              Text(title, style: TextStyle(color: Colors.white,fontSize: 14, fontWeight: FontWeight.w500),)
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -368,7 +359,7 @@ class _DashboardState extends State<Dashboard> {
                     ),
                     child: Column(
                       children: [
-                        Text("ROAD TAX", style: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.w600),),
+                        Text("ROAD CHALLAN", style: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.w600),),
                         SizedBox(height: 25,),
                         Row(
                           children: [
@@ -398,7 +389,7 @@ class _DashboardState extends State<Dashboard> {
                                           children: [
                                             Text("35",style: TextStyle(fontSize: 25, color: Colors.white, fontWeight: FontWeight.w600)),
                                             SizedBox(height: 5,),
-                                            Text("Total Tax Number",style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.w500)),
+                                            Text("Total Challan Number",style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.w500)),
                                           ],
                                         )
                                     ),
@@ -436,7 +427,7 @@ class _DashboardState extends State<Dashboard> {
                                           children: [
                                             Text("₹1458",style: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.w600)),
                                             SizedBox(height: 5,),
-                                            Text("Total Amount Tax",style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.w500)),
+                                            Text("Total Amount Challan",style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.w500)),
                                           ],
                                         )
                                     ),
@@ -450,15 +441,20 @@ class _DashboardState extends State<Dashboard> {
                           ],
                         ),
                         SizedBox(height: 20,),
-                        Container(
-                          height: 35,
-                          width: 200,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5),
-                              color: Color(0xff003366).withOpacity(0.8)
-                          ),
-                          child: Center(
-                            child: Text("Manage Road Tax", style: TextStyle(color: Colors.white,fontWeight: FontWeight.w500, fontSize: 14),),
+                        InkWell(
+                          onTap: (){
+                            selectChallan();
+                          },
+                          child: Container(
+                            height: 35,
+                            width: 200,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                color: Color(0xff003366).withOpacity(0.8)
+                            ),
+                            child: Center(
+                              child: Text("Manage Road Challan", style: TextStyle(color: Colors.white,fontWeight: FontWeight.w500, fontSize: 14),),
+                            ),
                           ),
                         )
                       ],
@@ -513,7 +509,7 @@ class _DashboardState extends State<Dashboard> {
                                         child: Column(
                                           mainAxisAlignment: MainAxisAlignment.center,
                                           children: [
-                                            Text(total_invoice,style: TextStyle(fontSize: 22, color: Colors.white, fontWeight: FontWeight.w600)),
+                                            Text(total_invoice,style: TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.w600)),
                                             SizedBox(height: 5,),
                                             Text("Total Invoice",style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.w500)),
                                           ],
@@ -551,7 +547,7 @@ class _DashboardState extends State<Dashboard> {
                                         child: Column(
                                           mainAxisAlignment: MainAxisAlignment.center,
                                           children: [
-                                            Text("₹$total_invoice_amount",style: TextStyle(fontSize: 22, color: Colors.white, fontWeight: FontWeight.w600)),
+                                            Text("₹$total_invoice_amount",style: TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.w600)),
                                             SizedBox(height: 5,),
                                             Text("Total Amount",style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.w500)),
                                           ],
@@ -569,15 +565,7 @@ class _DashboardState extends State<Dashboard> {
                         SizedBox(height: 20,),
                         InkWell(
                           onTap: (){
-                            setState(() {
-                              isDrawerSelected=false;
-                              isQuotationSelected=false;
-                              isRoadTaxSelected=false;
-                              isInvoiceSelected=true;
-                              isProductSelected=false;
-
-                              placeHolder = InvoiceList();
-                            });
+                            selectInvoice();
                           },
                           child: Container(
                             height: 35,
@@ -702,5 +690,29 @@ class _DashboardState extends State<Dashboard> {
     }
   }
 
+  selectInvoice(){
+    setState(() {
+      isDrawerSelected=false;
+      isQuotationSelected=false;
+      isRoadChallanSelected=false;
+      isInvoiceSelected=true;
+      isProductSelected=false;
+
+      placeHolder = InvoiceList();
+    });
+  }
+
+
+  selectChallan(){
+    setState(() {
+      isDrawerSelected=false;
+      isQuotationSelected=false;
+      isRoadChallanSelected=true;
+      isInvoiceSelected=false;
+      isProductSelected=false;
+
+      placeHolder = ChallanList();
+    });
+  }
 
 }

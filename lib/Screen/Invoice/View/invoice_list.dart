@@ -264,12 +264,12 @@ class _InvoiceListState extends State<InvoiceList> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Container(
-                                padding: EdgeInsets.symmetric(horizontal: 15,vertical: 7),
+                                padding: EdgeInsets.symmetric(horizontal: 10,vertical: 7),
                                   decoration: BoxDecoration(
                                       color: Color(0xff003366).withOpacity(0.1),
                                       borderRadius: BorderRadius.circular(5)
                                   ),
-                                  child: Text("Invoice #"+selectedInvoiceNumber, style: TextStyle(fontWeight: FontWeight.w600,color: Colors.black, fontSize: 16),)
+                                  child: Text("Invoice #"+selectedInvoiceNumber, style: TextStyle(fontWeight: FontWeight.w600,color: Colors.black, fontSize: 14),)
                               ),
                               SizedBox(width: 20,),
                               InkWell(
@@ -278,14 +278,14 @@ class _InvoiceListState extends State<InvoiceList> {
                                   fetch_invoice_list();
                                 },
                                 child: Container(
-                                    width: 150,
+                                    width: 120,
                                     height: 35,
                                     decoration: BoxDecoration(
                                         color: Color(0xff006666),
                                         borderRadius: BorderRadius.circular(20)
                                     ),
                                     child: Center(
-                                        child: Text("Edit Invoice", style: TextStyle(fontWeight: FontWeight.w500,color: Colors.white),)
+                                        child: Text("Edit Invoice", style: TextStyle(fontWeight: FontWeight.w500,color: Colors.white, fontSize: 14),)
                                     )
                                 ),
                               ),
@@ -297,14 +297,14 @@ class _InvoiceListState extends State<InvoiceList> {
 
                                 },
                                 child: Container(
-                                    width: 150,
+                                    width: 120,
                                     height: 35,
                                     decoration: BoxDecoration(
                                         color: Color(0xff003366),
                                         borderRadius: BorderRadius.circular(20)
                                     ),
                                     child: Center(
-                                        child: Text("Copy Invoice", style: TextStyle(fontWeight: FontWeight.w500,color: Colors.white),)
+                                        child: Text("Copy Invoice", style: TextStyle(fontWeight: FontWeight.w500,color: Colors.white, fontSize: 14),)
                                     )
                                 ),
                               ),
@@ -326,14 +326,14 @@ class _InvoiceListState extends State<InvoiceList> {
                                   });
                                 },
                                 child: Container(
-                                    width: 130,
+                                    width: 120,
                                     height: 35,
                                     decoration: BoxDecoration(
                                         color: Color(0xff00802b),
                                         borderRadius: BorderRadius.circular(20)
                                     ),
                                     child: Center(
-                                        child: Text("Download", style: TextStyle(fontWeight: FontWeight.w500,color: Colors.white),)
+                                        child: Text("Download", style: TextStyle(fontWeight: FontWeight.w500,color: Colors.white, fontSize: 14),)
                                     )
                                 ),
                               ),
@@ -343,14 +343,14 @@ class _InvoiceListState extends State<InvoiceList> {
                                   deleteInvoice();
                                 },
                                 child: Container(
-                                    width: 130,
+                                    width: 120,
                                     height: 35,
                                     decoration: BoxDecoration(
                                         color: Colors.red.shade600,
                                         borderRadius: BorderRadius.circular(20)
                                     ),
                                     child: Center(
-                                        child: Text("Delete", style: TextStyle(fontWeight: FontWeight.w500,color: Colors.white),)
+                                        child: Text("Delete", style: TextStyle(fontWeight: FontWeight.w500,color: Colors.white, fontSize: 14),)
                                     )
                                 ),
                               ),
@@ -386,7 +386,7 @@ class _InvoiceListState extends State<InvoiceList> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                width:800,
+                width:MediaQuery.of(context).size.width*0.5,
                 decoration: BoxDecoration(
                   color: Colors.white,
                 ),
@@ -430,7 +430,7 @@ class _InvoiceListState extends State<InvoiceList> {
                               Text("INVOICE",style: GoogleFonts.alata(fontSize: 20,fontWeight: FontWeight.bold,color: Colors.black),),
                               SizedBox(height: 5,),
                               Text("Invoice Number : "+selectedInvoiceNumber,style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
-                              Text("Invoice Date : "+DateFormat('dd/MM/yyyy').format(DateTime.now()),style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
+                              Text("Invoice Date : "+formattedDate(selectedInvoiceDate),style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
 
                             ],
                           ),
@@ -466,7 +466,7 @@ class _InvoiceListState extends State<InvoiceList> {
                           }).toList(),
                         ],
 
-                        columnSpacing: 16,
+                        columnSpacing: 10,
                         headingRowColor: MaterialStateProperty.resolveWith<Color?>((states) => Colors.blue.withOpacity(0.3)),
                         border: TableBorder.all(color: Colors.blue,width: 1),
                         headingRowHeight: 30,

@@ -12,7 +12,6 @@ import '../../../Utils/urls.dart';
 import '../Model/editable_invoice_item.dart';
 import '../Model/noteditable_invoice_item.dart';
 import 'dart:html' as html;
-import 'package:get/get.dart' as getX;
 
 
 class InvoiceCreate extends StatefulWidget {
@@ -944,9 +943,9 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
 
       var jsonData=jsonDecode(myData);
       if(jsonData['status']=="success"){
-        generatePdf(invoice_no, recipient_controller.text.trim(), invoice_items, subtotal.toStringAsFixed(2), gst_controller.text, gst.toStringAsFixed(2), other_charges_controller.text, grand_total.toStringAsFixed(2), paid_amount_controller.text.toString(), due_amount.toStringAsFixed(2),comment_controller.text.trim());
+        generatePdf(invoice_no,invoice_date, recipient_controller.text.trim(), invoice_items, subtotal.toStringAsFixed(2), gst_controller.text, gst.toStringAsFixed(2), other_charges_controller.text, grand_total.toStringAsFixed(2), paid_amount_controller.text.toString(), due_amount.toStringAsFixed(2),comment_controller.text.trim());
         setState(() {
-          placeHolder=invoiceView(invoice_no, recipient_controller.text.trim(), invoice_items, subtotal.toStringAsFixed(2), gst_controller.text, gst.toStringAsFixed(2), other_charges_controller.text, grand_total.toStringAsFixed(2), paid_amount_controller.text.toString(), due_amount.toStringAsFixed(2),comment_controller.text.trim());
+          placeHolder=invoiceView(invoice_no, invoice_date, recipient_controller.text.trim(), invoice_items, subtotal.toStringAsFixed(2), gst_controller.text, gst.toStringAsFixed(2), other_charges_controller.text, grand_total.toStringAsFixed(2), paid_amount_controller.text.toString(), due_amount.toStringAsFixed(2),comment_controller.text.trim());
         });
       }else{
         Fluttertoast.showToast(
@@ -992,13 +991,12 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
     Response response = await post(url, body: body);
     if(response.statusCode==200){
       String myData = response.body;
-      print(myData);
       var jsonData=jsonDecode(myData);
       if(jsonData['status']=="success"){
         invoice_no=jsonData['invoice_no'];
-        generatePdf(invoice_no, recipient_controller.text.trim(), invoice_items, subtotal.toStringAsFixed(2), gst_controller.text, gst.toStringAsFixed(2), other_charges_controller.text, grand_total.toStringAsFixed(2), paid_amount_controller.text.toString(), due_amount.toStringAsFixed(2),comment_controller.text.trim());
+        generatePdf(invoice_no, DateFormat('dd/MM/yyyy').format(DateTime.now()), recipient_controller.text.trim(), invoice_items, subtotal.toStringAsFixed(2), gst_controller.text, gst.toStringAsFixed(2), other_charges_controller.text, grand_total.toStringAsFixed(2), paid_amount_controller.text.toString(), due_amount.toStringAsFixed(2),comment_controller.text.trim());
         setState(() {
-          placeHolder=invoiceView(invoice_no, recipient_controller.text.trim(), invoice_items, subtotal.toStringAsFixed(2), gst_controller.text, gst.toStringAsFixed(2), other_charges_controller.text, grand_total.toStringAsFixed(2), paid_amount_controller.text.toString(), due_amount.toStringAsFixed(2),comment_controller.text.trim());
+          placeHolder=invoiceView(invoice_no, invoice_date, recipient_controller.text.trim(), invoice_items, subtotal.toStringAsFixed(2), gst_controller.text, gst.toStringAsFixed(2), other_charges_controller.text, grand_total.toStringAsFixed(2), paid_amount_controller.text.toString(), due_amount.toStringAsFixed(2),comment_controller.text.trim());
 
         });
       }else{
@@ -1031,7 +1029,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
   }
 
 
-  Widget invoiceView(String invoice_number, String customer_details, List<noteditableInvoiceItem> invoice_item_details, String subtotal, String gst_percentage, String gst, String other_charges, String grand_total, String paid, String due, String comments){
+  Widget invoiceView(String invoice_number,String invoice_date, String customer_details, List<noteditableInvoiceItem> invoice_item_details, String subtotal, String gst_percentage, String gst, String other_charges, String grand_total, String paid, String due, String comments){
     return Expanded(
       child: ListView(
         shrinkWrap: true,
@@ -1084,7 +1082,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                               Text("INVOICE",style: GoogleFonts.alata(fontSize: 20,fontWeight: FontWeight.bold,color: Colors.black),),
                               SizedBox(height: 5,),
                               Text("Invoice Number : "+invoice_number,style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
-                              Text("Invoice Date : "+DateFormat('dd/MM/yyyy').format(DateTime.now()),style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
+                              Text("Invoice Date : "+formattedDate(invoice_date),style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
 
                             ],
                           ),
@@ -1382,7 +1380,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
 
 
 
-  generatePdf(String invoice_no, String recipient_details,  List<noteditableInvoiceItem> invoice_items, String subtotal, String gst_percentage, String gst, String other_charges, String grand_total, String paid, String due, String comments) async {
+  generatePdf(String invoice_no, String invoice_date, String recipient_details,  List<noteditableInvoiceItem> invoice_items, String subtotal, String gst_percentage, String gst, String other_charges, String grand_total, String paid, String due, String comments) async {
     final invoiceLogo = await getAssetsImage("assets/logo/logo.png");
     List<pw.Widget> widgets = [];
 
@@ -1418,7 +1416,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
             pw.Text("INVOICE",style: pw.TextStyle(fontSize: 18,fontWeight:pw.FontWeight.bold,color: PdfColors.black),),
             pw.SizedBox(height: 5,),
             pw.Text("Invoice Number $invoice_no",style: pw.TextStyle(fontSize: 12,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
-            pw.Text("Invoice Date "+DateFormat('dd/MM/yyyy').format(DateTime.now()),style: pw.TextStyle(fontSize: 12,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
+            pw.Text("Invoice Date "+formattedDate(invoice_date),style: pw.TextStyle(fontSize: 12,fontWeight: pw.FontWeight.normal,color: PdfColors.black),)
           ],
         ),
       ],
@@ -1560,19 +1558,29 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
 
 
   String formattedDate(String inputDate){
-    DateFormat format = DateFormat("yyyy-MM-dd");
-    var inDate = format.parse(inputDate);
-    final DateFormat formatter = DateFormat('dd/MM/yyyy');
-    final String formatted = formatter.format(inDate);
-    return formatted;
+    try{
+      DateFormat format = DateFormat("yyyy-MM-dd");
+      var inDate = format.parse(inputDate);
+      final DateFormat formatter = DateFormat('dd/MM/yyyy');
+      final String formatted = formatter.format(inDate);
+      return formatted;
+    }catch(e){
+      return inputDate;
+    }
+
   }
 
   String formattedDate2(String inputDate){
-    DateFormat format = DateFormat("dd/MM/yyyy");
-    var inDate = format.parse(inputDate);
-    final DateFormat formatter = DateFormat('yyyy-MM-dd');
-    final String formatted = formatter.format(inDate);
-    return formatted;
+    try{
+      DateFormat format = DateFormat("dd/MM/yyyy");
+      var inDate = format.parse(inputDate);
+      final DateFormat formatter = DateFormat('yyyy-MM-dd');
+      final String formatted = formatter.format(inDate);
+      return formatted;
+    }catch(e){
+      return inputDate;
+    }
+
   }
 
 

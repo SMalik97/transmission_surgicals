@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-        initialRoute: '/splash-screen',  //  "/splash-screen",
+        initialRoute: '/create-challan',  //  "/splash-screen",
         getPages: appRoutes()
     );
   }
