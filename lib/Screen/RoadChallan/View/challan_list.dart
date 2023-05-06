@@ -44,8 +44,8 @@ class _ChallanListState extends State<ChallanList> {
                       children: [
                         InkWell(
                           onTap: () async {
-                            //await getX.Get.toNamed("/create-Challan");
-                            //fetch_invoice_list();
+                            await getX.Get.toNamed("/create-challan");
+                            fetch_challan_list();
                           },
                           child: Container(
                             height: 30,
@@ -215,8 +215,8 @@ class _ChallanListState extends State<ChallanList> {
                                 SizedBox(height: 5,),
                                 InkWell(
                                   onTap: () async {
-                                    // await getX.Get.toNamed("/create-invoice");
-                                    // fetch_invoice_list();
+                                    await getX.Get.toNamed("/create-challan");
+                                    fetch_challan_list();
                                   },
                                   child: Container(
                                     width: 150,

@@ -12,7 +12,7 @@ class notEditableChallanItem {
     description = json['description'];
     quantity = json['quantity'];
     rate = json['rate'];
-    totalAmount = json['amount'];
+    totalAmount = json['total_amount'];
   }
 
   Map<String, dynamic> toJson() {
@@ -20,7 +20,7 @@ class notEditableChallanItem {
     data['description'] = this.description;
     data['quantity'] = this.quantity;
     data['rate'] = this.rate;
-    data['amount'] = this.totalAmount;
+    data['total_amount'] = this.totalAmount;
     return data;
   }
 }

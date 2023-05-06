@@ -59,12 +59,47 @@ class _CreateChallanState extends State<CreateChallan> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                          InkWell(
+                       if(isGenerateViewShowing==true)
+                       InkWell(
                             onTap: (){
-                              List<notEditableChallanItem> challan_list=[];
-                              notEditableChallanItem a= notEditableChallanItem(description: "description", quantity: "2", rate: "45.00", totalAmount: "90.00");
-                              challan_list.add(a);
-                             generatePdf("745882", "2023/05/06", "shgfd dhj\ndhsgfdgd\n65255455\nsdef rrtt", challan_list);
+                              createInvoice();
+                                                         },
+                            child: Opacity(
+                              opacity: isGenerating==true? 0.7:1,
+                              child: Container(
+                                height: 30,
+                                padding: EdgeInsets.symmetric(horizontal: 10),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(3),
+                                    color: Color(0xff00802b)
+                                ),
+                                child: Center(child: Text(isGenerating==true ? "Generating..." :"Generate Challan", style: TextStyle(color: Colors.white,fontSize: 14, fontWeight: FontWeight.w500),)),
+                              ),
+                            ),
+                          ),
+
+                       if(isDownloadViewShowing==true)
+                       InkWell(
+                            onTap: (){
+                              final blob = html.Blob([pdf_bytes], 'application/pdf');
+                              final url = html.Url.createObjectUrlFromBlob(blob);
+                              final anchor = html.document.createElement('a') as html.AnchorElement
+                                ..href = url
+                                ..download = "Challan$challan_no.pdf";
+                              html.document.body?.children.add(anchor);
+                              anchor.click();
+                              html.document.body?.children.remove(anchor);
+                              html.Url.revokeObjectUrl(url);
+                              Fluttertoast.showToast(
+                                  msg: "Downloading...",
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.BOTTOM_RIGHT,
+                                  timeInSecForIosWeb: 1,
+                                  backgroundColor: Colors.red,
+                                  textColor: Colors.white,
+                                  webBgColor: "linear-gradient(to right, #1da241, #1da241)",
+                                  fontSize: 16.0
+                              );
 
                             },
                             child: Opacity(
@@ -76,7 +111,7 @@ class _CreateChallanState extends State<CreateChallan> {
                                     borderRadius: BorderRadius.circular(3),
                                     color: Color(0xff00802b)
                                 ),
-                                child: Center(child: Text(isGenerating==true ? "Generating..." :"Generate Challan", style: TextStyle(color: Colors.white,fontSize: 14, fontWeight: FontWeight.w500),)),
+                                child: Center(child: Text("Download Challan", style: TextStyle(color: Colors.white,fontSize: 14, fontWeight: FontWeight.w500),)),
                               ),
                             ),
                           ),
@@ -622,7 +657,10 @@ class _CreateChallanState extends State<CreateChallan> {
                                       Text("%)", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
                                     ],
                                   ),
-                                  Text("Other Charges", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
+                                  Transform.translate(
+                                      offset: Offset(0, -7),
+                                  child: Text("Other Charges", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),)
+                                  ),
                                 ],
                               ),
 
@@ -729,11 +767,14 @@ class _CreateChallanState extends State<CreateChallan> {
     }else{
       gst=0.00;
     }
-
     if(other_charges_controller.text.isEmpty){
-      grand_total = subtotal + gst;
+      setState(() {
+        grand_total = subtotal + gst;
+      });
     }else{
-      grand_total = subtotal + gst + double.parse(other_charges_controller.text);
+      setState(() {
+        grand_total = subtotal + gst + double.parse(other_charges_controller.text);
+      });
     }
 
 
@@ -961,7 +1002,7 @@ class _CreateChallanState extends State<CreateChallan> {
     setState(() {
       isGenerating = true;
     });
-    List<notEditableChallanItem> invoice_items = [];
+    List<notEditableChallanItem> challan_items = [];
     for (int i = 0; i < editable_challan_list.length; i++) {
       notEditableChallanItem a = notEditableChallanItem(
           description: editable_challan_list[i].description.toString(),
@@ -969,9 +1010,9 @@ class _CreateChallanState extends State<CreateChallan> {
           rate: editable_challan_list[i].rate!.toStringAsFixed(2),
           totalAmount: editable_challan_list[i].totalAmount!.toStringAsFixed(
               2));
-      invoice_items.add(a);
+      challan_items.add(a);
     }
-    String challan_item_list = jsonEncode(invoice_items);
+    String challan_item_list = jsonEncode(challan_items);
     var url = Uri.parse(create_challan);
     Map<String, String> body = {
       "recipient_address": recipient_controller.text.trim(),
@@ -981,6 +1022,7 @@ class _CreateChallanState extends State<CreateChallan> {
       "subtotal": subtotal.toStringAsFixed(2),
       "gst_percentage": gst_controller.text,
       "gst": gst.toStringAsFixed(2),
+      "other_charges": other_charges_controller.text,
       "total": grand_total.toStringAsFixed(2),
       "challan_items": challan_item_list
     };
@@ -990,7 +1032,7 @@ class _CreateChallanState extends State<CreateChallan> {
       var jsonData = jsonDecode(myData);
       if (jsonData['status'] == "success") {
         challan_no = jsonData['challan_no'];
-        //generatePdf(challan_no, recipient_controller.text.trim(), invoice_items, subtotal.toStringAsFixed(2), gst_controller.text, gst.toStringAsFixed(2), other_charges_controller.text, grand_total.toStringAsFixed(2));
+        generatePdf(challan_no, DateFormat('dd/MM/yyyy').format(DateTime.now()), recipient_controller.text, challan_items, gst_controller.text,subtotal.toStringAsFixed(2), gst.toStringAsFixed(2),other_charges_controller.text, grand_total.toStringAsFixed(2));
         setState(() {
           placeHolder = challanView(
               challan_no,
@@ -999,7 +1041,7 @@ class _CreateChallanState extends State<CreateChallan> {
               gst_no_controller.text,
               vehicle_no_controller.text,
               supply_place_controller.text,
-              invoice_items,
+              challan_items,
               gst_controller.text,
               subtotal.toStringAsFixed(2),
               gst.toStringAsFixed(2),
@@ -1007,6 +1049,9 @@ class _CreateChallanState extends State<CreateChallan> {
               grand_total.toStringAsFixed(2));
         });
       } else {
+        setState(() {
+          isGenerating = false;
+        });
         Fluttertoast.showToast(
             msg: "Some error has occurred",
             toastLength: Toast.LENGTH_SHORT,
@@ -1019,6 +1064,9 @@ class _CreateChallanState extends State<CreateChallan> {
         );
       }
     }else{
+      setState(() {
+        isGenerating = false;
+      });
       Fluttertoast.showToast(
           msg: "Some error has occurred",
           toastLength: Toast.LENGTH_SHORT,
@@ -1031,9 +1079,7 @@ class _CreateChallanState extends State<CreateChallan> {
       );
     }
 
-    setState(() {
-      isGenerating = false;
-    });
+
   }
 
 
@@ -1042,7 +1088,7 @@ class _CreateChallanState extends State<CreateChallan> {
 
 
 
-  generatePdf(String challan_no, String challan_date, String recipient_details, List<notEditableChallanItem> challan_item_list) async {
+  generatePdf(String challan_no, String challan_date, String recipient_details, List<notEditableChallanItem> challan_item_list, String gst_percentage, String subtotal, String gst, String other_charges, String grand_total) async {
     final invoiceLogo = await getAssetsImage("assets/logo/logo.png");
     List<pw.Widget> widgets = [];
     widgets.add(pw.SizedBox(height: 60,),);
@@ -1119,6 +1165,87 @@ class _CreateChallanState extends State<CreateChallan> {
 
 
 
+    widgets.add(pw.SizedBox(height: 5,),);
+
+
+    widgets.add(pw.Row(
+      mainAxisAlignment: pw.MainAxisAlignment.end,
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: [
+        pw.Column(
+          crossAxisAlignment:pw. CrossAxisAlignment.start,
+          children: [
+            pw.Text("Subtotal", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+            pw.Text("GST ($gst_percentage%)", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+            pw.Text("Other charges", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+          ],
+        ),
+        pw.Column(
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            pw.Text(" : ", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+            pw.Text(" : ", style: pw.TextStyle(fontWeight:pw. FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+            pw.Text(" : ", style:pw. TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+          ],
+        ),
+
+        pw.Column(
+          crossAxisAlignment: pw.CrossAxisAlignment.end,
+          children: [
+            pw.Text(subtotal, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+            pw.Text(gst, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+            pw.Text(other_charges, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+
+          ],
+        ),
+      ],
+    ),);
+
+
+    widgets.add(pw.SizedBox(height: 10,),);
+
+    widgets.add(
+      pw.Row(
+        mainAxisAlignment: pw.MainAxisAlignment.end,
+        children: [
+          pw.Container(
+            padding: pw.EdgeInsets.symmetric(horizontal: 3, vertical: 3),
+            width: 250,
+            decoration: pw.BoxDecoration(
+                color: PdfColors.grey300
+            ),
+            child: pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.end,
+              children: [
+                pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    pw.Text("Total Amount", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+                  ],
+                ),
+                pw.SizedBox(width: 10,),
+                pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    pw.Text(" : ", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+                  ],
+                ),
+                pw.SizedBox(width: 10,),
+                pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.end,
+                  children: [
+                    pw.Text(grand_total, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+
+
+
     pdf.addPage(
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
@@ -1128,18 +1255,14 @@ class _CreateChallanState extends State<CreateChallan> {
 
     pdf_bytes=await pdf.save();
 
+    setState(() {
+      isGenerating = false;
+      isGenerateViewShowing=false;
+      isDownloadViewShowing=true;
+    });
 
-    final blob = html.Blob([pdf_bytes], 'application/pdf');
-    final url = html.Url.createObjectUrlFromBlob(blob);
-    final anchor = html.document.createElement('a') as html.AnchorElement
-      ..href = url
-      ..download = "Challan123.pdf";
-    html.document.body?.children.add(anchor);
-    anchor.click();
-    html.document.body?.children.remove(anchor);
-    html.Url.revokeObjectUrl(url);
     Fluttertoast.showToast(
-        msg: "Downloading...",
+        msg: "Challan Generated!",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM_RIGHT,
         timeInSecForIosWeb: 1,
@@ -1148,6 +1271,7 @@ class _CreateChallanState extends State<CreateChallan> {
         webBgColor: "linear-gradient(to right, #1da241, #1da241)",
         fontSize: 16.0
     );
+
 
 
 
