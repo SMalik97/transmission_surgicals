@@ -34,7 +34,8 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     Timer(Duration(seconds: 1), () {
       readSharedPreferences(ISLOGIN, "0").then((value) {
-          if(value=="1"){
+        print(value);
+        if(value=="1"){
           getX.Get.offAndToNamed('/dashboard');
         }else{
           getX.Get.offAndToNamed('/login');

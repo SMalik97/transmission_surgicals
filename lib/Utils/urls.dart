@@ -12,3 +12,4 @@ const get_challan_list=api_base_path+"road_challan";
 const get_challan_details=api_base_path+"vew_challan_details";
 const update_road_challan=api_base_path+"edit_road_challan";
 const delete_road_challan=api_base_path+"delete_road_challan";
+const road_challan_dashboard=api_base_path+"road_challan_dashboard";
