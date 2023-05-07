@@ -37,8 +37,12 @@ class _CreateChallanState extends State<CreateChallan> {
   List<editableChallanModel> editable_challan_list=[];
 
   double subtotal=0.00, gst=0.00, grand_total=0.00;
-  String challan_no="", purpose="", challan_id="";
+  String purpose="";
   final pdf = pw.Document();
+
+  String selectedChallanId="", selectedChallanNumber="", selectedChallanDate="", selectedChallanRecipientDetails="", selectedChallanGstno="", selectedChallanVehicleno="", selectedChallanSupplyPlace="", selectedGstPercentage="";
+  String selectedChallanSubtotal="0.00", selectedChallanGst="0.00", selectedChallanOther_charges="0.00", selectedChallanGrand_total="0.00";
+  List<notEditableChallanItem> challan_list=[];
 
 
   @override
@@ -60,9 +64,26 @@ class _CreateChallanState extends State<CreateChallan> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                        if(isGenerateViewShowing==true)
+                         purpose=="edit" ? InkWell(
+                           onTap: (){
+                             updateChallan();
+                           },
+                           child: Opacity(
+                             opacity: isGenerating==true? 0.7:1,
+                             child: Container(
+                               height: 30,
+                               padding: EdgeInsets.symmetric(horizontal: 10),
+                               decoration: BoxDecoration(
+                                   borderRadius: BorderRadius.circular(3),
+                                   color: Color(0xff00802b)
+                               ),
+                               child: Center(child: Text(isGenerating==true ? "Saving..." :"Save Challan", style: TextStyle(color: Colors.white,fontSize: 14, fontWeight: FontWeight.w500),)),
+                             ),
+                           ),
+                         ) :
                        InkWell(
                             onTap: (){
-                              createInvoice();
+                              createChallan();
                                                          },
                             child: Opacity(
                               opacity: isGenerating==true? 0.7:1,
@@ -85,7 +106,7 @@ class _CreateChallanState extends State<CreateChallan> {
                               final url = html.Url.createObjectUrlFromBlob(blob);
                               final anchor = html.document.createElement('a') as html.AnchorElement
                                 ..href = url
-                                ..download = "Challan$challan_no.pdf";
+                                ..download = "Challan$selectedChallanNumber.pdf";
                               html.document.body?.children.add(anchor);
                               anchor.click();
                               html.document.body?.children.remove(anchor);
@@ -119,7 +140,21 @@ class _CreateChallanState extends State<CreateChallan> {
                         SizedBox(width: 15,),
                         InkWell(
                           onTap: (){
-
+                            if(getX.Get.parameters['id'] == null){
+                              getX.Get.offAndToNamed("/create-challan");
+                            }else{
+                              getX.Get.offAndToNamed("/create-challan?purpose=$purpose&id=$selectedChallanId",);
+                            }
+                            Fluttertoast.showToast(
+                                msg: "Refreshing...",
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.BOTTOM_RIGHT,
+                                timeInSecForIosWeb: 1,
+                                backgroundColor: Colors.red,
+                                textColor: Colors.white,
+                                webBgColor: "linear-gradient(to right, #1da241, #1da241)",
+                                fontSize: 16.0
+                            );
                           },
                           child: Container(
                             width: 30, height: 30,
@@ -147,7 +182,7 @@ class _CreateChallanState extends State<CreateChallan> {
                       ],
                     )
                 ),
-                SizedBox(width: 15,)
+                SizedBox(width: 15,),
               ],
             ),
           ),
@@ -169,19 +204,36 @@ class _CreateChallanState extends State<CreateChallan> {
 
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         setState(() {
-          placeHolder=createChallanView();
+          placeHolder=createChallanView("########",DateFormat('dd/MM/yyyy').format(DateTime.now()));
         });
       });
 
     }else{
       purpose = getX.Get.parameters['purpose']!;
-      challan_id = getX.Get.parameters['id']!;
+      selectedChallanId = getX.Get.parameters['id']!;
+      placeHolder=Expanded(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: 25,height: 25,
+                child: CircularProgressIndicator(),
+              ),
+              SizedBox(height: 5,),
+              Text("Getting ready...", style: TextStyle(color: Colors.green, fontWeight: FontWeight.w600,fontSize: 15),)
+            ],
+          ),
+        ),
+      );
+
+      fetch_challan_details(selectedChallanId);
     }
 
     super.initState();
   }
 
-  Widget createChallanView(){
+  Widget createChallanView(String challan_no, String challan_date){
     return StatefulBuilder(
       builder: (context, setState) {
         return Expanded(
@@ -228,8 +280,8 @@ class _CreateChallanState extends State<CreateChallan> {
                             children: [
                               Text("Road Challan",style: GoogleFonts.alata(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.black),),
                               SizedBox(height: 5,),
-                              Text("Challan Number ########",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
-                              Text("Challan Date "+DateFormat('dd/MM/yyyy').format(DateTime.now()),style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
+                              Text("Challan Number: $challan_no",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
+                              Text("Challan Date: "+challan_date,style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
 
                             ],
                           ),
@@ -998,7 +1050,7 @@ class _CreateChallanState extends State<CreateChallan> {
   }
 
 
-  createInvoice() async {
+  createChallan() async {
     setState(() {
       isGenerating = true;
     });
@@ -1031,11 +1083,11 @@ class _CreateChallanState extends State<CreateChallan> {
       String myData = response.body;
       var jsonData = jsonDecode(myData);
       if (jsonData['status'] == "success") {
-        challan_no = jsonData['challan_no'];
-        generatePdf(challan_no, DateFormat('dd/MM/yyyy').format(DateTime.now()), recipient_controller.text, challan_items, gst_controller.text,subtotal.toStringAsFixed(2), gst.toStringAsFixed(2),other_charges_controller.text, grand_total.toStringAsFixed(2));
+        selectedChallanNumber = jsonData['challan_no'];
+        generatePdf(selectedChallanId, DateFormat('dd/MM/yyyy').format(DateTime.now()), recipient_controller.text, challan_items, gst_controller.text,subtotal.toStringAsFixed(2), gst.toStringAsFixed(2),other_charges_controller.text, grand_total.toStringAsFixed(2));
         setState(() {
           placeHolder = challanView(
-              challan_no,
+              selectedChallanNumber,
               DateFormat('dd/MM/yyyy').format(DateTime.now()),
               recipient_controller.text.trim(),
               gst_no_controller.text,
@@ -1282,6 +1334,153 @@ class _CreateChallanState extends State<CreateChallan> {
     return data.buffer.asUint8List();
   }
 
+
+  fetch_challan_details(String challan_id) async {
+    var url = Uri.parse(get_challan_details);
+    Map<String, String> body = {"challan_id": challan_id};
+    Response response = await post(url, body: body);
+    if(response.statusCode==200){
+      String myData = response.body;
+      var jsonData=jsonDecode(myData);
+      if(jsonData['status']=="success"){
+        selectedChallanId = jsonData['id'].toString();
+        selectedChallanNumber = jsonData['challan_no'].toString();
+        selectedChallanDate = jsonData['date'].toString();
+        selectedChallanRecipientDetails = jsonData['recipient_address'].toString();
+        selectedChallanGstno = jsonData['gst_number'].toString();
+        selectedChallanVehicleno = jsonData['vehicle_number'].toString();
+        selectedChallanSupplyPlace = jsonData['supply_place'].toString();
+
+        challan_list.clear();
+        jsonData['challan_items'].forEach((jsonResponse) {
+          notEditableChallanItem obj = new notEditableChallanItem.fromJson(jsonResponse);
+          setState(() {
+            challan_list.add(obj);
+          });
+        });
+
+
+        for(int i = 0; i<challan_list.length; i++){
+          editableChallanModel a =editableChallanModel(description: challan_list[i].description, quantity: int.parse(challan_list[i].quantity.toString()), rate: double.parse(challan_list[i].rate!), totalAmount: double.parse(challan_list[i].totalAmount!), des_controller: TextEditingController(), price_controller: TextEditingController(), quantity_controller: TextEditingController());
+          editable_challan_list .add(a);
+          editable_challan_list[i].des_controller!.text=challan_list[i].description.toString();
+          editable_challan_list[i].quantity_controller!.text=challan_list[i].quantity.toString();
+          editable_challan_list[i].price_controller!.text=challan_list[i].rate.toString();
+        }
+
+        selectedChallanSubtotal = jsonData['subtotal'].toString();
+        selectedGstPercentage = jsonData['gst_percentage'].toString();
+        selectedChallanGst = jsonData['gst'].toString();
+        selectedChallanOther_charges = jsonData['other_charges'].toString();
+        selectedChallanGrand_total = jsonData['total'].toString();
+
+
+        setState(() {
+          recipient_controller.text = selectedChallanRecipientDetails;
+          gst_no_controller.text=selectedChallanGstno;
+          vehicle_no_controller.text=selectedChallanVehicleno;
+          supply_place_controller.text=selectedChallanSupplyPlace;
+          subtotal = double.parse(selectedChallanSubtotal);
+          gst=double.parse(selectedChallanGst);
+          other_charges_controller.text = selectedChallanOther_charges;
+          grand_total = double.parse(selectedChallanGrand_total);
+
+          placeHolder=createChallanView("########",DateFormat('dd/MM/yyyy').format(DateTime.now()));
+
+        });
+
+      }
+    }else{
+      Fluttertoast.showToast(
+          msg: "Some error has occurred",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM_RIGHT,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          webBgColor: "linear-gradient(to right, #C62828, #C62828)",
+          fontSize: 16.0
+      );
+    }
+  }
+
+
+  updateChallan() async {
+    setState(() {
+      isGenerating = true;
+    });
+    List<notEditableChallanItem> not_challan_items=[];
+    for(int i =0; i<editable_challan_list.length; i++){
+      notEditableChallanItem a = notEditableChallanItem(description: editable_challan_list[i].description.toString(),quantity: editable_challan_list[i].quantity.toString(),rate: editable_challan_list[i].rate!.toStringAsFixed(2),totalAmount: editable_challan_list[i].totalAmount!.toStringAsFixed(2));
+      not_challan_items.add(a);
+    }
+    String challan_item_list=jsonEncode(not_challan_items);
+    var url = Uri.parse(update_road_challan);
+    Map<String, String> body = {
+      "challan_id":selectedChallanId,
+      "recipient_address": recipient_controller.text.trim(),
+      "gst_number": gst_no_controller.text,
+      "vehicle_number": vehicle_no_controller.text,
+      "supply_place": supply_place_controller.text,
+      "subtotal": subtotal.toStringAsFixed(2),
+      "gst_percentage": gst_controller.text,
+      "gst": gst.toStringAsFixed(2),
+      "other_charges": other_charges_controller.text,
+      "total": grand_total.toStringAsFixed(2),
+      "challan_items": challan_item_list
+    };
+    Response response = await post(url, body: body);
+    if (response.statusCode == 200) {
+      String myData = response.body;
+      var jsonData = jsonDecode(myData);
+      if (jsonData['status'] == "success") {
+        generatePdf(selectedChallanNumber, formattedDate(selectedChallanDate), recipient_controller.text, not_challan_items, gst_controller.text,subtotal.toStringAsFixed(2), gst.toStringAsFixed(2),other_charges_controller.text, grand_total.toStringAsFixed(2));
+        setState(() {
+          placeHolder = challanView(
+              selectedChallanNumber,
+              DateFormat('dd/MM/yyyy').format(DateTime.now()),
+              recipient_controller.text.trim(),
+              gst_no_controller.text,
+              vehicle_no_controller.text,
+              supply_place_controller.text,
+              not_challan_items,
+              gst_controller.text,
+              subtotal.toStringAsFixed(2),
+              gst.toStringAsFixed(2),
+              other_charges_controller.text,
+              grand_total.toStringAsFixed(2));
+        });
+      } else {
+        setState(() {
+          isGenerating = false;
+        });
+        Fluttertoast.showToast(
+            msg: "Some error has occurred",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM_RIGHT,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            webBgColor: "linear-gradient(to right, #C62828, #C62828)",
+            fontSize: 16.0
+        );
+      }
+    }else{
+      setState(() {
+        isGenerating = false;
+      });
+      Fluttertoast.showToast(
+          msg: "Some error has occurred",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM_RIGHT,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          webBgColor: "linear-gradient(to right, #C62828, #C62828)",
+          fontSize: 16.0
+      );
+    }
+  }
 
 
 }

@@ -1,9 +1,20 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:typed_data';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart' as getX;
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart';
 import 'package:intl/intl.dart';
+import 'dart:html' as html;
 import 'package:transmission_surgicals/Screen/RoadChallan/Model/challan_item_model.dart';
+import 'package:transmission_surgicals/Screen/RoadChallan/Model/challan_list_model.dart';
+
+import '../../../Utils/urls.dart';
 
 class ChallanList extends StatefulWidget {
   const ChallanList({Key? key}) : super(key: key);
@@ -14,14 +25,19 @@ class ChallanList extends StatefulWidget {
 
 class _ChallanListState extends State<ChallanList> {
 
-  bool isListLoading=false;
+  bool isListLoading=true;
   bool isChallanLoading=false;
-  String selectedChallanId="4", selectedChallanNumber="", selectedChallanDate="", selectedChallanRecipientDetails="", selectedChallanGstno="", selectedChallanVehicleno="", selectedChallanSupplyPlace="";
+  String selectedChallanId="", selectedChallanNumber="", selectedChallanDate="", selectedChallanRecipientDetails="", selectedChallanGstno="", selectedChallanVehicleno="", selectedChallanSupplyPlace="", selectedGstPercentage="";
 
   List<notEditableChallanItem> challan_list=[];
+  List<ChallanListModel> road_challan_list=[];
 
-  double selectedChallanSubtotal=0.00, selectedChallanGst=0.00, selectedChallanOther_charges=0.00, selectedChallanGrand_total=0.00;
+  String selectedChallanSubtotal="0.00", selectedChallanGst="0.00", selectedChallanOther_charges="0.00", selectedChallanGrand_total="0.00";
 
+  late Uint8List pdf_bytes;
+  final pdf = pw.Document();
+
+  int selectedIndex=0;
 
 
   @override
@@ -60,7 +76,13 @@ class _ChallanListState extends State<ChallanList> {
                         SizedBox(width: 25,),
                         InkWell(
                           onTap: (){
-
+                            fetch_challan_list();
+                            setState(() {
+                              isListLoading=true;
+                              isChallanLoading=false;
+                              selectedIndex=0;
+                              selectedChallanId="";
+                            });
                             Fluttertoast.showToast(
                                 msg: "Refreshing...",
                                 toastLength: Toast.LENGTH_SHORT,
@@ -117,18 +139,38 @@ class _ChallanListState extends State<ChallanList> {
                                     borderRadius: BorderRadius.circular(20)
                                 ),
                                 child: Center(
-                                    child: Text("List of Challan", style: TextStyle(fontWeight: FontWeight.w500,color: Colors.white),)
+                                    child: Text("List of Challans", style: TextStyle(fontWeight: FontWeight.w500,color: Colors.white),)
                                 )
                             ),
                             SizedBox(height: 10,),
                             Expanded(
-                              child: ListView.builder(
+                              child: isListLoading? Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      width: 25, height: 25,
+                                      child: CircularProgressIndicator(color: Colors.green,),
+                                    ),
+                                    SizedBox(height: 7,),
+                                    Text("Getting challan list...", style: TextStyle(fontSize: 14,color: Colors.green,fontWeight: FontWeight.w500),)
+                                  ],
+                                ),
+                              ) : ListView.builder(
                                   shrinkWrap: true,
                                   padding: EdgeInsets.zero,
-                                  itemCount: 5,
+                                  itemCount: road_challan_list.length,
                                   itemBuilder: (context, index){
                                     return InkWell(
                                       onTap: (){
+                                        setState(() {
+                                          selectedChallanId=road_challan_list[index].id.toString();
+                                          selectedChallanNumber=road_challan_list[index].challanNo.toString();
+                                          selectedIndex=index;
+                                          isChallanLoading=true;
+                                        });
+
+                                        fetch_challan_details();
 
                                       },
                                       child: Container(
@@ -145,8 +187,8 @@ class _ChallanListState extends State<ChallanList> {
                                             Row(
                                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                               children: [
-                                                Text("Challan No. #789647", style: TextStyle(fontWeight: FontWeight.w500, color: Colors.white, fontSize: 14),),
-                                                Text("06 Mar 2023", style: TextStyle(fontWeight: FontWeight.w500, color: Colors.white, fontSize: 11),),
+                                                Text("Challan No. #"+road_challan_list[index].challanNo.toString(), style: TextStyle(fontWeight: FontWeight.w500, color: Colors.white, fontSize: 14),),
+                                                Text(formattedDate(road_challan_list[index].date.toString()), style: TextStyle(fontWeight: FontWeight.w500, color: Colors.white, fontSize: 11),),
                                               ],
                                             ),
                                             SizedBox(height: 15,),
@@ -156,13 +198,13 @@ class _ChallanListState extends State<ChallanList> {
                                                 Column(
                                                   crossAxisAlignment: CrossAxisAlignment.start,
                                                   children: [
-                                                    Text("this is multiline\n details of \n recipient", style: TextStyle(fontWeight: FontWeight.w500, color: Colors.white.withOpacity(0.90), fontSize: 13),),
+                                                    Text(road_challan_list[index].recipientAddress.toString(), style: TextStyle(fontWeight: FontWeight.w500, color: Colors.white.withOpacity(0.90), fontSize: 13),),
                                                   ],
                                                 ),
                                                 Column(
                                                   mainAxisAlignment: MainAxisAlignment.center,
                                                   children: [
-                                                    Text("₹"+"4587", style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),)
+                                                    Text("₹"+road_challan_list[index].total.toString(), style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),)
                                                   ],
                                                 )
                                               ],
@@ -296,9 +338,9 @@ class _ChallanListState extends State<ChallanList> {
                                         webBgColor: "linear-gradient(to right, #1da241, #1da241)",
                                         fontSize: 16.0
                                     );
-                                    // Timer(Duration(milliseconds: 100),(){
-                                    //   generatePdf(selectedInvoiceNumber, selectedInvoiceRecipientDetails,  invoice_details_list, selectedInvoiceSubtotal, selectedInvoiceGst_percentage, selectedInvoiceGst, selectedInvoiceOther_charges, selectedInvoiceGrand_total, selectedInvoicePaid, selectedInvoiceDue, selectedInvoiceCustom_note);
-                                    // });
+                                    Timer(Duration(milliseconds: 100),(){
+                                      generatePdf(selectedChallanNumber, selectedChallanDate, selectedChallanRecipientDetails, challan_list, selectedGstPercentage, selectedChallanSubtotal, selectedChallanGst, selectedChallanOther_charges, selectedChallanGrand_total);
+                                    });
                                   },
                                   child: Container(
                                       width: 120,
@@ -315,7 +357,7 @@ class _ChallanListState extends State<ChallanList> {
                                 SizedBox(width: 20,),
                                 InkWell(
                                   onTap: (){
-                                    // deleteInvoice();
+                                    deleteChallan();
                                   },
                                   child: Container(
                                       width: 120,
@@ -347,7 +389,7 @@ class _ChallanListState extends State<ChallanList> {
 
   @override
   void initState() {
-
+    fetch_challan_list();
     super.initState();
   }
 
@@ -477,7 +519,7 @@ class _ChallanListState extends State<ChallanList> {
                             children: [
                               Text("Subtotal", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
                               SizedBox(height: 2,),
-                              Text("GST (5%)", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
+                              Text("GST ($selectedGstPercentage%)", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
                               SizedBox(height: 2,),
                               Text("Other charges", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
                               SizedBox(height: 2,),
@@ -504,13 +546,13 @@ class _ChallanListState extends State<ChallanList> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
-                              Text(selectedChallanSubtotal.toStringAsFixed(2), style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
+                              Text(selectedChallanSubtotal, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
                               SizedBox(height: 2,),
-                              Text(selectedChallanGst.toStringAsFixed(2), style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
+                              Text(selectedChallanGst, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
                               SizedBox(height: 2,),
-                              Text(selectedChallanOther_charges.toStringAsFixed(2), style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
+                              Text(selectedChallanOther_charges, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
                               SizedBox(height: 2,),
-                              Text(selectedChallanGrand_total.toStringAsFixed(2), style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
+                              Text(selectedChallanGrand_total, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
                               SizedBox(height: 2,),
                             ],
                           ),
@@ -547,7 +589,7 @@ class _ChallanListState extends State<ChallanList> {
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
-                                    Text(selectedChallanGrand_total.toStringAsFixed(2), style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
+                                    Text(selectedChallanGrand_total, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
                                   ],
                                 ),
                               ],
@@ -571,8 +613,398 @@ class _ChallanListState extends State<ChallanList> {
     );
   }
 
-  fetch_challan_list(){
+  fetch_challan_list() async {
+    var url = Uri.parse(get_challan_list);
+    Response response = await post(url);
+    if(response.statusCode==200){
+      String myData = response.body;
+      var jsonData=jsonDecode(myData);
+      road_challan_list.clear();
+      jsonData['challan_list'].forEach((jsonResponse) {
+        ChallanListModel obj = new ChallanListModel.fromJson(jsonResponse);
+        setState(() {
+          road_challan_list.add(obj);
+        });
+      });
 
+      if(selectedChallanId.isNotEmpty){
+        fetch_challan_details();
+        refreshIndex();
+      }
+
+    }else{
+      Fluttertoast.showToast(
+          msg: "Some error has occurred!",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM_RIGHT,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          webBgColor: "linear-gradient(to right, #C62828, #C62828)",
+          fontSize: 16.0
+      );
+    }
+    setState(() {
+      isListLoading=false;
+    });
+
+  }
+
+
+  fetch_challan_details() async {
+    var url = Uri.parse(get_challan_details);
+    Map<String, String> body = {"challan_id": selectedChallanId};
+    Response response = await post(url, body: body);
+    if(response.statusCode==200){
+      String myData = response.body;
+      var jsonData=jsonDecode(myData);
+      if(jsonData['status']=="success"){
+        selectedChallanId = jsonData['id'].toString();
+        selectedChallanNumber = jsonData['challan_no'].toString();
+        selectedChallanDate = jsonData['date'].toString();
+        selectedChallanRecipientDetails = jsonData['recipient_address'].toString();
+        selectedChallanGstno = jsonData['gst_number'].toString();
+        selectedChallanVehicleno = jsonData['vehicle_number'].toString();
+        selectedChallanSupplyPlace = jsonData['supply_place'].toString();
+
+        challan_list.clear();
+        jsonData['challan_items'].forEach((jsonResponse) {
+          notEditableChallanItem obj = new notEditableChallanItem.fromJson(jsonResponse);
+          setState(() {
+            challan_list.add(obj);
+          });
+        });
+
+        selectedChallanSubtotal = jsonData['subtotal'].toString();
+        selectedGstPercentage = jsonData['gst_percentage'].toString();
+        selectedChallanGst = jsonData['gst'].toString();
+        selectedChallanOther_charges = jsonData['other_charges'].toString();
+        selectedChallanGrand_total = jsonData['total'].toString();
+
+
+        setState(() {
+          isChallanLoading=false;
+        });
+
+      }
+    }else{
+
+    }
+  }
+
+
+  generatePdf(String challan_no, String challan_date, String recipient_details, List<notEditableChallanItem> challan_item_list, String gst_percentage, String subtotal, String gst, String other_charges, String grand_total) async {
+    final invoiceLogo = await getAssetsImage("assets/logo/logo.png");
+    List<pw.Widget> widgets = [];
+    widgets.add(pw.SizedBox(height: 60,),);
+
+
+    widgets.add(pw.Row(
+      mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: [
+        pw.Column(
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          mainAxisAlignment: pw.MainAxisAlignment.start,
+          children: [
+            pw.Row(
+              crossAxisAlignment: pw.CrossAxisAlignment.center,
+              mainAxisAlignment: pw.MainAxisAlignment.start,
+              children: [
+                pw.Image(pw.MemoryImage(invoiceLogo), width: 50,height: 50),
+                pw.SizedBox(width: 8,),
+                pw. Text("Transmission Surgicals", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 18,color: PdfColors.lightBlue),),
+              ],
+            ),
+            pw.SizedBox(height: 2,),
+            pw.Text("333 J.C. Bose Road, PallyShree\nSodepur, Kolkata - 700110 \nPhone : +91 0333335980722 / 7278360630 / 9836947573\nEmail : surgicaltrans@gmail.com",style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 10,color: PdfColors.black),),
+
+          ],
+        ),
+        pw.Column(
+          mainAxisAlignment: pw.MainAxisAlignment.start,
+          crossAxisAlignment: pw.CrossAxisAlignment.end,
+          children: [
+            pw.Text("Road Challan",style: pw.TextStyle(fontSize: 16,fontWeight:pw.FontWeight.bold,color: PdfColors.black),),
+            pw.SizedBox(height: 5,),
+            pw.Text("Challan Number : $challan_no",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
+            pw.Text("Challan Date : "+challan_date,style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
+          ],
+        ),
+      ],
+    ));
+
+    widgets.add( pw.SizedBox(height: 30,),);
+
+    widgets.add(pw.Text("TO :",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 13,color: PdfColors.black),),);
+    widgets.add(pw.Text(recipient_details,style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 12,color: PdfColors.black),),);
+    widgets.add(pw.SizedBox(height: 30,),);
+
+
+    widgets.add(pw.Table.fromTextArray(
+        data: [
+          ['Sl. No.','Description', 'Quantity', 'Rate', 'Total'],
+          ...challan_item_list.asMap().entries.map((item) => [
+            (item.key+1).toString()+".",
+            item.value.description.toString(),
+            item.value.quantity.toString(),
+            item.value.rate.toString(),
+            item.value.totalAmount.toString(),
+          ]).toList(),
+        ],
+        cellAlignment: pw.Alignment.centerRight,
+        cellStyle: pw.TextStyle(fontWeight: pw.FontWeight.normal),
+        headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: PdfColors.white),
+        border: pw.TableBorder.all(width: 1, color: PdfColors.black),
+        headerDecoration: pw.BoxDecoration(
+          color: PdfColors.grey600,
+        ),
+        columnWidths: {
+          0:pw.FlexColumnWidth(1),
+          1:pw.FlexColumnWidth(3),
+          2:pw.FlexColumnWidth(2),
+          3:pw.FlexColumnWidth(2),
+          4:pw.FlexColumnWidth(2),
+        }
+    ),);
+
+
+
+    widgets.add(pw.SizedBox(height: 5,),);
+
+
+    widgets.add(pw.Row(
+      mainAxisAlignment: pw.MainAxisAlignment.end,
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: [
+        pw.Column(
+          crossAxisAlignment:pw. CrossAxisAlignment.start,
+          children: [
+            pw.Text("Subtotal", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+            pw.Text("GST ($gst_percentage%)", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+            pw.Text("Other charges", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+          ],
+        ),
+        pw.Column(
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            pw.Text(" : ", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+            pw.Text(" : ", style: pw.TextStyle(fontWeight:pw. FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+            pw.Text(" : ", style:pw. TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+          ],
+        ),
+
+        pw.Column(
+          crossAxisAlignment: pw.CrossAxisAlignment.end,
+          children: [
+            pw.Text(subtotal, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+            pw.Text(gst, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+            pw.Text(other_charges, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+
+          ],
+        ),
+      ],
+    ),);
+
+
+    widgets.add(pw.SizedBox(height: 10,),);
+
+    widgets.add(
+      pw.Row(
+        mainAxisAlignment: pw.MainAxisAlignment.end,
+        children: [
+          pw.Container(
+            padding: pw.EdgeInsets.symmetric(horizontal: 3, vertical: 3),
+            width: 250,
+            decoration: pw.BoxDecoration(
+                color: PdfColors.grey300
+            ),
+            child: pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.end,
+              children: [
+                pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    pw.Text("Total Amount", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+                  ],
+                ),
+                pw.SizedBox(width: 10,),
+                pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    pw.Text(" : ", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+                  ],
+                ),
+                pw.SizedBox(width: 10,),
+                pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.end,
+                  children: [
+                    pw.Text(grand_total, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+
+
+
+    pdf.addPage(
+      pw.MultiPage(
+        pageFormat: PdfPageFormat.a4,
+        build: (context) => widgets,
+      ),
+    );
+
+    pdf_bytes=await pdf.save();
+
+    final blob = html.Blob([pdf_bytes], 'application/pdf');
+    final url = html.Url.createObjectUrlFromBlob(blob);
+    final anchor = html.document.createElement('a') as html.AnchorElement
+      ..href = url
+      ..download = "Challan$selectedChallanGstno.pdf";
+    html.document.body?.children.add(anchor);
+    anchor.click();
+    html.document.body?.children.remove(anchor);
+    html.Url.revokeObjectUrl(url);
+
+
+    Fluttertoast.showToast(
+        msg: "Challan Downloaded!",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM_RIGHT,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        webBgColor: "linear-gradient(to right, #1da241, #1da241)",
+        fontSize: 16.0
+    );
+
+
+
+
+  }
+
+
+  Future<Uint8List> getAssetsImage(String imagePath) async {
+    final ByteData data = await rootBundle.load(imagePath);
+    return data.buffer.asUint8List();
+  }
+
+  refreshIndex(){
+    for(int i=0; i<road_challan_list.length; i++){
+      if(road_challan_list[i].id == selectedChallanId){
+        selectedIndex = i;
+      }
+    }
+  }
+
+  deleteChallan(){
+    Dialog delete = Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: Wrap(
+        children: [
+          Container(
+            width: 320,
+            color: Colors.white,
+            child: Column(
+              children: [
+                SizedBox(height: 15,),
+                Text("Delete?", style: TextStyle(color: Colors.black,fontSize: 16,fontWeight: FontWeight.bold),),
+                SizedBox(height: 15,),
+                Text("Are you sure you want to delete this challan?",style: TextStyle(color: Colors.black,fontSize: 14,fontWeight: FontWeight.w500)),
+                SizedBox(height: 25,),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    InkWell(
+                      onTap: (){
+                        getX.Get.back();
+                      },
+                      child: Container(
+                        height: 32,
+                        width: 80,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(2),
+                            border: Border.all(color: Colors.red, width: 0.7),
+                            color: Colors.red.withOpacity(0.1)
+                        ),
+                        child: Center(child: Text("Cancel", style: TextStyle(color: Colors.red,fontSize: 14,fontWeight: FontWeight.w600))),
+                      ),
+                    ),
+
+                    InkWell(
+                      onTap: (){
+                        setState(() {
+                          deleteChallanApi(selectedChallanId);
+                          road_challan_list.removeAt(selectedIndex);
+                          selectedChallanId="";
+                        });
+                        getX.Get.back();
+                      },
+                      child: Container(
+                        height: 32,
+                        width: 80,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(2),
+                            border: Border.all(color: Colors.blue, width: 0.7),
+                            color: Colors.blue.withOpacity(0.1)
+                        ),
+                        child: Center(child: Text("Delete", style: TextStyle(color: Colors.blue,fontSize: 14,fontWeight: FontWeight.w600))),
+                      ),
+                    )
+                  ],
+                ),
+                SizedBox(height: 15,),
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+    showDialog(context: context, builder: (context)=>delete);
+  }
+
+
+
+  deleteChallanApi(String challan_id) async {
+    var url = Uri.parse(delete_road_challan);
+    Map<String, String> body = {"challan_id": challan_id};
+    Response response = await post(url, body: body);
+    if(response.statusCode==200){
+      String myData = response.body;
+      print(myData);
+      var jsonData=jsonDecode(myData);
+      if(jsonData['status']=="success"){
+        setState(() {});
+      }else{
+        Fluttertoast.showToast(
+            msg: "Error while loading",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM_RIGHT,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            webBgColor: "linear-gradient(to right, #C62828, #C62828)",
+            fontSize: 16.0
+        );
+      }
+    }else{
+      Fluttertoast.showToast(
+          msg: "Some error has occurred",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM_RIGHT,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          webBgColor: "linear-gradient(to right, #C62828, #C62828)",
+          fontSize: 16.0
+      );
+    }
   }
 
 }

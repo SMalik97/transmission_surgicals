@@ -669,7 +669,6 @@ class _DashboardState extends State<Dashboard> {
     Response response = await post(url);
     if(response.statusCode==200){
       String myData = response.body;
-      print(myData);
       var jsonData=jsonDecode(myData);
       setState(() {
         total_invoice=jsonData['number'].toString();

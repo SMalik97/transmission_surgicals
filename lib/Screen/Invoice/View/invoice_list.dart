@@ -578,11 +578,7 @@ class _InvoiceListState extends State<InvoiceList> {
         });
       });
       if(selectedInvoiceId.isNotEmpty){
-        setState(() {
-          isInvoiceLoading=true;
-          selectedInvoiceId=invoice_list[selectedIndex].invoiceId.toString();
-          selectedInvoiceNumber=invoice_list[selectedIndex].invoiceNo.toString();
-        });
+        refreshIndex();
         fetchInvoiceDetails(selectedInvoiceId);
       }
 
@@ -715,11 +711,12 @@ class _InvoiceListState extends State<InvoiceList> {
 
                     InkWell(
                       onTap: (){
+                        deleteInvoiceApi(selectedInvoiceId);
                         setState(() {
                           invoice_list.removeAt(selectedIndex);
                           selectedInvoiceId="";
                         });
-                        deleteInvoiceApi(selectedInvoiceId);
+
                         getX.Get.back();
                       },
                       child: Container(
@@ -953,6 +950,14 @@ class _InvoiceListState extends State<InvoiceList> {
     return data.buffer.asUint8List();
   }
 
+
+  refreshIndex(){
+    for(int i=0; i<invoice_list.length; i++){
+      if(invoice_list[i].invoiceId == invoice_list){
+        selectedIndex = i;
+      }
+    }
+  }
 
 
 
