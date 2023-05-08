@@ -688,7 +688,16 @@ class _ChallanListState extends State<ChallanList> {
 
       }
     }else{
-
+      Fluttertoast.showToast(
+          msg: "No challan found",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM_RIGHT,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          webBgColor: "linear-gradient(to right, #C62828, #C62828)",
+          fontSize: 16.0
+      );
     }
   }
 

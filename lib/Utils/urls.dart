@@ -1,5 +1,6 @@
 const domain="https://transmissionsurgicals.com/api/";
 const api_base_path=domain+"api/";
+const product_image_base_path=domain+"uploads/";
 const create_invoice=api_base_path+"create_invoice";
 const user_login=api_base_path+"login";
 const fetch_invoice=api_base_path+"allinvoice";
@@ -13,3 +14,5 @@ const get_challan_details=api_base_path+"vew_challan_details";
 const update_road_challan=api_base_path+"edit_road_challan";
 const delete_road_challan=api_base_path+"delete_road_challan";
 const road_challan_dashboard=api_base_path+"road_challan_dashboard";
+const add_new_product=api_base_path+"create_product";
+const fetch_all_product=api_base_path+"all_product";
