@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
+import 'package:number_to_words/number_to_words.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:get/get.dart' as getX;
@@ -12,6 +13,7 @@ import '../../../Utils/urls.dart';
 import '../Model/editable_invoice_item.dart';
 import '../Model/noteditable_invoice_item.dart';
 import 'dart:html' as html;
+
 
 
 class InvoiceCreate extends StatefulWidget {
@@ -26,7 +28,8 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
   final pdf = pw.Document();
   late Uint8List pdf_bytes;
   List<editableInvoiceItem> invoice_data=[];
-  final recipient_controller=TextEditingController();
+  final billing_address_controller=TextEditingController();
+  final shipping_address_controller=TextEditingController();
   final gst_controller=TextEditingController();
   final other_charges_controller=TextEditingController();
   final paid_amount_controller=TextEditingController();
@@ -38,7 +41,8 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
   bool isDownloadViewShowing=false;
   bool isGenerating=false;
 
-  double subtotal=0.00, gst=0.00, grand_total=0.00, due_amount=0.00;
+  double subtotal=0.00, gst=0.00, due_amount=0.00;
+  int  grand_total=0;
 
   String invoice_no="",invoice_id="",invoice_date="", purpose="";
 
@@ -67,9 +71,20 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                           (getX.Get.parameters['id'] !=null && purpose=="edit") ?
                           InkWell(
                             onTap: (){
-                              if(recipient_controller.text.isEmpty){
+                              if(billing_address_controller.text.isEmpty){
                                 Fluttertoast.showToast(
-                                    msg: "Please enter recipient address",
+                                    msg: "Please enter billing address",
+                                    toastLength: Toast.LENGTH_SHORT,
+                                    gravity: ToastGravity.BOTTOM_RIGHT,
+                                    timeInSecForIosWeb: 1,
+                                    backgroundColor: Colors.red,
+                                    textColor: Colors.white,
+                                    webBgColor: "linear-gradient(to right, #C62828, #C62828)",
+                                    fontSize: 16.0
+                                );
+                              }if(shipping_address_controller.text.isEmpty){
+                                Fluttertoast.showToast(
+                                    msg: "Please enter shipping address",
                                     toastLength: Toast.LENGTH_SHORT,
                                     gravity: ToastGravity.BOTTOM_RIGHT,
                                     timeInSecForIosWeb: 1,
@@ -117,9 +132,20 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                           ):
                           InkWell(
                           onTap: isGenerating==true? null : (){
-                            if(recipient_controller.text.isEmpty){
+                            if(billing_address_controller.text.isEmpty){
                               Fluttertoast.showToast(
-                                  msg: "Please enter recipient address",
+                                  msg: "Please enter billing address",
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.BOTTOM_RIGHT,
+                                  timeInSecForIosWeb: 1,
+                                  backgroundColor: Colors.red,
+                                  textColor: Colors.white,
+                                  webBgColor: "linear-gradient(to right, #C62828, #C62828)",
+                                  fontSize: 16.0
+                              );
+                            }if(shipping_address_controller.text.isEmpty){
+                              Fluttertoast.showToast(
+                                  msg: "Please enter shipping address",
                                   toastLength: Toast.LENGTH_SHORT,
                                   gravity: ToastGravity.BOTTOM_RIGHT,
                                   timeInSecForIosWeb: 1,
@@ -259,7 +285,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
   @override
   void initState() {
     if(getX.Get.parameters['id']==null){
-      editableInvoiceItem eii=editableInvoiceItem(description: "", quantity: 0, price: 0.00, totalAmount: 0.00, des_controller: TextEditingController(), price_controller: TextEditingController(), quantity_controller: TextEditingController());
+      editableInvoiceItem eii=editableInvoiceItem(description: "", quantity: 0, price: 0.00, totalAmount: 0.00, gst: 0.00, gst_percentage: 0, hsn: "", des_controller: TextEditingController(), price_controller: TextEditingController(), quantity_controller: TextEditingController(), gst_percentage_controller: TextEditingController(),hsn_controller: TextEditingController());
       invoice_data.add(eii);
 
       gst_controller.text="18";
@@ -313,11 +339,11 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
       if(jsonData['status']=="Success"){
         invoice_no=jsonData['invoice_no'];
         invoice_date=jsonData['date'];
-        recipient_controller.text=jsonData['customer_details'];
+        billing_address_controller.text=jsonData['customer_details'];
         subtotal=double.parse(jsonData['subtotal']);
         gst=double.parse(jsonData['gst']);
         other_charges_controller.text=jsonData['other_charges'];
-        grand_total=double.parse(jsonData['grand_total']);
+        grand_total=int.parse(jsonData['grand_total']);
         paid_amount_controller.text=jsonData['paid'];
         due_amount=double.parse(jsonData['due']);
         comment_controller.text=jsonData['custom_note'];
@@ -334,7 +360,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
 
 
         for(int i =0; i<invoice_details_list.length; i++){
-          editableInvoiceItem eii=editableInvoiceItem(description: invoice_details_list[i].description.toString(), quantity: int.parse(invoice_details_list[i].quantity.toString()), price: double.parse(invoice_details_list[i].price.toString()), totalAmount: double.parse(invoice_details_list[i].totalAmount.toString()), des_controller: TextEditingController(), price_controller: TextEditingController(), quantity_controller: TextEditingController());
+          editableInvoiceItem eii=editableInvoiceItem(description: invoice_details_list[i].description.toString(), quantity: int.parse(invoice_details_list[i].quantity.toString()), price: double.parse(invoice_details_list[i].price.toString()), totalAmount: double.parse(invoice_details_list[i].totalAmount.toString()),hsn:invoice_details_list[i].totalAmount.toString(), gst: double.parse(invoice_details_list[i].gst.toString()), gst_percentage: double.parse(invoice_details_list[i].gst_percentage.toString()), gst_percentage_controller: TextEditingController(), hsn_controller: TextEditingController() , des_controller: TextEditingController(), price_controller: TextEditingController(), quantity_controller: TextEditingController());
           invoice_data.add(eii);
           invoice_data[i].des_controller!.text=invoice_details_list[i].description.toString();
           invoice_data[i].price_controller!.text=invoice_details_list[i].price.toString();
@@ -451,33 +477,81 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                       ),
 
                       SizedBox(height: 30,),
-                      Text("TO :",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 18,color: Colors.black),),
                       Row(
                         children: [
-                          Container(
-                            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                            width:300,
-                            constraints: BoxConstraints(
-                              minHeight: 100,
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text("Billing Address :",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16,color: Colors.black),),
+                                SizedBox(height: 5,),
+                                Row(
+                                  children: [
+                                    Container(
+                                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                      width:300,
+                                      constraints: BoxConstraints(
+                                        minHeight: 100,
+                                      ),
+                                      decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(1),
+                                          border: Border.all(color: Colors.blue.withOpacity(0.5),width: 1)
+                                      ),
+                                      child: TextField(
+                                        controller: billing_address_controller,
+                                        decoration: InputDecoration(
+                                          isDense: true,
+                                          border: InputBorder.none,
+                                          hintText: "Recipient Name\nRecipient Address\nRecipient Phone\nRecipient Email",
+                                          hintStyle: TextStyle(fontSize: 14, color: Colors.grey),
+                                        ),
+                                        maxLines: null,
+                                        style: TextStyle(height: 1.2, color: Colors.black, fontSize: 14, fontWeight: FontWeight.w500),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(1),
-                                border: Border.all(color: Colors.blue.withOpacity(0.5),width: 1)
-                            ),
-                            child: TextField(
-                              controller: recipient_controller,
-                              decoration: InputDecoration(
-                                isDense: true,
-                                border: InputBorder.none,
-                                hintText: "Recipient Name\nRecipient Address\nRecipient Phone\nRecipient Email",
-                                hintStyle: TextStyle(fontSize: 14, color: Colors.grey),
-                              ),
-                              maxLines: null,
-                              style: TextStyle(height: 1.2, color: Colors.black, fontSize: 14, fontWeight: FontWeight.w500),
+                          ),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text("Shipping Address :",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16,color: Colors.black),),
+                                SizedBox(height: 5,),
+                                Row(
+                                  children: [
+                                    Container(
+                                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                      width:300,
+                                      constraints: BoxConstraints(
+                                        minHeight: 100,
+                                      ),
+                                      decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(1),
+                                          border: Border.all(color: Colors.blue.withOpacity(0.5),width: 1)
+                                      ),
+                                      child: TextField(
+                                        controller: shipping_address_controller,
+                                        decoration: InputDecoration(
+                                          isDense: true,
+                                          border: InputBorder.none,
+                                          hintText: "Recipient Name\nRecipient Address\nRecipient Phone\nRecipient Email",
+                                          hintStyle: TextStyle(fontSize: 14, color: Colors.grey),
+                                        ),
+                                        maxLines: null,
+                                        style: TextStyle(height: 1.2, color: Colors.black, fontSize: 14, fontWeight: FontWeight.w500),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
                           ),
                         ],
                       ),
+
 
                       SizedBox(height: 30,),
 
@@ -495,7 +569,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                 color: Colors.blue.withOpacity(0.3)
                             ),
                             child: Center(
-                                child: Text("Sl. No.", style: TextStyle(color: Colors.blue, fontSize: 15, fontWeight: FontWeight.w600),)
+                                child: Text("Sl. No.", style: TextStyle(color: Colors.blue, fontSize: 13, fontWeight: FontWeight.w600),)
                             ),
                           ),
                           Expanded(
@@ -512,7 +586,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                     color: Colors.blue.withOpacity(0.3)
                                 ),
                                 child: Center(
-                                    child: Text("Description", style: TextStyle(color: Colors.blue, fontSize: 16, fontWeight: FontWeight.w600),)
+                                    child: Text("Description", style: TextStyle(color: Colors.blue, fontSize: 13, fontWeight: FontWeight.w600),)
                                 ),
                               )),
 
@@ -530,7 +604,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                     color: Colors.blue.withOpacity(0.3)
                                 ),
                                 child: Center(
-                                    child: Text("Price", style: TextStyle(color: Colors.blue, fontSize: 16, fontWeight: FontWeight.w600),)
+                                    child: Text("Price", style: TextStyle(color: Colors.blue, fontSize: 13, fontWeight: FontWeight.w600),)
                                 ),
                               )),
 
@@ -548,7 +622,43 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                     color: Colors.blue.withOpacity(0.3)
                                 ),
                                 child: Center(
-                                    child: Text("Quantity", style: TextStyle(color: Colors.blue, fontSize: 16, fontWeight: FontWeight.w600),)
+                                    child: Text("HSN/SAC", style: TextStyle(color: Colors.blue, fontSize: 13, fontWeight: FontWeight.w600),)
+                                ),
+                              )),
+
+                          Expanded(
+                              flex: 3,
+                              child: Container(
+                                width: 80,
+                                height: 30,
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                      left: BorderSide(color: Colors.blue, width: 1),
+                                      top: BorderSide(color: Colors.blue, width: 1),
+                                      bottom: BorderSide(color: Colors.blue, width: 1),
+                                    ),
+                                    color: Colors.blue.withOpacity(0.3)
+                                ),
+                                child: Center(
+                                    child: Text("Quantity", style: TextStyle(color: Colors.blue, fontSize: 13, fontWeight: FontWeight.w600),)
+                                ),
+                              )),
+
+                          Expanded(
+                              flex: 3,
+                              child: Container(
+                                width: 80,
+                                height: 30,
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                      left: BorderSide(color: Colors.blue, width: 1),
+                                      top: BorderSide(color: Colors.blue, width: 1),
+                                      bottom: BorderSide(color: Colors.blue, width: 1),
+                                    ),
+                                    color: Colors.blue.withOpacity(0.3)
+                                ),
+                                child: Center(
+                                    child: Text("GST", style: TextStyle(color: Colors.blue, fontSize: 13, fontWeight: FontWeight.w600),)
                                 ),
                               )),
 
@@ -567,7 +677,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                     color: Colors.blue.withOpacity(0.3)
                                 ),
                                 child: Center(
-                                    child: Text("Total", style: TextStyle(color: Colors.blue, fontSize: 16, fontWeight: FontWeight.w600),)
+                                    child: Text("Total", style: TextStyle(color: Colors.blue, fontSize: 13, fontWeight: FontWeight.w600),)
                                 ),
                               )),
                         ],
@@ -582,7 +692,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                 Container(
                                   width: 60,
                                   constraints: BoxConstraints(
-                                      minHeight: 30
+                                      minHeight: 50
                                   ),
                                   decoration: BoxDecoration(
                                     border: Border(
@@ -601,7 +711,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                       padding: EdgeInsets.symmetric(horizontal: 7),
                                       width: 80,
                                       constraints: BoxConstraints(
-                                          minHeight: 30
+                                          minHeight: 50
                                       ),
                                       decoration: BoxDecoration(
                                         border: Border(
@@ -627,7 +737,48 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                       padding: EdgeInsets.symmetric(horizontal: 7),
                                       width: 80,
                                       constraints: BoxConstraints(
-                                          minHeight: 30
+                                          minHeight: 50
+                                      ),
+                                      decoration: BoxDecoration(
+                                        border: Border(
+                                          left: BorderSide(color: Colors.blue, width: 1),
+                                          bottom: BorderSide(color: Colors.blue, width: 1),
+                                        ),
+                                      ),
+                                      child: TextField(
+                                        controller: invoice_data[index].hsn_controller,
+                                        inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*$'))],
+                                        decoration: InputDecoration(
+                                            isDense: true,
+                                            border: InputBorder.none
+                                        ),
+                                        onChanged: (v){
+                                          if(invoice_data[index].price_controller!.text.isNotEmpty){
+                                            invoice_data[index].price = double.parse(invoice_data[index].price_controller!.text);
+                                          }
+
+                                          if(invoice_data[index].price_controller!.text.isEmpty || invoice_data[index].quantity_controller!.text.isEmpty){
+                                            setState(() {
+                                              invoice_data[index].totalAmount = 0.00;
+                                            });
+                                          }else{
+                                            double r = double.parse(invoice_data[index].price_controller!.text) * double.parse(invoice_data[index].quantity_controller!.text);
+                                            setState(() {
+                                              invoice_data[index].totalAmount =r;
+                                            });
+                                          }
+                                          calculateInvoice();
+                                        },
+                                      ),
+                                    )),
+
+                                Expanded(
+                                    flex: 3,
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(horizontal: 7),
+                                      width: 80,
+                                      constraints: BoxConstraints(
+                                          minHeight: 50
                                       ),
                                       decoration: BoxDecoration(
                                         border: Border(
@@ -668,7 +819,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                       padding: EdgeInsets.symmetric(horizontal: 7),
                                       width: 80,
                                       constraints: BoxConstraints(
-                                          minHeight: 30
+                                          minHeight: 50
                                       ),
                                       decoration: BoxDecoration(
                                         border: Border(
@@ -709,7 +860,48 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                       padding: EdgeInsets.symmetric(horizontal: 7),
                                       width: 80,
                                       constraints: BoxConstraints(
-                                          minHeight: 30
+                                          minHeight: 50
+                                      ),
+                                      decoration: BoxDecoration(
+                                        border: Border(
+                                          left: BorderSide(color: Colors.blue, width: 1),
+                                          bottom: BorderSide(color: Colors.blue, width: 1),
+                                        ),
+
+                                      ),
+                                      child: TextField(
+                                        controller: invoice_data[index].gst_percentage_controller,
+                                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                        decoration: InputDecoration(
+                                            isDense: true,
+                                            border: InputBorder.none
+                                        ),
+                                        onChanged: (v){
+                                          if(invoice_data[index].quantity_controller!.text.isNotEmpty){
+                                            invoice_data[index].quantity = int.parse(invoice_data[index].quantity_controller!.text);
+                                          }
+                                          if(invoice_data[index].price_controller!.text.isEmpty || invoice_data[index].quantity_controller!.text.isEmpty){
+                                            setState(() {
+                                              invoice_data[index].totalAmount = 0.00;
+                                            });
+                                          }else{
+                                            double r = double.parse(invoice_data[index].price_controller!.text) * double.parse(invoice_data[index].quantity_controller!.text);
+                                            setState(() {
+                                              invoice_data[index].totalAmount =r;
+                                            });
+                                          }
+                                          calculateInvoice();
+                                        },
+                                      ),
+                                    )),
+
+                                Expanded(
+                                    flex: 3,
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(horizontal: 7),
+                                      width: 80,
+                                      constraints: BoxConstraints(
+                                          minHeight: 50
                                       ),
                                       decoration: BoxDecoration(
                                         border: Border(
@@ -740,7 +932,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                             padding: EdgeInsets.only(top: 5),
                             child: InkWell(
                               onTap: (){
-                                editableInvoiceItem eii=editableInvoiceItem(description: "", quantity: 0, price: 0.00, totalAmount: 0.00, des_controller: TextEditingController(), price_controller: TextEditingController(), quantity_controller: TextEditingController());
+                                editableInvoiceItem eii=editableInvoiceItem(description: "", quantity: 0, price: 0.00, totalAmount: 0.00,hsn: "", gst: 0.00, gst_percentage: 0, des_controller: TextEditingController(), price_controller: TextEditingController(), quantity_controller: TextEditingController(), hsn_controller: TextEditingController(), gst_percentage_controller: TextEditingController());
                                 setState(() {
                                   invoice_data.add(eii);
                                 });
@@ -853,6 +1045,18 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                           ),
                         ],
                       ),
+                      SizedBox(height: 30,),
+                      if(amountToWords(grand_total.round()).isNotEmpty)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Container(
+                              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                              color: Colors.grey.shade300,
+                              child: Text(amountToWords(grand_total.round()))
+                          ),
+                        ],
+                      ),
                       SizedBox(height: 50,),
 
                       Text("COMMENTS OR SPECIAL INSTRUCTIONS:",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 14,color: Colors.black),),
@@ -910,13 +1114,13 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
     }
 
     if(other_charges_controller.text.isEmpty){
-      grand_total = subtotal + gst;
+      grand_total = (subtotal + gst).round();
     }else{
-      grand_total = subtotal + gst + double.parse(other_charges_controller.text);
+      grand_total = (subtotal + gst + double.parse(other_charges_controller.text)).round();
     }
 
     if(paid_amount_controller.text.isEmpty){
-      due_amount = grand_total;
+      due_amount = double.parse(grand_total.toString());
     }else{
       due_amount = grand_total - double.parse(paid_amount_controller.text);
     }
@@ -931,21 +1135,21 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
     });
     List<noteditableInvoiceItem> invoice_items=[];
     for(int i =0; i<invoice_data.length; i++){
-      noteditableInvoiceItem a = noteditableInvoiceItem(description: invoice_data[i].description.toString(),quantity: invoice_data[i].quantity.toString(),price: invoice_data[i].price!.toStringAsFixed(2),totalAmount: invoice_data[i].totalAmount!.toStringAsFixed(2));
+      noteditableInvoiceItem a = noteditableInvoiceItem(description: invoice_data[i].description.toString(),quantity: invoice_data[i].quantity.toString(),price: invoice_data[i].price!.toStringAsFixed(2),totalAmount: invoice_data[i].totalAmount!.toStringAsFixed(2),gst_percentage: invoice_data[i].gst_percentage!.toStringAsFixed(2), gst: invoice_data[i].gst!.toStringAsFixed(2), hsn: invoice_data[i].hsn!);
       invoice_items.add(a);
     }
     String invoice_item_list=jsonEncode(invoice_items);
     var url = Uri.parse(update_invoice);
-    Map<String, String> body = {"invoice_id":invoice_id,"date":formattedDate2(date_controller.text),"customer_details": recipient_controller.text.trim(),"subtotal":subtotal.toStringAsFixed(2), "gst_percentage":gst_controller.text, "gst":gst.toStringAsFixed(2), "grand_total":grand_total.toStringAsFixed(2),"paid":paid_amount_controller.text.toString(),"due":due_amount.toStringAsFixed(2),"custom_note":comment_controller.text.trim(),"other_charges":other_charges_controller.text,"descriptions":invoice_item_list};
+    Map<String, String> body = {"invoice_id":invoice_id,"date":formattedDate2(date_controller.text),"customer_details": billing_address_controller.text.trim(),"subtotal":subtotal.toStringAsFixed(2), "gst_percentage":gst_controller.text, "gst":gst.toStringAsFixed(2), "grand_total":grand_total.toStringAsFixed(2),"paid":paid_amount_controller.text.toString(),"due":due_amount.toStringAsFixed(2),"custom_note":comment_controller.text.trim(),"other_charges":other_charges_controller.text,"descriptions":invoice_item_list};
     Response response = await post(url, body: body);
     if(response.statusCode==200){
       String myData = response.body;
 
       var jsonData=jsonDecode(myData);
       if(jsonData['status']=="success"){
-        generatePdf(invoice_no,invoice_date, recipient_controller.text.trim(), invoice_items, subtotal.toStringAsFixed(2), gst_controller.text, gst.toStringAsFixed(2), other_charges_controller.text, grand_total.toStringAsFixed(2), paid_amount_controller.text.toString(), due_amount.toStringAsFixed(2),comment_controller.text.trim());
+        generatePdf(invoice_no,invoice_date, billing_address_controller.text.trim(), invoice_items, subtotal.toStringAsFixed(2), gst_controller.text, gst.toStringAsFixed(2), other_charges_controller.text, grand_total.toStringAsFixed(2), paid_amount_controller.text.toString(), due_amount.toStringAsFixed(2),comment_controller.text.trim());
         setState(() {
-          placeHolder=invoiceView(invoice_no, invoice_date, recipient_controller.text.trim(), invoice_items, subtotal.toStringAsFixed(2), gst_controller.text, gst.toStringAsFixed(2), other_charges_controller.text, grand_total.toStringAsFixed(2), paid_amount_controller.text.toString(), due_amount.toStringAsFixed(2),comment_controller.text.trim());
+          placeHolder=invoiceView(invoice_no, invoice_date, billing_address_controller.text.trim(), invoice_items, subtotal.toStringAsFixed(2), gst_controller.text, gst.toStringAsFixed(2), other_charges_controller.text, grand_total.toStringAsFixed(2), paid_amount_controller.text.toString(), due_amount.toStringAsFixed(2),comment_controller.text.trim());
         });
       }else{
         Fluttertoast.showToast(
@@ -982,21 +1186,21 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
     });
     List<noteditableInvoiceItem> invoice_items=[];
     for(int i =0; i<invoice_data.length; i++){
-      noteditableInvoiceItem a = noteditableInvoiceItem(description: invoice_data[i].description.toString(),quantity: invoice_data[i].quantity.toString(),price: invoice_data[i].price!.toStringAsFixed(2),totalAmount: invoice_data[i].totalAmount!.toStringAsFixed(2));
+      noteditableInvoiceItem a = noteditableInvoiceItem(description: invoice_data[i].description.toString(),quantity: invoice_data[i].quantity.toString(),price: invoice_data[i].price!.toStringAsFixed(2),totalAmount: invoice_data[i].totalAmount!.toStringAsFixed(2),gst_percentage: invoice_data[i].gst_percentage!.toStringAsFixed(2), gst: invoice_data[i].gst!.toStringAsFixed(2), hsn: invoice_data[i].hsn!);
       invoice_items.add(a);
     }
     String invoice_item_list=jsonEncode(invoice_items);
     var url = Uri.parse(update_invoice);
-    Map<String, String> body = {"customer_details": recipient_controller.text.trim(),"subtotal":subtotal.toStringAsFixed(2), "gst_percentage":gst_controller.text, "gst":gst.toStringAsFixed(2), "grand_total":grand_total.toStringAsFixed(2),"paid":paid_amount_controller.text.toString(),"due":due_amount.toStringAsFixed(2),"custom_note":comment_controller.text.trim(),"other_charges":other_charges_controller.text,"descriptions":invoice_item_list};
+    Map<String, String> body = {"customer_details": billing_address_controller.text.trim(),"subtotal":subtotal.toStringAsFixed(2), "gst_percentage":gst_controller.text, "gst":gst.toStringAsFixed(2), "grand_total":grand_total.toStringAsFixed(2),"paid":paid_amount_controller.text.toString(),"due":due_amount.toStringAsFixed(2),"custom_note":comment_controller.text.trim(),"other_charges":other_charges_controller.text,"descriptions":invoice_item_list};
     Response response = await post(url, body: body);
     if(response.statusCode==200){
       String myData = response.body;
       var jsonData=jsonDecode(myData);
       if(jsonData['status']=="success"){
         invoice_no=jsonData['invoice_no'];
-        generatePdf(invoice_no, DateFormat('dd/MM/yyyy').format(DateTime.now()), recipient_controller.text.trim(), invoice_items, subtotal.toStringAsFixed(2), gst_controller.text, gst.toStringAsFixed(2), other_charges_controller.text, grand_total.toStringAsFixed(2), paid_amount_controller.text.toString(), due_amount.toStringAsFixed(2),comment_controller.text.trim());
+        generatePdf(invoice_no, DateFormat('dd/MM/yyyy').format(DateTime.now()), billing_address_controller.text.trim(), invoice_items, subtotal.toStringAsFixed(2), gst_controller.text, gst.toStringAsFixed(2), other_charges_controller.text, grand_total.toStringAsFixed(2), paid_amount_controller.text.toString(), due_amount.toStringAsFixed(2),comment_controller.text.trim());
         setState(() {
-          placeHolder=invoiceView(invoice_no, invoice_date, recipient_controller.text.trim(), invoice_items, subtotal.toStringAsFixed(2), gst_controller.text, gst.toStringAsFixed(2), other_charges_controller.text, grand_total.toStringAsFixed(2), paid_amount_controller.text.toString(), due_amount.toStringAsFixed(2),comment_controller.text.trim());
+          placeHolder=invoiceView(invoice_no, invoice_date, billing_address_controller.text.trim(), invoice_items, subtotal.toStringAsFixed(2), gst_controller.text, gst.toStringAsFixed(2), other_charges_controller.text, grand_total.toStringAsFixed(2), paid_amount_controller.text.toString(), due_amount.toStringAsFixed(2),comment_controller.text.trim());
 
         });
       }else{
@@ -1582,6 +1786,43 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
     }
 
   }
+
+  String amountToWords(int amount) {
+    if(amount==0){
+      return "";
+    }
+
+   String words = capitalizeSentence(NumberToWord().convert('en-in', amount).trim()) + ' rupees only';
+
+    return words;
+  }
+
+
+
+
+  String capitalizeSentence(String sentence) {
+    print(sentence);
+    if(sentence.length == 0){
+      return "";
+    }
+    List<String> words = sentence.split(' ');
+    List<String> capitalizedWords = [];
+
+    String capitalizedWord="";
+    for (String word in words) {
+      if(word.length>=2){
+        capitalizedWord = word.substring(0, 1).toUpperCase() + word.substring(1);
+      }else{
+        capitalizedWord = word.substring(0, 1).toUpperCase();
+      }
+
+      capitalizedWords.add(capitalizedWord);
+    }
+
+    String capitalizedSentence = capitalizedWords.join(' ');
+    return capitalizedSentence;
+  }
+
 
 
 }
