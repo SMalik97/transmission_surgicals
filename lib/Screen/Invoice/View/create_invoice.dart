@@ -30,7 +30,6 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
   List<editableInvoiceItem> invoice_data=[];
   final billing_address_controller=TextEditingController();
   final shipping_address_controller=TextEditingController();
-  final gst_controller=TextEditingController();
   final other_charges_controller=TextEditingController();
   final paid_amount_controller=TextEditingController();
   final comment_controller=TextEditingController();
@@ -96,7 +95,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                               }else{
                                 bool isError=false;
                                 for(int i = 0 ; i<invoice_data.length; i++){
-                                  if(invoice_data[i].des_controller!.text.isEmpty || invoice_data[i].price_controller!.text.isEmpty || invoice_data[i].quantity_controller!.text.isEmpty){
+                                  if(invoice_data[i].des_controller!.text.isEmpty || invoice_data[i].price_controller!.text.isEmpty || invoice_data[i].quantity_controller!.text.isEmpty || invoice_data[i].hsn_controller!.text.isEmpty){
                                     isError =true;
                                   }
                                 }
@@ -157,7 +156,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                             }else{
                               bool isError=false;
                               for(int i = 0 ; i<invoice_data.length; i++){
-                                if(invoice_data[i].des_controller!.text.isEmpty || invoice_data[i].price_controller!.text.isEmpty || invoice_data[i].quantity_controller!.text.isEmpty){
+                                if(invoice_data[i].des_controller!.text.isEmpty || invoice_data[i].price_controller!.text.isEmpty || invoice_data[i].quantity_controller!.text.isEmpty || invoice_data[i].quantity_controller!.text.isEmpty){
                                   isError =true;
                                 }
                               }
@@ -174,7 +173,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                 );
                               }else{
                                 ///call api
-                                updateInvoice();
+                                createNewInvoice();
                               }
                             }
                           },
@@ -285,10 +284,10 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
   @override
   void initState() {
     if(getX.Get.parameters['id']==null){
-      editableInvoiceItem eii=editableInvoiceItem(description: "", quantity: 0, price: 0.00, totalAmount: 0.00, gst: 0.00, gst_percentage: 0, hsn: "", des_controller: TextEditingController(), price_controller: TextEditingController(), quantity_controller: TextEditingController(), gst_percentage_controller: TextEditingController(),hsn_controller: TextEditingController());
+      editableInvoiceItem eii=editableInvoiceItem(description: "", quantity: 0, price: 0.00, totalAmount: 0.00, gst: 0.00, gst_percentage: 18, hsn: "", des_controller: TextEditingController(), price_controller: TextEditingController(), quantity_controller: TextEditingController(), gst_percentage_controller: TextEditingController(),hsn_controller: TextEditingController());
       invoice_data.add(eii);
+      invoice_data[0].gst_percentage_controller!.text="18";
 
-      gst_controller.text="18";
       other_charges_controller.text="0.00";
       paid_amount_controller.text="0.00";
       comment_controller.text="If you have any questions concerning this invoice, contact name, phone or amount please contact us at surgicaltrans@gmail.com";
@@ -298,6 +297,10 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         setState(() {
           placeHolder=createInvoiceView();
+          // noteditableInvoiceItem a= noteditableInvoiceItem(hsn: "jkhj", gst: "52",gst_percentage: "7",totalAmount: "5263", price: "52.00", quantity: "4", description: "fdf hgfhf g");
+          // List<noteditableInvoiceItem> invoice_item_details=[];
+          // invoice_item_details.add(a);
+          // placeHolder = invoiceView("478596","2023/02/10", "String billing_address", "String shipping_address", invoice_item_details, "4563", "74", "45", "79", "0", "4", "String comments");
         });
       });
     }else{
@@ -347,7 +350,6 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
         paid_amount_controller.text=jsonData['paid'];
         due_amount=double.parse(jsonData['due']);
         comment_controller.text=jsonData['custom_note'];
-        gst_controller.text=jsonData['gst_percentage'];
 
         date_controller.text=formattedDate(invoice_date);
 
@@ -443,7 +445,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
-                              Text("INVOICE",style: GoogleFonts.alata(fontSize: 20,fontWeight: FontWeight.bold,color: Colors.black),),
+                              Text("TAX INVOICE",style: GoogleFonts.alata(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.black),),
                               SizedBox(height: 5,),
                               purpose=="edit"?
                               Text("Invoice Number $invoice_no",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),)
@@ -458,10 +460,10 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                     child: TextField(
                                       controller: date_controller,
                                       decoration: InputDecoration(
-                                        isDense: true,
-                                        border: InputBorder.none,
-                                        hintText: "DD/MM/YYYY",
-                                        hintStyle: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.grey)
+                                          isDense: true,
+                                          border: InputBorder.none,
+                                          hintText: "DD/MM/YYYY",
+                                          hintStyle: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.grey)
                                       ),
                                       style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),
 
@@ -604,7 +606,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                     color: Colors.blue.withOpacity(0.3)
                                 ),
                                 child: Center(
-                                    child: Text("Price", style: TextStyle(color: Colors.blue, fontSize: 13, fontWeight: FontWeight.w600),)
+                                    child: Text("HSN/SAC", style: TextStyle(color: Colors.blue, fontSize: 13, fontWeight: FontWeight.w600),)
                                 ),
                               )),
 
@@ -622,7 +624,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                     color: Colors.blue.withOpacity(0.3)
                                 ),
                                 child: Center(
-                                    child: Text("HSN/SAC", style: TextStyle(color: Colors.blue, fontSize: 13, fontWeight: FontWeight.w600),)
+                                    child: Text("Price", style: TextStyle(color: Colors.blue, fontSize: 13, fontWeight: FontWeight.w600),)
                                 ),
                               )),
 
@@ -701,10 +703,11 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                     ),
                                   ),
                                   child: Center(
-                                      child: Text((index+1).toString()+".", style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w600),)
+                                      child: Text((index+1).toString()+".", style: TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.w500),)
                                   ),
                                 ),
 
+                                /// Description ..........................
                                 Expanded(
                                     flex: 5,
                                     child: Container(
@@ -725,12 +728,15 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                             isDense: true,
                                             border: InputBorder.none
                                         ),
+                                        style: TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.w500),
+                                        textAlign: TextAlign.end,
                                         onChanged: (v){
                                           invoice_data[index].description = invoice_data[index].des_controller!.text;
                                         },
                                       ),
                                     )),
 
+                                /// HSN / SAC ..................
                                 Expanded(
                                     flex: 3,
                                     child: Container(
@@ -747,31 +753,19 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                       ),
                                       child: TextField(
                                         controller: invoice_data[index].hsn_controller,
-                                        inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*$'))],
                                         decoration: InputDecoration(
                                             isDense: true,
                                             border: InputBorder.none
                                         ),
+                                        style: TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.w500),
+                                        textAlign: TextAlign.end,
                                         onChanged: (v){
-                                          if(invoice_data[index].price_controller!.text.isNotEmpty){
-                                            invoice_data[index].price = double.parse(invoice_data[index].price_controller!.text);
-                                          }
-
-                                          if(invoice_data[index].price_controller!.text.isEmpty || invoice_data[index].quantity_controller!.text.isEmpty){
-                                            setState(() {
-                                              invoice_data[index].totalAmount = 0.00;
-                                            });
-                                          }else{
-                                            double r = double.parse(invoice_data[index].price_controller!.text) * double.parse(invoice_data[index].quantity_controller!.text);
-                                            setState(() {
-                                              invoice_data[index].totalAmount =r;
-                                            });
-                                          }
-                                          calculateInvoice();
+                                          invoice_data[index].hsn=v;
                                         },
                                       ),
                                     )),
 
+                                /// Price ................
                                 Expanded(
                                     flex: 3,
                                     child: Container(
@@ -793,11 +787,12 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                             isDense: true,
                                             border: InputBorder.none
                                         ),
+                                        style: TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.w500),
+                                        textAlign: TextAlign.end,
                                         onChanged: (v){
                                           if(invoice_data[index].price_controller!.text.isNotEmpty){
                                             invoice_data[index].price = double.parse(invoice_data[index].price_controller!.text);
                                           }
-
                                           if(invoice_data[index].price_controller!.text.isEmpty || invoice_data[index].quantity_controller!.text.isEmpty){
                                             setState(() {
                                               invoice_data[index].totalAmount = 0.00;
@@ -813,6 +808,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                       ),
                                     )),
 
+                                ///Quantity ....................
                                 Expanded(
                                     flex: 3,
                                     child: Container(
@@ -835,6 +831,8 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                             isDense: true,
                                             border: InputBorder.none
                                         ),
+                                        style: TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.w500),
+                                        textAlign: TextAlign.end,
                                         onChanged: (v){
                                           if(invoice_data[index].quantity_controller!.text.isNotEmpty){
                                             invoice_data[index].quantity = int.parse(invoice_data[index].quantity_controller!.text);
@@ -854,10 +852,11 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                       ),
                                     )),
 
+                                /// Gst .................
                                 Expanded(
                                     flex: 3,
                                     child: Container(
-                                      padding: EdgeInsets.symmetric(horizontal: 7),
+                                      padding: EdgeInsets.symmetric(horizontal: 3),
                                       width: 80,
                                       constraints: BoxConstraints(
                                           minHeight: 50
@@ -869,32 +868,48 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                         ),
 
                                       ),
-                                      child: TextField(
-                                        controller: invoice_data[index].gst_percentage_controller,
-                                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                                        decoration: InputDecoration(
-                                            isDense: true,
-                                            border: InputBorder.none
-                                        ),
-                                        onChanged: (v){
-                                          if(invoice_data[index].quantity_controller!.text.isNotEmpty){
-                                            invoice_data[index].quantity = int.parse(invoice_data[index].quantity_controller!.text);
-                                          }
-                                          if(invoice_data[index].price_controller!.text.isEmpty || invoice_data[index].quantity_controller!.text.isEmpty){
-                                            setState(() {
-                                              invoice_data[index].totalAmount = 0.00;
-                                            });
-                                          }else{
-                                            double r = double.parse(invoice_data[index].price_controller!.text) * double.parse(invoice_data[index].quantity_controller!.text);
-                                            setState(() {
-                                              invoice_data[index].totalAmount =r;
-                                            });
-                                          }
-                                          calculateInvoice();
-                                        },
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                        crossAxisAlignment: CrossAxisAlignment.end,
+                                        children: [
+                                          Container(
+                                            width: 40,
+                                            child:Text(invoice_data[index].gst!.toStringAsFixed(2), style: TextStyle(fontSize: 13,fontWeight: FontWeight.w500),textAlign: TextAlign.end),
+                                          ),
+                                          Container(
+                                            width: 40,
+                                            child: Row(
+                                              children: [
+                                                Expanded(
+                                                  child: TextField(
+                                                    controller: invoice_data[index].gst_percentage_controller,
+                                                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                                    decoration: InputDecoration(
+                                                        isDense: true,
+                                                        border: InputBorder.none,
+
+                                                    ),
+                                                    style: TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.w500),
+                                                    textAlign: TextAlign.end,
+                                                    onChanged: (v){
+                                                      if(invoice_data[index].gst_percentage_controller!.text.isNotEmpty){
+                                                        invoice_data[index].gst_percentage = double.parse(invoice_data[index].gst_percentage_controller!.text);
+                                                        calculateInvoice();
+                                                      }
+
+                                                    },
+                                                  ),
+                                                ),
+                                                SizedBox(height: 3,),
+                                                Text("%", style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.black),)
+                                              ],
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     )),
 
+                                /// Total Price ...........................
                                 Expanded(
                                     flex: 3,
                                     child: Container(
@@ -915,7 +930,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                         mainAxisAlignment: MainAxisAlignment.end,
                                         crossAxisAlignment: CrossAxisAlignment.center,
                                         children: [
-                                          Text(invoice_data[index].totalAmount!.toStringAsFixed(2), style: TextStyle(fontSize: 16, color: Colors.black,fontWeight: FontWeight.w500),textAlign: TextAlign.right,),
+                                          Text(invoice_data[index].totalAmount!.toStringAsFixed(2), style: TextStyle(fontSize: 14, color: Colors.black,fontWeight: FontWeight.w500),textAlign: TextAlign.right,),
                                         ],
                                       ),
                                     )),
@@ -932,9 +947,10 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                             padding: EdgeInsets.only(top: 5),
                             child: InkWell(
                               onTap: (){
-                                editableInvoiceItem eii=editableInvoiceItem(description: "", quantity: 0, price: 0.00, totalAmount: 0.00,hsn: "", gst: 0.00, gst_percentage: 0, des_controller: TextEditingController(), price_controller: TextEditingController(), quantity_controller: TextEditingController(), hsn_controller: TextEditingController(), gst_percentage_controller: TextEditingController());
+                                editableInvoiceItem eii=editableInvoiceItem(description: "", quantity: 0, price: 0.00, totalAmount: 0.00,hsn: "", gst: 0.00, gst_percentage: 18, des_controller: TextEditingController(), price_controller: TextEditingController(), quantity_controller: TextEditingController(), hsn_controller: TextEditingController(), gst_percentage_controller: TextEditingController());
+                                invoice_data.add(eii);
                                 setState(() {
-                                  invoice_data.add(eii);
+                                  invoice_data[invoice_data.length-1].gst_percentage_controller!.text="18";
                                 });
                               },
                               child: Row(
@@ -957,23 +973,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                   Row(
                                     crossAxisAlignment: CrossAxisAlignment.center,
                                     children: [
-                                      Text("GST (", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                                      Container(
-                                        margin: EdgeInsets.only(top: 3),
-                                        width: 20,
-                                        height: 15,
-                                        child: TextField(
-                                          controller: gst_controller,
-                                          decoration: InputDecoration(
-                                              isDense: true,border: InputBorder.none
-                                          ),
-                                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),
-                                          onChanged: (v){
-                                            calculateInvoice();
-                                          },
-                                        ),
-                                      ),
-                                      Text("%)", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
+                                      Text("GST", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
                                     ],
                                   ),
                                   Text("Other Charges", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
@@ -1053,7 +1053,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                           Container(
                               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                               color: Colors.grey.shade300,
-                              child: Text(amountToWords(grand_total.round()))
+                              child: Text("Total: "+amountToWords(grand_total.round()), style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.black),)
                           ),
                         ],
                       ),
@@ -1104,14 +1104,24 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
 
   calculateInvoice(){
     subtotal = 0.00;
+    gst=0.00;
     for(int i=0; i<invoice_data.length; i++){
       subtotal = subtotal + invoice_data[i].totalAmount!;
+      try{
+        if(invoice_data[i].gst_percentage_controller!.text.isNotEmpty){
+          double g = (invoice_data[i].totalAmount! * invoice_data[i].gst_percentage!)/100;
+           invoice_data[i].gst=g;
+          gst = gst + g;
+        }else{
+          invoice_data[i].gst=0.00;
+        }
+      }catch(e){
+        invoice_data[i].gst=0.00;
+      }
     }
-    if(gst_controller.text.isNotEmpty){
-      gst=(subtotal*double.parse(gst_controller.text))/100;
-    }else{
-      gst=0.00;
-    }
+
+
+
 
     if(other_charges_controller.text.isEmpty){
       grand_total = (subtotal + gst).round();
@@ -1140,16 +1150,16 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
     }
     String invoice_item_list=jsonEncode(invoice_items);
     var url = Uri.parse(update_invoice);
-    Map<String, String> body = {"invoice_id":invoice_id,"date":formattedDate2(date_controller.text),"customer_details": billing_address_controller.text.trim(),"subtotal":subtotal.toStringAsFixed(2), "gst_percentage":gst_controller.text, "gst":gst.toStringAsFixed(2), "grand_total":grand_total.toStringAsFixed(2),"paid":paid_amount_controller.text.toString(),"due":due_amount.toStringAsFixed(2),"custom_note":comment_controller.text.trim(),"other_charges":other_charges_controller.text,"descriptions":invoice_item_list};
+    Map<String, String> body = {"invoice_id":invoice_id,"date":formattedDate2(date_controller.text),"customer_details": billing_address_controller.text.trim(),"subtotal":subtotal.toStringAsFixed(2), "gst":gst.toStringAsFixed(2), "grand_total":grand_total.toStringAsFixed(2),"paid":paid_amount_controller.text.toString(),"due":due_amount.toStringAsFixed(2),"custom_note":comment_controller.text.trim(),"other_charges":other_charges_controller.text,"descriptions":invoice_item_list};
     Response response = await post(url, body: body);
     if(response.statusCode==200){
       String myData = response.body;
 
       var jsonData=jsonDecode(myData);
       if(jsonData['status']=="success"){
-        generatePdf(invoice_no,invoice_date, billing_address_controller.text.trim(), invoice_items, subtotal.toStringAsFixed(2), gst_controller.text, gst.toStringAsFixed(2), other_charges_controller.text, grand_total.toStringAsFixed(2), paid_amount_controller.text.toString(), due_amount.toStringAsFixed(2),comment_controller.text.trim());
+        generatePdf(invoice_no,invoice_date, billing_address_controller.text.trim(), shipping_address_controller.text.trim(), invoice_items, subtotal.toStringAsFixed(2), gst.toStringAsFixed(2), other_charges_controller.text, grand_total.toStringAsFixed(2), paid_amount_controller.text.toString(), due_amount.toStringAsFixed(2),comment_controller.text.trim());
         setState(() {
-          placeHolder=invoiceView(invoice_no, invoice_date, billing_address_controller.text.trim(), invoice_items, subtotal.toStringAsFixed(2), gst_controller.text, gst.toStringAsFixed(2), other_charges_controller.text, grand_total.toStringAsFixed(2), paid_amount_controller.text.toString(), due_amount.toStringAsFixed(2),comment_controller.text.trim());
+          placeHolder=invoiceView(invoice_no, invoice_date, billing_address_controller.text.trim(), shipping_address_controller.text.trim(), invoice_items, subtotal.toStringAsFixed(2), gst.toStringAsFixed(2), other_charges_controller.text, grand_total.toStringAsFixed(2), paid_amount_controller.text.toString(), due_amount.toStringAsFixed(2),comment_controller.text.trim());
         });
       }else{
         Fluttertoast.showToast(
@@ -1190,17 +1200,17 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
       invoice_items.add(a);
     }
     String invoice_item_list=jsonEncode(invoice_items);
-    var url = Uri.parse(update_invoice);
-    Map<String, String> body = {"customer_details": billing_address_controller.text.trim(),"subtotal":subtotal.toStringAsFixed(2), "gst_percentage":gst_controller.text, "gst":gst.toStringAsFixed(2), "grand_total":grand_total.toStringAsFixed(2),"paid":paid_amount_controller.text.toString(),"due":due_amount.toStringAsFixed(2),"custom_note":comment_controller.text.trim(),"other_charges":other_charges_controller.text,"descriptions":invoice_item_list};
+    var url = Uri.parse(create_invoice);
+    Map<String, String> body = {"customer_details": billing_address_controller.text.trim(),"subtotal":subtotal.toStringAsFixed(2), "gst":gst.toStringAsFixed(2), "grand_total":grand_total.toStringAsFixed(2),"paid":paid_amount_controller.text.toString(),"due":due_amount.toStringAsFixed(2),"custom_note":comment_controller.text.trim(),"other_charges":other_charges_controller.text,"descriptions":invoice_item_list};
     Response response = await post(url, body: body);
     if(response.statusCode==200){
       String myData = response.body;
       var jsonData=jsonDecode(myData);
       if(jsonData['status']=="success"){
         invoice_no=jsonData['invoice_no'];
-        generatePdf(invoice_no, DateFormat('dd/MM/yyyy').format(DateTime.now()), billing_address_controller.text.trim(), invoice_items, subtotal.toStringAsFixed(2), gst_controller.text, gst.toStringAsFixed(2), other_charges_controller.text, grand_total.toStringAsFixed(2), paid_amount_controller.text.toString(), due_amount.toStringAsFixed(2),comment_controller.text.trim());
+        generatePdf(invoice_no, DateFormat('dd/MM/yyyy').format(DateTime.now()), billing_address_controller.text.trim(), shipping_address_controller.text.trim(), invoice_items, subtotal.toStringAsFixed(2), gst.toStringAsFixed(2), other_charges_controller.text, grand_total.toStringAsFixed(2), paid_amount_controller.text.toString(), due_amount.toStringAsFixed(2),comment_controller.text.trim());
         setState(() {
-          placeHolder=invoiceView(invoice_no, invoice_date, billing_address_controller.text.trim(), invoice_items, subtotal.toStringAsFixed(2), gst_controller.text, gst.toStringAsFixed(2), other_charges_controller.text, grand_total.toStringAsFixed(2), paid_amount_controller.text.toString(), due_amount.toStringAsFixed(2),comment_controller.text.trim());
+          placeHolder=invoiceView(invoice_no, DateFormat('dd/MM/yyyy').format(DateTime.now()), billing_address_controller.text.trim(), shipping_address_controller.text.trim(), invoice_items, subtotal.toStringAsFixed(2), gst.toStringAsFixed(2), other_charges_controller.text, grand_total.toStringAsFixed(2), paid_amount_controller.text.toString(), due_amount.toStringAsFixed(2),comment_controller.text.trim());
 
         });
       }else{
@@ -1233,7 +1243,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
   }
 
 
-  Widget invoiceView(String invoice_number,String invoice_date, String customer_details, List<noteditableInvoiceItem> invoice_item_details, String subtotal, String gst_percentage, String gst, String other_charges, String grand_total, String paid, String due, String comments){
+  Widget invoiceView(String invoice_number,String invoice_date, String billing_address, String shipping_address, List<noteditableInvoiceItem> invoice_item_details, String subtotal, String gst, String other_charges, String grand_total, String paid, String due, String comments){
     return Expanded(
       child: ListView(
         shrinkWrap: true,
@@ -1283,7 +1293,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
-                              Text("INVOICE",style: GoogleFonts.alata(fontSize: 20,fontWeight: FontWeight.bold,color: Colors.black),),
+                              Text("TAX INVOICE",style: GoogleFonts.alata(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.black),),
                               SizedBox(height: 5,),
                               Text("Invoice Number : "+invoice_number,style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
                               Text("Invoice Date : "+formattedDate(invoice_date),style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
@@ -1294,13 +1304,38 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                       ),
 
                       SizedBox(height: 30,),
-                      Text("TO :",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 18,color: Colors.black),),
-                      Text(customer_details,style: TextStyle(fontWeight: FontWeight.w500,fontSize: 13,color: Colors.black),),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text("Billing Address :",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16,color: Colors.black),),
+                                SizedBox(height: 5,),
+                                Text(billing_address,style: TextStyle(fontWeight: FontWeight.w500,fontSize: 13,color: Colors.black),),
+                              ],
+                            ),
+                          ),
+                          SizedBox(width: 20,),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text("Shipping Address :",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16,color: Colors.black),),
+                                SizedBox(height: 5,),
+                                Text(shipping_address,style: TextStyle(fontWeight: FontWeight.w500,fontSize: 13,color: Colors.black),),
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
 
                       SizedBox(height: 30,),
 
                       Row(
                         children: [
+                          ///Sl no................
                           Container(
                             width: 60,
                             height: 30,
@@ -1313,9 +1348,11 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                 color: Colors.blue.withOpacity(0.3)
                             ),
                             child: Center(
-                                child: Text("Sl. No.", style: TextStyle(color: Colors.blue, fontSize: 15, fontWeight: FontWeight.w600),)
+                                child: Text("Sl. No.", style: TextStyle(color: Colors.blue, fontSize: 14, fontWeight: FontWeight.w400),)
                             ),
                           ),
+
+                          ///Description ........................
                           Expanded(
                               flex: 5,
                               child: Container(
@@ -1330,10 +1367,11 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                     color: Colors.blue.withOpacity(0.3)
                                 ),
                                 child: Center(
-                                    child: Text("Description", style: TextStyle(color: Colors.blue, fontSize: 16, fontWeight: FontWeight.w600),)
+                                    child: Text("Description", style: TextStyle(color: Colors.blue, fontSize: 14, fontWeight: FontWeight.w500),)
                                 ),
                               )),
 
+                          ///HSN/SAC ........................
                           Expanded(
                               flex: 3,
                               child: Container(
@@ -1348,10 +1386,11 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                     color: Colors.blue.withOpacity(0.3)
                                 ),
                                 child: Center(
-                                    child: Text("Price", style: TextStyle(color: Colors.blue, fontSize: 16, fontWeight: FontWeight.w600),)
+                                    child: Text("HSN/SAC", style: TextStyle(color: Colors.blue, fontSize: 14, fontWeight: FontWeight.w500),)
                                 ),
                               )),
 
+                          ///Price ...........................
                           Expanded(
                               flex: 3,
                               child: Container(
@@ -1366,10 +1405,49 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                     color: Colors.blue.withOpacity(0.3)
                                 ),
                                 child: Center(
-                                    child: Text("Quantity", style: TextStyle(color: Colors.blue, fontSize: 16, fontWeight: FontWeight.w600),)
+                                    child: Text("Price", style: TextStyle(color: Colors.blue, fontSize: 14, fontWeight: FontWeight.w500),)
                                 ),
                               )),
 
+                          ///Quantity ....................
+                          Expanded(
+                              flex: 3,
+                              child: Container(
+                                width: 80,
+                                height: 30,
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                      left: BorderSide(color: Colors.blue, width: 1),
+                                      top: BorderSide(color: Colors.blue, width: 1),
+                                      bottom: BorderSide(color: Colors.blue, width: 1),
+                                    ),
+                                    color: Colors.blue.withOpacity(0.3)
+                                ),
+                                child: Center(
+                                    child: Text("Quantity", style: TextStyle(color: Colors.blue, fontSize: 14, fontWeight: FontWeight.w500),)
+                                ),
+                              )),
+
+                          ///Gst ....................
+                          Expanded(
+                              flex: 3,
+                              child: Container(
+                                width: 80,
+                                height: 30,
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                      left: BorderSide(color: Colors.blue, width: 1),
+                                      top: BorderSide(color: Colors.blue, width: 1),
+                                      bottom: BorderSide(color: Colors.blue, width: 1),
+                                    ),
+                                    color: Colors.blue.withOpacity(0.3)
+                                ),
+                                child: Center(
+                                    child: Text("GST", style: TextStyle(color: Colors.blue, fontSize: 14, fontWeight: FontWeight.w500),)
+                                ),
+                              )),
+
+                          ///Total ..................
                           Expanded(
                               flex: 3,
                               child: Container(
@@ -1385,7 +1463,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                     color: Colors.blue.withOpacity(0.3)
                                 ),
                                 child: Center(
-                                    child: Text("Total", style: TextStyle(color: Colors.blue, fontSize: 16, fontWeight: FontWeight.w600),)
+                                    child: Text("Total", style: TextStyle(color: Colors.blue, fontSize: 14, fontWeight: FontWeight.w500),)
                                 ),
                               )),
                         ],
@@ -1396,9 +1474,10 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                           itemBuilder: (context, index){
                             return Row(
                               children: [
+                                /// Sl. No. .........................
                                 Container(
                                   width: 60,
-                                  height: 30,
+                                  height: 50,
                                   decoration: BoxDecoration(
                                     border: Border(
                                       left: BorderSide(color: Colors.blue, width: 1),
@@ -1406,15 +1485,17 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                     ),
                                   ),
                                   child: Center(
-                                      child: Text((index+1).toString()+".", style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w600),)
+                                      child: Text((index+1).toString()+".", style: TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.w500),)
                                   ),
                                 ),
+
+                                /// Description .........................
                                 Expanded(
                                     flex: 5,
                                     child: Container(
                                       padding: EdgeInsets.all(5),
                                       width: 80,
-                                      height: 30,
+                                      height: 50,
                                       decoration: BoxDecoration(
                                         border: Border(
                                           left: BorderSide(color: Colors.blue, width: 1),
@@ -1423,19 +1504,20 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
 
                                       ),
                                       child: Row(
-                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        mainAxisAlignment: MainAxisAlignment.end,
                                         children: [
                                           Expanded(child: Text(invoice_item_details[index].description.toString(),style: TextStyle(fontSize: 14, color: Colors.black,fontWeight: FontWeight.w500,),softWrap: true, overflow: TextOverflow.fade,)),
                                         ],
                                       ),
                                     )),
 
+                                /// HSN /SAC ............................
                                 Expanded(
                                     flex: 3,
                                     child: Container(
                                       padding: EdgeInsets.all(5),
                                       width: 80,
-                                      height: 30,
+                                      height: 50,
                                       decoration: BoxDecoration(
                                         border: Border(
                                           left: BorderSide(color: Colors.blue, width: 1),
@@ -1443,19 +1525,41 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                         ),
                                       ),
                                       child: Row(
-                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        mainAxisAlignment: MainAxisAlignment.end,
+                                        children: [
+                                          Text(invoice_item_details[index].hsn.toString(),style: TextStyle(fontSize: 14, color: Colors.black,fontWeight: FontWeight.w500),),
+                                        ],
+                                      ),
+                                    )),
+
+                                ///Price ..............................
+                                Expanded(
+                                    flex: 3,
+                                    child: Container(
+                                      padding: EdgeInsets.all(5),
+                                      width: 80,
+                                      height: 50,
+                                      decoration: BoxDecoration(
+                                        border: Border(
+                                          left: BorderSide(color: Colors.blue, width: 1),
+                                          bottom: BorderSide(color: Colors.blue, width: 1),
+                                        ),
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.end,
                                         children: [
                                           Text(invoice_item_details[index].price.toString(),style: TextStyle(fontSize: 14, color: Colors.black,fontWeight: FontWeight.w500),),
                                         ],
                                       ),
                                     )),
 
+                                ///Quantity ............................
                                 Expanded(
                                     flex: 3,
                                     child: Container(
                                       padding: EdgeInsets.all(5),
                                       width: 80,
-                                      height: 30,
+                                      height: 50,
                                       decoration: BoxDecoration(
                                         border: Border(
                                           left: BorderSide(color: Colors.blue, width: 1),
@@ -1463,19 +1567,44 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                         ),
                                       ),
                                       child: Row(
-                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        mainAxisAlignment: MainAxisAlignment.end,
                                         children: [
                                           Text(invoice_item_details[index].quantity.toString(),style: TextStyle(fontSize: 14, color: Colors.black,fontWeight: FontWeight.w500),),
                                         ],
                                       ),
                                     )),
 
+                                ///Gst ............................
                                 Expanded(
                                     flex: 3,
                                     child: Container(
                                       padding: EdgeInsets.all(5),
                                       width: 80,
-                                      height: 30,
+                                      height: 50,
+                                      decoration: BoxDecoration(
+                                        border: Border(
+                                          left: BorderSide(color: Colors.blue, width: 1),
+                                          bottom: BorderSide(color: Colors.blue, width: 1),
+                                        ),
+                                      ),
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.end,
+                                        children: [
+                                          Text(invoice_item_details[index].gst.toString(),style: TextStyle(fontSize: 12, color: Colors.black,fontWeight: FontWeight.w500),),
+                                          SizedBox(height: 3,),
+                                          Text(invoice_item_details[index].gst_percentage.toString()+"%",style: TextStyle(fontSize: 12, color: Colors.black,fontWeight: FontWeight.w500),),
+                                        ],
+                                      ),
+                                    )),
+
+                                ///Total ............................
+                                Expanded(
+                                    flex: 3,
+                                    child: Container(
+                                      padding: EdgeInsets.all(5),
+                                      width: 80,
+                                      height: 50,
                                       decoration: BoxDecoration(
                                         border: Border(
                                           left: BorderSide(color: Colors.blue, width: 1),
@@ -1505,7 +1634,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                             children: [
                               Text("Subtotal", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
                               SizedBox(height: 2,),
-                              Text("GST ($gst_percentage%)", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
+                              Text("GST", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
                               SizedBox(height: 2,),
                               Text("Other charges", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
                               SizedBox(height: 2,),
@@ -1551,6 +1680,17 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                           ),
                         ],
                       ),
+                      SizedBox(height: 30,),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Container(
+                                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                                color: Colors.grey.shade300,
+                                child: Text("Total: "+amountToWords(int.parse(double.parse(grand_total).round().toString())), style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.black),)
+                            ),
+                          ],
+                        ),
                       SizedBox(height: 50,),
 
                       Text("COMMENTS OR SPECIAL INSTRUCTIONS:",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 14,color: Colors.black),),
@@ -1584,7 +1724,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
 
 
 
-  generatePdf(String invoice_no, String invoice_date, String recipient_details,  List<noteditableInvoiceItem> invoice_items, String subtotal, String gst_percentage, String gst, String other_charges, String grand_total, String paid, String due, String comments) async {
+  generatePdf(String invoice_no, String invoice_date, String billing_details, String shipping_details,  List<noteditableInvoiceItem> invoice_items, String subtotal, String gst, String other_charges, String grand_total, String paid, String due, String comments) async {
     final invoiceLogo = await getAssetsImage("assets/logo/logo.png");
     List<pw.Widget> widgets = [];
 
@@ -1617,7 +1757,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
           mainAxisAlignment: pw.MainAxisAlignment.start,
           crossAxisAlignment: pw.CrossAxisAlignment.end,
           children: [
-            pw.Text("INVOICE",style: pw.TextStyle(fontSize: 18,fontWeight:pw.FontWeight.bold,color: PdfColors.black),),
+            pw.Text("TAX INVOICE",style: pw.TextStyle(fontSize: 16,fontWeight:pw.FontWeight.bold,color: PdfColors.black),),
             pw.SizedBox(height: 5,),
             pw.Text("Invoice Number $invoice_no",style: pw.TextStyle(fontSize: 12,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
             pw.Text("Invoice Date "+formattedDate(invoice_date),style: pw.TextStyle(fontSize: 12,fontWeight: pw.FontWeight.normal,color: PdfColors.black),)
@@ -1629,8 +1769,34 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
 
     widgets.add( pw.SizedBox(height: 30,),);
 
-    widgets.add(pw.Text("TO :",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 13,color: PdfColors.black),),);
-    widgets.add(pw.Text(recipient_details,style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 13,color: PdfColors.black),),);
+    widgets.add(
+      pw.Row(
+        children: [
+          pw.Expanded(
+            child: pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                pw.Text("Billing Address :",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 12,color: PdfColors.black),),
+                pw.Text(billing_details,style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 10,color: PdfColors.black),),
+              ]
+            )
+          ),
+
+          pw.SizedBox(width: 25),
+
+          pw.Expanded(
+              child: pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    pw.Text("Shipping Address :",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 12,color: PdfColors.black),),
+                    pw.Text(shipping_details,style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 10,color: PdfColors.black),),
+                  ]
+              )
+          )
+        ],
+      ),
+    );
+
     widgets.add(pw.SizedBox(height: 30,),);
 
 
@@ -1638,18 +1804,20 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
 
     widgets.add(pw.Table.fromTextArray(
         data: [
-          ['Sl. No.','Description', 'Quantity', 'Price', 'Total'],
+          ['Sl. No.','Description', 'HSN/SAC', 'Quantity', 'Price', 'GST', 'Total'],
           ...invoice_items.asMap().entries.map((item) => [
             (item.key+1).toString()+".",
             item.value.description.toString(),
+            item.value.hsn.toString(),
             item.value.quantity.toString(),
             item.value.price.toString(),
+            item.value.gst.toString()+"\n"+item.value.gst_percentage.toString()+"%",
             item.value.totalAmount.toString(),
           ]).toList(),
         ],
         cellAlignment: pw.Alignment.centerRight,
         cellStyle: pw.TextStyle(fontWeight: pw.FontWeight.normal),
-        headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+        headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10),
         border: pw.TableBorder.all(width: 1, color: PdfColors.blue),
         headerDecoration: pw.BoxDecoration(
           color: PdfColors.blue100,
@@ -1660,6 +1828,8 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
           2:pw.FlexColumnWidth(2),
           3:pw.FlexColumnWidth(2),
           4:pw.FlexColumnWidth(2),
+          5:pw.FlexColumnWidth(2),
+          6:pw.FlexColumnWidth(2),
         }
     ),);
 
@@ -1674,7 +1844,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
           crossAxisAlignment:pw. CrossAxisAlignment.start,
           children: [
             pw.Text("Subtotal", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-            pw.Text("GST ($gst_percentage%)", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+            pw.Text("GST", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
             pw.Text("Other charges", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
             pw.Text("Grand Total", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
             pw.Text("Paid", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
@@ -1703,6 +1873,18 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
             pw.Text(paid, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
             pw.Text(due, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
           ],
+        ),
+      ],
+    ),);
+
+    widgets.add(pw.SizedBox(height: 30,),);
+    widgets.add(pw.Row(
+      mainAxisAlignment: pw.MainAxisAlignment.end,
+      children: [
+        pw.Container(
+            padding: pw.EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+            color: PdfColors.grey200,
+            child: pw.Text("Total: "+amountToWords(int.parse(double.parse(grand_total).round().toString())), style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold, color: PdfColors.grey900),)
         ),
       ],
     ),);
@@ -1801,7 +1983,6 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
 
 
   String capitalizeSentence(String sentence) {
-    print(sentence);
     if(sentence.length == 0){
       return "";
     }
