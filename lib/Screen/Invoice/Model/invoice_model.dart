@@ -4,21 +4,21 @@ class InvoiceModel {
   String? invoiceNo;
   String? grandTotal;
   String? date;
-  String? recipientDetails;
+  String? billingAddress;
 
   InvoiceModel(
       {this.invoiceId,
         this.invoiceNo,
         this.grandTotal,
         this.date,
-        this.recipientDetails});
+        this.billingAddress});
 
   InvoiceModel.fromJson(Map<String, dynamic> json) {
     invoiceId = json['invoice_id'];
     invoiceNo = json['invoice_no'];
     grandTotal = json['grand_total'];
     date = json['date'];
-    recipientDetails = json['customer_details'];
+    billingAddress = json['billing_address'];
   }
 
   Map<String, dynamic> toJson() {
@@ -27,7 +27,7 @@ class InvoiceModel {
     data['invoice_no'] = this.invoiceNo;
     data['grand_total'] = this.grandTotal;
     data['date'] = this.date;
-    data['customer_details'] = this.recipientDetails;
+    data['billing_address'] = this.billingAddress;
     return data;
   }
 }

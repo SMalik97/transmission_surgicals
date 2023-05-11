@@ -9,6 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart' as getX;
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
+import 'package:number_to_words/number_to_words.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import '../../../Utils/urls.dart';
@@ -29,9 +30,9 @@ class _InvoiceListState extends State<InvoiceList> {
   bool isListLoading=true;
   bool isInvoiceLoading=false;
   int selectedIndex=0;
-  String selectedInvoiceId="", selectedInvoiceNumber="", selectedInvoiceRecipientDetails="", selectedInvoiceSubtotal="";
+  String selectedInvoiceId="", selectedInvoiceNumber="", selectedInvoiceShippingAddress="", selectedInvoiceBillingAddress="", selectedInvoiceSubtotal="";
   String selectedInvoiceGst="", selectedInvoiceOther_charges="", selectedInvoiceGrand_total="", selectedInvoicePaid="";
-  String selectedInvoiceDue="", selectedInvoiceDate="", selectedInvoiceCustom_note="", selectedInvoiceGst_percentage="";
+  String selectedInvoiceDue="", selectedInvoiceDate="", selectedInvoiceCustom_note="";
   final pdf = pw.Document();
   late Uint8List pdf_bytes;
 
@@ -181,7 +182,7 @@ class _InvoiceListState extends State<InvoiceList> {
                                               Column(
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
-                                                  Text(invoice_list[index].recipientDetails.toString(), style: TextStyle(fontWeight: FontWeight.w500, color: Colors.white.withOpacity(0.90), fontSize: 13),),
+                                                  Text(invoice_list[index].billingAddress.toString(), style: TextStyle(fontWeight: FontWeight.w500, color: Colors.white.withOpacity(0.90), fontSize: 13),),
                                                 ],
                                               ),
                                               Column(
@@ -322,7 +323,7 @@ class _InvoiceListState extends State<InvoiceList> {
                                       fontSize: 16.0
                                   );
                                   Timer(Duration(milliseconds: 100),(){
-                                    generatePdf(selectedInvoiceNumber, selectedInvoiceRecipientDetails,  invoice_details_list, selectedInvoiceSubtotal, selectedInvoiceGst_percentage, selectedInvoiceGst, selectedInvoiceOther_charges, selectedInvoiceGrand_total, selectedInvoicePaid, selectedInvoiceDue, selectedInvoiceCustom_note);
+                                    generatePdf(selectedInvoiceNumber, selectedInvoiceBillingAddress, selectedInvoiceShippingAddress,  invoice_details_list, selectedInvoiceSubtotal, selectedInvoiceGst, selectedInvoiceOther_charges, selectedInvoiceGrand_total, selectedInvoicePaid, selectedInvoiceDue, selectedInvoiceCustom_note);
                                   });
                                 },
                                 child: Container(
@@ -427,7 +428,7 @@ class _InvoiceListState extends State<InvoiceList> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
-                              Text("INVOICE",style: GoogleFonts.alata(fontSize: 20,fontWeight: FontWeight.bold,color: Colors.black),),
+                              Text("TAX INVOICE",style: GoogleFonts.alata(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.black),),
                               SizedBox(height: 5,),
                               Text("Invoice Number : "+selectedInvoiceNumber,style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
                               Text("Invoice Date : "+formattedDate(selectedInvoiceDate),style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
@@ -438,8 +439,29 @@ class _InvoiceListState extends State<InvoiceList> {
                       ),
 
                       SizedBox(height: 30,),
-                      Text("TO :",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 18,color: Colors.black),),
-                      Text(selectedInvoiceRecipientDetails,style: TextStyle(fontWeight: FontWeight.w500,fontSize: 13,color: Colors.black),),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text("Billing Address :",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16,color: Colors.black),),
+                                Text(selectedInvoiceBillingAddress,style: TextStyle(fontWeight: FontWeight.w500,fontSize: 13,color: Colors.black),),
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text("Shipping Address :",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16,color: Colors.black),),
+                                Text(selectedInvoiceShippingAddress,style: TextStyle(fontWeight: FontWeight.w500,fontSize: 13,color: Colors.black),),
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
 
                       SizedBox(height: 30,),
 
@@ -448,8 +470,10 @@ class _InvoiceListState extends State<InvoiceList> {
                         columns: [
                           DataColumn(label: Text('Sl. No.'),),
                           DataColumn(label: Text('Description')),
+                          DataColumn(label: Text('HSN/SAC')),
                           DataColumn(label: Text('Quantity')),
                           DataColumn(label: Text('Price')),
+                          DataColumn(label: Text('GST')),
                           DataColumn(label: Text('Total')),
                         ],
                         rows: [
@@ -458,8 +482,10 @@ class _InvoiceListState extends State<InvoiceList> {
                               cells: [
                                 DataCell(Text((item.key + 1).toString() + ".")),
                                 DataCell(Text(item.value.description.toString())),
+                                DataCell(Text(item.value.hsn.toString())),
                                 DataCell(Text(item.value.quantity.toString())),
                                 DataCell(Text(item.value.price.toString())),
+                                DataCell(Text(item.value.gst.toString()+"\n"+item.value.gst_percentage.toString()+"%")),
                                 DataCell(Text(item.value.totalAmount.toString())),
                               ],
                             );
@@ -485,7 +511,7 @@ class _InvoiceListState extends State<InvoiceList> {
                             children: [
                               Text("Subtotal", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
                               SizedBox(height: 2,),
-                              Text("GST ($selectedInvoiceGst_percentage%)", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
+                              Text("GST", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
                               SizedBox(height: 2,),
                               Text("Other charges", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
                               SizedBox(height: 2,),
@@ -531,6 +557,19 @@ class _InvoiceListState extends State<InvoiceList> {
                           ),
                         ],
                       ),
+
+                      SizedBox(height: 30,),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Container(
+                              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                              color: Colors.grey.shade300,
+                              child: Text("Total : "+amountToWords(int.parse(double.parse(selectedInvoiceDue).round().toString())), style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.black),)
+                          ),
+                        ],
+                      ),
+
                       SizedBox(height: 50,),
 
                       Text("COMMENTS OR SPECIAL INSTRUCTIONS:",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 14,color: Colors.black),),
@@ -623,7 +662,8 @@ class _InvoiceListState extends State<InvoiceList> {
       if(jsonData['status']=="Success"){
         selectedInvoiceId=jsonData['invoice_id'];
         selectedInvoiceNumber=jsonData['invoice_no'];
-        selectedInvoiceRecipientDetails=jsonData['customer_details'];
+        selectedInvoiceBillingAddress=jsonData['billing_address'];
+        selectedInvoiceShippingAddress=jsonData['shipping_address'];
         selectedInvoiceSubtotal=jsonData['subtotal'];
         selectedInvoiceGst=jsonData['gst'];
         selectedInvoiceOther_charges=jsonData['other_charges'];
@@ -632,7 +672,6 @@ class _InvoiceListState extends State<InvoiceList> {
         selectedInvoiceDue=jsonData['due'];
         selectedInvoiceDate=jsonData['date'];
         selectedInvoiceCustom_note=jsonData['custom_note'];
-        selectedInvoiceGst_percentage=jsonData['gst_percentage'];
 
 
         invoice_details_list.clear();
@@ -780,7 +819,7 @@ class _InvoiceListState extends State<InvoiceList> {
     }
   }
 
-  generatePdf(String invoice_no, String recipient_details,  List<noteditableInvoiceItem> invoice_items, String subtotal, String gst_percentage, String gst, String other_charges, String grand_total, String paid, String due, String comments) async {
+  generatePdf(String invoice_no, String billing_address,String shipping_address,  List<noteditableInvoiceItem> invoice_items, String subtotal, String gst, String other_charges, String grand_total, String paid, String due, String comments) async {
 
     final invoiceLogo = await getAssetsImage("assets/logo/logo.png");
     List<pw.Widget> widgets = [];
@@ -814,7 +853,7 @@ class _InvoiceListState extends State<InvoiceList> {
           mainAxisAlignment: pw.MainAxisAlignment.start,
           crossAxisAlignment: pw.CrossAxisAlignment.end,
           children: [
-            pw.Text("INVOICE",style: pw.TextStyle(fontSize: 18,fontWeight:pw.FontWeight.bold,color: PdfColors.black),),
+            pw.Text("TAX INVOICE",style: pw.TextStyle(fontSize: 16,fontWeight:pw.FontWeight.bold,color: PdfColors.black),),
             pw.SizedBox(height: 5,),
             pw.Text("Invoice Number $invoice_no",style: pw.TextStyle(fontSize: 12,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
             pw.Text("Invoice Date "+DateFormat('dd/MM/yyyy').format(DateTime.now()),style: pw.TextStyle(fontSize: 12,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
@@ -826,8 +865,32 @@ class _InvoiceListState extends State<InvoiceList> {
 
     widgets.add( pw.SizedBox(height: 30,),);
 
-    widgets.add(pw.Text("TO :",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 13,color: PdfColors.black),),);
-    widgets.add(pw.Text(recipient_details,style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 13,color: PdfColors.black),),);
+    widgets.add(
+        pw.Row(
+          mainAxisAlignment: pw.MainAxisAlignment.start,
+            children: [
+              pw.Expanded(
+                  child:pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
+                    children: [
+                      pw.Text("Billing Address :",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 12,color: PdfColors.black),),
+                      pw.Text(billing_address,style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 11,color: PdfColors.black),),
+                    ]
+                  )
+              ),
+              pw.SizedBox(width: 25),
+              pw.Expanded(
+                  child:pw.Column(
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        pw.Text("Shipping Address :",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 12,color: PdfColors.black),),
+                        pw.Text(shipping_address,style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 11,color: PdfColors.black),),
+                      ]
+                  )
+              )
+            ]
+        )
+    );
     widgets.add(pw.SizedBox(height: 30,),);
 
 
@@ -835,18 +898,20 @@ class _InvoiceListState extends State<InvoiceList> {
 
     widgets.add(pw.Table.fromTextArray(
         data: [
-          ['Sl. No.','Description', 'Quantity', 'Price', 'Total'],
+          ['Sl. No.','Description','HSN/SAC', 'Quantity', 'Price', 'GST', 'Total'],
           ...invoice_items.asMap().entries.map((item) => [
             (item.key+1).toString()+".",
             item.value.description.toString(),
+            item.value.hsn.toString(),
             item.value.quantity.toString(),
             item.value.price.toString(),
+            item.value.gst.toString()+"\n"+item.value.gst_percentage.toString()+"%",
             item.value.totalAmount.toString(),
           ]).toList(),
         ],
         cellAlignment: pw.Alignment.centerRight,
-        cellStyle: pw.TextStyle(fontWeight: pw.FontWeight.normal),
-        headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+        cellStyle: pw.TextStyle(fontWeight: pw.FontWeight.normal, fontSize: 10),
+        headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10),
         border: pw.TableBorder.all(width: 1, color: PdfColors.blue),
         headerDecoration: pw.BoxDecoration(
           color: PdfColors.blue100,
@@ -871,7 +936,7 @@ class _InvoiceListState extends State<InvoiceList> {
           crossAxisAlignment:pw. CrossAxisAlignment.start,
           children: [
             pw.Text("Subtotal", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-            pw.Text("GST ($gst_percentage%)", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+            pw.Text("GST", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
             pw.Text("Other charges", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
             pw.Text("Grand Total", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
             pw.Text("Paid", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
@@ -904,6 +969,19 @@ class _InvoiceListState extends State<InvoiceList> {
       ],
     ),);
 
+    widgets.add(pw.SizedBox(height: 30,));
+
+    widgets.add(pw.Row(
+      mainAxisAlignment: pw.MainAxisAlignment.end,
+      children: [
+        pw.Container(
+            padding: pw.EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+            color: PdfColors.grey200,
+            child: pw.Text("Total : "+amountToWords(int.parse(double.parse(selectedInvoiceDue).round().toString())), style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold, color: PdfColors.grey900),)
+        ),
+      ],
+    ),);
+
     widgets.add(pw.SizedBox(height: 50,),);
 
     widgets.add(pw.Text("COMMENTS OR SPECIAL INSTRUCTIONS:",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 12,color: PdfColors.black),),);
@@ -925,7 +1003,10 @@ class _InvoiceListState extends State<InvoiceList> {
     pdf.addPage(
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
-        build: (context) => widgets,
+        build: (context) {
+           return widgets;
+        }
+
       ),
     );
 
@@ -957,6 +1038,39 @@ class _InvoiceListState extends State<InvoiceList> {
         selectedIndex = i;
       }
     }
+  }
+
+
+  String amountToWords(int amount) {
+    if(amount==0){
+      return "";
+    }
+
+    String words = capitalizeSentence(NumberToWord().convert('en-in', amount).trim()) + ' rupees only';
+
+    return words;
+  }
+
+  String capitalizeSentence(String sentence) {
+    if(sentence.length == 0){
+      return "";
+    }
+    List<String> words = sentence.split(' ');
+    List<String> capitalizedWords = [];
+
+    String capitalizedWord="";
+    for (String word in words) {
+      if(word.length>=2){
+        capitalizedWord = word.substring(0, 1).toUpperCase() + word.substring(1);
+      }else{
+        capitalizedWord = word.substring(0, 1).toUpperCase();
+      }
+
+      capitalizedWords.add(capitalizedWord);
+    }
+
+    String capitalizedSentence = capitalizedWords.join(' ');
+    return capitalizedSentence;
   }
 
 

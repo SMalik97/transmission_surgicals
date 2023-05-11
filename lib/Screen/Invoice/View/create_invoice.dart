@@ -1046,14 +1046,14 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                         ],
                       ),
                       SizedBox(height: 30,),
-                      if(amountToWords(grand_total.round()).isNotEmpty)
+                      if(amountToWords(due_amount.round()).isNotEmpty)
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Container(
                               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                               color: Colors.grey.shade300,
-                              child: Text("Total: "+amountToWords(grand_total.round()), style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.black),)
+                              child: Text("Total : "+amountToWords(due_amount.round()), style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.black),)
                           ),
                         ],
                       ),
@@ -1150,7 +1150,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
     }
     String invoice_item_list=jsonEncode(invoice_items);
     var url = Uri.parse(update_invoice);
-    Map<String, String> body = {"invoice_id":invoice_id,"date":formattedDate2(date_controller.text),"customer_details": billing_address_controller.text.trim(),"subtotal":subtotal.toStringAsFixed(2), "gst":gst.toStringAsFixed(2), "grand_total":grand_total.toStringAsFixed(2),"paid":paid_amount_controller.text.toString(),"due":due_amount.toStringAsFixed(2),"custom_note":comment_controller.text.trim(),"other_charges":other_charges_controller.text,"descriptions":invoice_item_list};
+    Map<String, String> body = {"invoice_id":invoice_id,"date":formattedDate2(date_controller.text),"billing_address": billing_address_controller.text.trim(), "shipping_address":shipping_address_controller.text.trim(),"subtotal":subtotal.toStringAsFixed(2), "gst":gst.toStringAsFixed(2), "grand_total":grand_total.toStringAsFixed(2),"paid":paid_amount_controller.text.toString(),"due":due_amount.toStringAsFixed(2),"custom_note":comment_controller.text.trim(),"other_charges":other_charges_controller.text,"descriptions":invoice_item_list};
     Response response = await post(url, body: body);
     if(response.statusCode==200){
       String myData = response.body;
@@ -1201,7 +1201,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
     }
     String invoice_item_list=jsonEncode(invoice_items);
     var url = Uri.parse(create_invoice);
-    Map<String, String> body = {"customer_details": billing_address_controller.text.trim(),"subtotal":subtotal.toStringAsFixed(2), "gst":gst.toStringAsFixed(2), "grand_total":grand_total.toStringAsFixed(2),"paid":paid_amount_controller.text.toString(),"due":due_amount.toStringAsFixed(2),"custom_note":comment_controller.text.trim(),"other_charges":other_charges_controller.text,"descriptions":invoice_item_list};
+    Map<String, String> body = {"billing_address": billing_address_controller.text.trim(), "shipping_address":shipping_address_controller.text.trim(),"subtotal":subtotal.toStringAsFixed(2), "gst":gst.toStringAsFixed(2), "grand_total":grand_total.toStringAsFixed(2),"paid":paid_amount_controller.text.toString(),"due":due_amount.toStringAsFixed(2),"custom_note":comment_controller.text.trim(),"other_charges":other_charges_controller.text,"descriptions":invoice_item_list};
     Response response = await post(url, body: body);
     if(response.statusCode==200){
       String myData = response.body;
@@ -1687,7 +1687,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                             Container(
                                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                                 color: Colors.grey.shade300,
-                                child: Text("Total: "+amountToWords(int.parse(double.parse(grand_total).round().toString())), style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.black),)
+                                child: Text("Total: "+amountToWords(int.parse(due_amount.round().toString())), style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.black),)
                             ),
                           ],
                         ),
@@ -1884,7 +1884,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
         pw.Container(
             padding: pw.EdgeInsets.symmetric(horizontal: 20, vertical: 5),
             color: PdfColors.grey200,
-            child: pw.Text("Total: "+amountToWords(int.parse(double.parse(grand_total).round().toString())), style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold, color: PdfColors.grey900),)
+            child: pw.Text("Total : "+amountToWords(int.parse(due_amount.round().toString())), style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold, color: PdfColors.grey900),)
         ),
       ],
     ),);
@@ -1978,9 +1978,6 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
 
     return words;
   }
-
-
-
 
   String capitalizeSentence(String sentence) {
     if(sentence.length == 0){
