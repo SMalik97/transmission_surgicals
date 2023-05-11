@@ -316,7 +316,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                 child: CircularProgressIndicator(),
               ),
               SizedBox(height: 5,),
-              Text("Getting ready...", style: TextStyle(color: Colors.green, fontWeight: FontWeight.w600,fontSize: 15),)
+              Text("Getting ready...", style: TextStyle(color: Colors.blue, fontWeight: FontWeight.w600,fontSize: 15),)
             ],
           ),
         ),
@@ -342,11 +342,12 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
       if(jsonData['status']=="Success"){
         invoice_no=jsonData['invoice_no'];
         invoice_date=jsonData['date'];
-        billing_address_controller.text=jsonData['customer_details'];
+        billing_address_controller.text=jsonData['billing_address'];
+        shipping_address_controller.text=jsonData['shipping_address'];
         subtotal=double.parse(jsonData['subtotal']);
         gst=double.parse(jsonData['gst']);
         other_charges_controller.text=jsonData['other_charges'];
-        grand_total=int.parse(jsonData['grand_total']);
+        grand_total=double.parse(jsonData['grand_total']).round();
         paid_amount_controller.text=jsonData['paid'];
         due_amount=double.parse(jsonData['due']);
         comment_controller.text=jsonData['custom_note'];
@@ -362,11 +363,13 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
 
 
         for(int i =0; i<invoice_details_list.length; i++){
-          editableInvoiceItem eii=editableInvoiceItem(description: invoice_details_list[i].description.toString(), quantity: int.parse(invoice_details_list[i].quantity.toString()), price: double.parse(invoice_details_list[i].price.toString()), totalAmount: double.parse(invoice_details_list[i].totalAmount.toString()),hsn:invoice_details_list[i].totalAmount.toString(), gst: double.parse(invoice_details_list[i].gst.toString()), gst_percentage: double.parse(invoice_details_list[i].gst_percentage.toString()), gst_percentage_controller: TextEditingController(), hsn_controller: TextEditingController() , des_controller: TextEditingController(), price_controller: TextEditingController(), quantity_controller: TextEditingController());
+          editableInvoiceItem eii=editableInvoiceItem(description: invoice_details_list[i].description.toString(), quantity: int.parse(invoice_details_list[i].quantity.toString()), price: double.parse(invoice_details_list[i].price.toString()), totalAmount: double.parse(invoice_details_list[i].totalAmount.toString()),hsn:invoice_details_list[i].hsn.toString(), gst: double.parse(invoice_details_list[i].gst.toString()), gst_percentage: double.parse(invoice_details_list[i].gst_percentage.toString()), gst_percentage_controller: TextEditingController(), hsn_controller: TextEditingController() , des_controller: TextEditingController(), price_controller: TextEditingController(), quantity_controller: TextEditingController());
           invoice_data.add(eii);
           invoice_data[i].des_controller!.text=invoice_details_list[i].description.toString();
           invoice_data[i].price_controller!.text=invoice_details_list[i].price.toString();
           invoice_data[i].quantity_controller!.text=invoice_details_list[i].quantity.toString();
+          invoice_data[i].gst_percentage_controller!.text=invoice_details_list[i].gst_percentage.toString();
+          invoice_data[i].hsn_controller!.text=invoice_details_list[i].hsn.toString();
         }
 
         setState(() {});
