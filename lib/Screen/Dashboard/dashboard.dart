@@ -103,14 +103,14 @@ class _DashboardState extends State<Dashboard> {
                             onTap: (){
                               selectChallan();
                             },
-                            child: drawerItem(isRoadChallanSelected, "Road Challan", Icons.taxi_alert)
+                            child: drawerItem(isRoadChallanSelected, "Delivery Challan", Icons.taxi_alert)
                         ),
                         SizedBox(height: 5,),
                         InkWell(
                             onTap: (){
                               selectInvoice();
                             },
-                            child: drawerItem(isInvoiceSelected, "Invoice", Icons.sticky_note_2_outlined)
+                            child: drawerItem(isInvoiceSelected, "Tax Invoice", Icons.sticky_note_2_outlined)
                         ),
                         SizedBox(height: 5,),
                         InkWell(
@@ -358,7 +358,7 @@ class _DashboardState extends State<Dashboard> {
                     ),
                     child: Column(
                       children: [
-                        Text("ROAD CHALLAN", style: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.w600),),
+                        Text("DELIVERY CHALLAN", style: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.w600),),
                         SizedBox(height: 25,),
                         Row(
                           children: [
@@ -452,7 +452,7 @@ class _DashboardState extends State<Dashboard> {
                                 color: Color(0xff003366).withOpacity(0.8)
                             ),
                             child: Center(
-                              child: Text("Manage Road Challan", style: TextStyle(color: Colors.white,fontWeight: FontWeight.w500, fontSize: 14),),
+                              child: Text("Manage Delivery Challan", style: TextStyle(color: Colors.white,fontWeight: FontWeight.w500, fontSize: 14),),
                             ),
                           ),
                         )

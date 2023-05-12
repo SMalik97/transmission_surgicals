@@ -7,6 +7,7 @@ import 'package:get/get.dart' as getX;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
+import 'package:number_to_words/number_to_words.dart';
 import 'package:pdf/pdf.dart';
 import 'package:transmission_surgicals/Screen/RoadChallan/Model/editableChallanModel.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -28,20 +29,18 @@ class _CreateChallanState extends State<CreateChallan> {
   late Uint8List pdf_bytes;
   Widget placeHolder=Container();
   final recipient_controller=TextEditingController();
-  final gst_controller=TextEditingController();
-  final other_charges_controller=TextEditingController();
   final gst_no_controller=TextEditingController();
   final vehicle_no_controller=TextEditingController();
   final supply_place_controller=TextEditingController();
 
   List<editableChallanModel> editable_challan_list=[];
 
-  double subtotal=0.00, gst=0.00, grand_total=0.00;
+  double grand_total=0.00;
   String purpose="";
   final pdf = pw.Document();
 
   String selectedChallanId="", selectedChallanNumber="", selectedChallanDate="", selectedChallanRecipientDetails="", selectedChallanGstno="", selectedChallanVehicleno="", selectedChallanSupplyPlace="", selectedGstPercentage="";
-  String selectedChallanSubtotal="0.00", selectedChallanGst="0.00", selectedChallanOther_charges="0.00", selectedChallanGrand_total="0.00";
+  String selectedChallanGrand_total="0.00";
   List<notEditableChallanItem> challan_list=[];
 
 
@@ -197,9 +196,7 @@ class _CreateChallanState extends State<CreateChallan> {
   @override
   void initState() {
     if(getX.Get.parameters['id'] == null){
-      other_charges_controller.text="0.00";
-      gst_controller.text="3.0";
-      editableChallanModel eii=editableChallanModel(description: "", quantity: 0, rate: 0.00, totalAmount: 0.00, des_controller: TextEditingController(), price_controller: TextEditingController(), quantity_controller: TextEditingController());
+      editableChallanModel eii=editableChallanModel(description: "", quantity: 0, hsn: "", totalAmount: 0.00, des_controller: TextEditingController(), hsn_controller: TextEditingController(), quantity_controller: TextEditingController(),amount_controller: TextEditingController());
       editable_challan_list.add(eii);
 
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -233,6 +230,7 @@ class _CreateChallanState extends State<CreateChallan> {
     super.initState();
   }
 
+  ///Editable challan view
   Widget createChallanView(String challan_no, String challan_date){
     return StatefulBuilder(
       builder: (context, setState) {
@@ -356,9 +354,6 @@ class _CreateChallanState extends State<CreateChallan> {
                                       border: InputBorder.none
                                   ),
                                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),
-                                  onChanged: (v){
-                                    calculateChallan();
-                                  },
                                 ),
                               ),
                               Container(
@@ -376,9 +371,7 @@ class _CreateChallanState extends State<CreateChallan> {
                                       border: InputBorder.none
                                   ),
                                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),
-                                  onChanged: (v){
-                                    calculateChallan();
-                                  },
+
                                 ),
                               ),
                               Container(
@@ -396,9 +389,7 @@ class _CreateChallanState extends State<CreateChallan> {
                                       border: InputBorder.none
                                   ),
                                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),
-                                  onChanged: (v){
-                                    calculateChallan();
-                                  },
+
                                 ),
                               ),
                             ],
@@ -457,7 +448,7 @@ class _CreateChallanState extends State<CreateChallan> {
                                     color: Colors.black54
                                 ),
                                 child: Center(
-                                    child: Text("Price", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),)
+                                    child: Text("HSN/SAC", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),)
                                 ),
                               )),
 
@@ -494,7 +485,7 @@ class _CreateChallanState extends State<CreateChallan> {
                                     color: Colors.black54
                                 ),
                                 child: Center(
-                                    child: Text("Total", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),)
+                                    child: Text("MRP", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),)
                                 ),
                               )),
                         ],
@@ -506,6 +497,7 @@ class _CreateChallanState extends State<CreateChallan> {
                           itemBuilder: (context, index){
                             return Row(
                               children: [
+                                /// Sl. No. ....................
                                 Container(
                                   width: 60,
                                   constraints: BoxConstraints(
@@ -522,6 +514,7 @@ class _CreateChallanState extends State<CreateChallan> {
                                   ),
                                 ),
 
+                                ///Description ............
                                 Expanded(
                                     flex: 5,
                                     child: Container(
@@ -548,6 +541,7 @@ class _CreateChallanState extends State<CreateChallan> {
                                       ),
                                     )),
 
+                                ///HSN ..............
                                 Expanded(
                                     flex: 3,
                                     child: Container(
@@ -563,32 +557,21 @@ class _CreateChallanState extends State<CreateChallan> {
                                         ),
                                       ),
                                       child: TextField(
-                                        controller: editable_challan_list[index].price_controller,
-                                        inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*$'))],
+                                        controller: editable_challan_list[index].hsn_controller,
                                         decoration: InputDecoration(
                                             isDense: true,
                                             border: InputBorder.none
                                         ),
                                         onChanged: (v){
-                                          if(editable_challan_list[index].price_controller!.text.isNotEmpty){
-                                            editable_challan_list[index].rate = double.parse(editable_challan_list[index].price_controller!.text);
+                                          if(editable_challan_list[index].hsn_controller!.text.isNotEmpty){
+                                            editable_challan_list[index].hsn =editable_challan_list[index].hsn_controller!.text;
                                           }
 
-                                          if(editable_challan_list[index].price_controller!.text.isEmpty || editable_challan_list[index].quantity_controller!.text.isEmpty){
-                                            setState(() {
-                                              editable_challan_list[index].totalAmount = 0.00;
-                                            });
-                                          }else{
-                                            double r = double.parse(editable_challan_list[index].price_controller!.text) * double.parse(editable_challan_list[index].quantity_controller!.text);
-                                            setState(() {
-                                              editable_challan_list[index].totalAmount =r;
-                                            });
-                                          }
-                                          calculateChallan();
                                         },
                                       ),
                                     )),
 
+                                ///Quantity .......
                                 Expanded(
                                     flex: 3,
                                     child: Container(
@@ -615,21 +598,12 @@ class _CreateChallanState extends State<CreateChallan> {
                                           if(editable_challan_list[index].quantity_controller!.text.isNotEmpty){
                                             editable_challan_list[index].quantity = int.parse(editable_challan_list[index].quantity_controller!.text);
                                           }
-                                          if(editable_challan_list[index].price_controller!.text.isEmpty || editable_challan_list[index].quantity_controller!.text.isEmpty){
-                                            setState(() {
-                                              editable_challan_list[index].totalAmount = 0.00;
-                                            });
-                                          }else{
-                                            double r = double.parse(editable_challan_list[index].price_controller!.text) * double.parse(editable_challan_list[index].quantity_controller!.text);
-                                            setState(() {
-                                              editable_challan_list[index].totalAmount =r;
-                                            });
-                                          }
                                           calculateChallan();
                                         },
                                       ),
                                     )),
 
+                                /// MRP .............
                                 Expanded(
                                     flex: 3,
                                     child: Container(
@@ -646,12 +620,23 @@ class _CreateChallanState extends State<CreateChallan> {
                                         ),
 
                                       ),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.end,
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        children: [
-                                          Text(editable_challan_list[index].totalAmount!.toStringAsFixed(2), style: TextStyle(fontSize: 16, color: Colors.black,fontWeight: FontWeight.w500),textAlign: TextAlign.right,),
-                                        ],
+                                      child: TextField(
+                                        controller: editable_challan_list[index].amount_controller,
+                                        inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*$'))],
+                                        decoration: InputDecoration(
+                                            isDense: true,
+                                            border: InputBorder.none
+                                        ),
+                                        onChanged: (v){
+                                          if(editable_challan_list[index].amount_controller!.text.isNotEmpty){
+                                           setState((){
+                                             editable_challan_list[index].totalAmount =double.parse(editable_challan_list[index].amount_controller!.text);
+                                             calculateChallan();
+                                           });
+                                          }
+
+
+                                        },
                                       ),
                                     )),
                               ],
@@ -667,7 +652,7 @@ class _CreateChallanState extends State<CreateChallan> {
                             padding: EdgeInsets.only(top: 5),
                             child: InkWell(
                               onTap: (){
-                                editableChallanModel eii=editableChallanModel(description: "", quantity: 0, rate: 0.00, totalAmount: 0.00, des_controller: TextEditingController(), price_controller: TextEditingController(), quantity_controller: TextEditingController());
+                                editableChallanModel eii=editableChallanModel(description: "", quantity: 0, hsn: "", totalAmount: 0.00, des_controller: TextEditingController(), hsn_controller: TextEditingController(), quantity_controller: TextEditingController(), amount_controller: TextEditingController());
                                 setState(() {
                                   editable_challan_list.add(eii);
                                 });
@@ -685,118 +670,31 @@ class _CreateChallanState extends State<CreateChallan> {
                             mainAxisAlignment: MainAxisAlignment.end,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text("Subtotal", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                                  Row(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      Text("GST (", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                                      Container(
-                                        width: 20,
-                                        child: TextField(
-                                          controller: gst_controller,
-                                          decoration: InputDecoration(
-                                              isDense: true,border: InputBorder.none
-                                          ),
-                                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),
-                                          onChanged: (v){
-                                            calculateChallan();
-                                          },
-                                        ),
-                                      ),
-                                      Text("%)", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                                    ],
-                                  ),
-                                  Transform.translate(
-                                      offset: Offset(0, -7),
-                                  child: Text("Other Charges", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),)
-                                  ),
-                                ],
-                              ),
+                              Text("Total", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
 
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(" : ", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                                  Text(" : ", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                                  Text(" : ", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                                ],
-                              ),
+                              Text(" : ", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
 
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Text(subtotal.toStringAsFixed(2), style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                                  Text(gst.toStringAsFixed(2), style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                                  Transform.translate(
-                                    offset: Offset(2, 0),
-                                    child: Container(
-                                      margin: EdgeInsets.only(top: 3),
-                                      width: 80,
-                                      height: 15,
-                                      child: TextField(
-                                        controller: other_charges_controller,
-                                        decoration: InputDecoration(
-                                            isDense: true,border: InputBorder.none
-                                        ),
-                                        textAlign: TextAlign.right,
-                                        style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),
-                                        onChanged: (v){
-                                          calculateChallan();
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                              Text(grand_total.toStringAsFixed(2), style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
                             ],
                           ),
                         ],
                       ),
 
-                      SizedBox(height: 15,),
-
+                      if(amountToWords(int.parse(grand_total.round().toString())).isNotEmpty)
+                      SizedBox(height: 20,),
+                      if(amountToWords(int.parse(grand_total.round().toString())).isNotEmpty)
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Container(
-                            padding: EdgeInsets.symmetric(horizontal: 3, vertical: 3),
-                            width: 250,
-                            decoration: BoxDecoration(
-                                color: Colors.black.withOpacity(0.1)
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text("Total Amount", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                                  ],
-                                ),
-                                SizedBox(width: 10,),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(" : ", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                                  ],
-                                ),
-                                SizedBox(width: 10,),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Text(grand_total.toStringAsFixed(2), style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                                  ],
-                                ),
-                              ],
-                            ),
+                              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                              color: Colors.grey.shade300,
+                              child: Text("Total: "+amountToWords(int.parse(grand_total.round().toString())), style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.black),)
                           ),
                         ],
                       ),
 
-                      SizedBox(height: 80,),
+                      SizedBox(height: 50,),
                     ],
                   ),
                 ),
@@ -810,31 +708,15 @@ class _CreateChallanState extends State<CreateChallan> {
   }
 
   calculateChallan(){
-    subtotal = 0.00;
-    for(int i=0; i<editable_challan_list.length; i++){
-      subtotal = subtotal + editable_challan_list[i].totalAmount!;
-    }
-    if(gst_controller.text.isNotEmpty){
-      gst=(subtotal*double.parse(gst_controller.text))/100;
-    }else{
-      gst=0.00;
-    }
-    if(other_charges_controller.text.isEmpty){
-      setState(() {
-        grand_total = subtotal + gst;
-      });
-    }else{
-      setState(() {
-        grand_total = subtotal + gst + double.parse(other_charges_controller.text);
-      });
-    }
-
-
-    setState(() {});
+      grand_total = 0.00;
+      for(int i=0; i<editable_challan_list.length; i++){
+          grand_total = grand_total + editable_challan_list[i].totalAmount!;
+      }
   }
 
 
-  Widget challanView(String challan_no, String challan_date, String recipient_details, String gst_no, String vehicle_no, String supply_place, List<notEditableChallanItem> challan_list, String gst_percentage, String subtotal, String gst, String other_charges, String grand_total){
+  ///not editable challan view
+  Widget challanView(String challan_no, String challan_date, String recipient_details, String gst_no, String vehicle_no, String supply_place, List<notEditableChallanItem> challan_list, String grand_total){
     return Expanded(
       child: ListView(
         shrinkWrap: true,
@@ -912,8 +794,8 @@ class _CreateChallanState extends State<CreateChallan> {
                           DataColumn(label: Text('Sl. No.'),),
                           DataColumn(label: Text('Description')),
                           DataColumn(label: Text('Quantity')),
-                          DataColumn(label: Text('Price')),
-                          DataColumn(label: Text('Total')),
+                          DataColumn(label: Text('HSN/SAC')),
+                          DataColumn(label: Text('MRP')),
                         ],
                         rows: [
                           ...challan_list.asMap().entries.map((item) {
@@ -922,7 +804,7 @@ class _CreateChallanState extends State<CreateChallan> {
                                 DataCell(Text((item.key + 1).toString() + ".")),
                                 DataCell(Text(item.value.description.toString())),
                                 DataCell(Text(item.value.quantity.toString())),
-                                DataCell(Text(item.value.rate.toString())),
+                                DataCell(Text(item.value.hsn.toString())),
                                 DataCell(Text(item.value.totalAmount.toString())),
                               ],
                             );
@@ -939,88 +821,32 @@ class _CreateChallanState extends State<CreateChallan> {
                       ),
 
                       SizedBox(height: 5,),
+
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Subtotal", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                              SizedBox(height: 2,),
-                              Text("GST ($gst_percentage%)", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                              SizedBox(height: 2,),
-                              Text("Other charges", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                              SizedBox(height: 2,),
-
-                            ],
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(" : ", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                              SizedBox(height: 2,),
-                              Text(" : ", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                              SizedBox(height: 2,),
-                              Text(" : ", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                              SizedBox(height: 2,),
-
-                            ],
-                          ),
-
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text(subtotal, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                              SizedBox(height: 2,),
-                              Text(gst, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                              SizedBox(height: 2,),
-                              Text(other_charges, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                              SizedBox(height: 2,),
-
-                            ],
-                          ),
+                          Text("Total", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
+                          SizedBox(width: 10,),
+                          Text(" : ", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
+                          SizedBox(width: 10,),
+                          Text(grand_total, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
                         ],
                       ),
-                      SizedBox(height: 15,),
 
+                      SizedBox(height: 30,),
+
+                      if(amountToWords(int.parse(grand_total)).isNotEmpty)
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Container(
-                            padding: EdgeInsets.symmetric(horizontal: 3, vertical: 3),
-                            width: 250,
-                            decoration: BoxDecoration(
-                                color: Colors.black.withOpacity(0.1)
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text("Total Amount", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                                  ],
-                                ),
-                                SizedBox(width: 10,),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(" : ", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                                  ],
-                                ),
-                                SizedBox(width: 10,),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Text(grand_total, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                                  ],
-                                ),
-                              ],
-                            ),
+                              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                              color: Colors.grey.shade300,
+                              child: Text("Total: "+amountToWords(int.parse(grand_total)), style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.black),)
                           ),
                         ],
                       ),
+
                       SizedBox(height: 50,),
 
 
@@ -1050,6 +876,7 @@ class _CreateChallanState extends State<CreateChallan> {
   }
 
 
+  /// create challan api
   createChallan() async {
     setState(() {
       isGenerating = true;
@@ -1059,7 +886,7 @@ class _CreateChallanState extends State<CreateChallan> {
       notEditableChallanItem a = notEditableChallanItem(
           description: editable_challan_list[i].description.toString(),
           quantity: editable_challan_list[i].quantity.toString(),
-          rate: editable_challan_list[i].rate!.toStringAsFixed(2),
+          hsn: editable_challan_list[i].hsn!,
           totalAmount: editable_challan_list[i].totalAmount!.toStringAsFixed(
               2));
       challan_items.add(a);
@@ -1068,13 +895,8 @@ class _CreateChallanState extends State<CreateChallan> {
     var url = Uri.parse(create_challan);
     Map<String, String> body = {
       "recipient_address": recipient_controller.text.trim(),
-      "gst_number": gst_no_controller.text,
       "vehicle_number": vehicle_no_controller.text,
       "supply_place": supply_place_controller.text,
-      "subtotal": subtotal.toStringAsFixed(2),
-      "gst_percentage": gst_controller.text,
-      "gst": gst.toStringAsFixed(2),
-      "other_charges": other_charges_controller.text,
       "total": grand_total.toStringAsFixed(2),
       "challan_items": challan_item_list
     };
@@ -1084,7 +906,7 @@ class _CreateChallanState extends State<CreateChallan> {
       var jsonData = jsonDecode(myData);
       if (jsonData['status'] == "success") {
         selectedChallanNumber = jsonData['challan_no'];
-        generatePdf(selectedChallanId, DateFormat('dd/MM/yyyy').format(DateTime.now()), recipient_controller.text, challan_items, gst_controller.text,subtotal.toStringAsFixed(2), gst.toStringAsFixed(2),other_charges_controller.text, grand_total.toStringAsFixed(2));
+        generatePdf(selectedChallanId, DateFormat('dd/MM/yyyy').format(DateTime.now()), recipient_controller.text, challan_items, grand_total.toStringAsFixed(2));
         setState(() {
           placeHolder = challanView(
               selectedChallanNumber,
@@ -1094,10 +916,6 @@ class _CreateChallanState extends State<CreateChallan> {
               vehicle_no_controller.text,
               supply_place_controller.text,
               challan_items,
-              gst_controller.text,
-              subtotal.toStringAsFixed(2),
-              gst.toStringAsFixed(2),
-              other_charges_controller.text,
               grand_total.toStringAsFixed(2));
         });
       } else {
@@ -1140,7 +958,7 @@ class _CreateChallanState extends State<CreateChallan> {
 
 
 
-  generatePdf(String challan_no, String challan_date, String recipient_details, List<notEditableChallanItem> challan_item_list, String gst_percentage, String subtotal, String gst, String other_charges, String grand_total) async {
+  generatePdf(String challan_no, String challan_date, String recipient_details, List<notEditableChallanItem> challan_item_list, String grand_total) async {
     final invoiceLogo = await getAssetsImage("assets/logo/logo.png");
     List<pw.Widget> widgets = [];
     widgets.add(pw.SizedBox(height: 60,),);
@@ -1183,19 +1001,19 @@ class _CreateChallanState extends State<CreateChallan> {
 
     widgets.add( pw.SizedBox(height: 30,),);
 
-    widgets.add(pw.Text("TO :",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 13,color: PdfColors.black),),);
+    widgets.add(pw.Text("Delivery Challan For :",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 12,color: PdfColors.black),),);
     widgets.add(pw.Text(recipient_details,style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 12,color: PdfColors.black),),);
     widgets.add(pw.SizedBox(height: 30,),);
 
 
     widgets.add(pw.Table.fromTextArray(
         data: [
-          ['Sl. No.','Description', 'Quantity', 'Rate', 'Total'],
+          ['Sl. No.','Description', 'HSN/SAC', 'Quantity', 'MRP'],
           ...challan_item_list.asMap().entries.map((item) => [
             (item.key+1).toString()+".",
             item.value.description.toString(),
+            item.value.hsn.toString(),
             item.value.quantity.toString(),
-            item.value.rate.toString(),
             item.value.totalAmount.toString(),
           ]).toList(),
         ],
@@ -1224,77 +1042,26 @@ class _CreateChallanState extends State<CreateChallan> {
       mainAxisAlignment: pw.MainAxisAlignment.end,
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
-        pw.Column(
-          crossAxisAlignment:pw. CrossAxisAlignment.start,
-          children: [
-            pw.Text("Subtotal", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-            pw.Text("GST ($gst_percentage%)", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-            pw.Text("Other charges", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-          ],
-        ),
-        pw.Column(
-          crossAxisAlignment: pw.CrossAxisAlignment.start,
-          children: [
-            pw.Text(" : ", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-            pw.Text(" : ", style: pw.TextStyle(fontWeight:pw. FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-            pw.Text(" : ", style:pw. TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-          ],
-        ),
+        pw.Text("Subtotal", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+        pw.Text(" : ", style:pw. TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
 
-        pw.Column(
-          crossAxisAlignment: pw.CrossAxisAlignment.end,
-          children: [
-            pw.Text(subtotal, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-            pw.Text(gst, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-            pw.Text(other_charges, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-
-          ],
-        ),
+        pw.Text(grand_total, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
       ],
     ),);
 
 
-    widgets.add(pw.SizedBox(height: 10,),);
 
-    widgets.add(
-      pw.Row(
-        mainAxisAlignment: pw.MainAxisAlignment.end,
-        children: [
-          pw.Container(
-            padding: pw.EdgeInsets.symmetric(horizontal: 3, vertical: 3),
-            width: 250,
-            decoration: pw.BoxDecoration(
-                color: PdfColors.grey300
-            ),
-            child: pw.Row(
-              mainAxisAlignment: pw.MainAxisAlignment.end,
-              children: [
-                pw.Column(
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                  children: [
-                    pw.Text("Total Amount", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-                  ],
-                ),
-                pw.SizedBox(width: 10,),
-                pw.Column(
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                  children: [
-                    pw.Text(" : ", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-                  ],
-                ),
-                pw.SizedBox(width: 10,),
-                pw.Column(
-                  crossAxisAlignment: pw.CrossAxisAlignment.end,
-                  children: [
-                    pw.Text(grand_total, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+    widgets.add(pw.SizedBox(height:20,),);
+    widgets.add(pw.Row(
+      mainAxisAlignment: pw.MainAxisAlignment.end,
+      children: [
+        pw.Container(
+            padding: pw.EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+            color: PdfColors.grey200,
+            child: pw.Text("Total : "+amountToWords(int.parse(grand_total)), style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold, color: PdfColors.grey900),)
+        ),
+      ],
+    ),);
 
 
 
@@ -1361,17 +1128,14 @@ class _CreateChallanState extends State<CreateChallan> {
 
 
         for(int i = 0; i<challan_list.length; i++){
-          editableChallanModel a =editableChallanModel(description: challan_list[i].description, quantity: int.parse(challan_list[i].quantity.toString()), rate: double.parse(challan_list[i].rate!), totalAmount: double.parse(challan_list[i].totalAmount!), des_controller: TextEditingController(), price_controller: TextEditingController(), quantity_controller: TextEditingController());
+          editableChallanModel a =editableChallanModel(description: challan_list[i].description, quantity: int.parse(challan_list[i].quantity.toString()), hsn: challan_list[i].hsn!, totalAmount: double.parse(challan_list[i].totalAmount!), des_controller: TextEditingController(), hsn_controller: TextEditingController(), quantity_controller: TextEditingController(), amount_controller: TextEditingController());
           editable_challan_list .add(a);
           editable_challan_list[i].des_controller!.text=challan_list[i].description.toString();
           editable_challan_list[i].quantity_controller!.text=challan_list[i].quantity.toString();
-          editable_challan_list[i].price_controller!.text=challan_list[i].rate.toString();
+          editable_challan_list[i].hsn_controller!.text=challan_list[i].hsn.toString();
         }
 
-        selectedChallanSubtotal = jsonData['subtotal'].toString();
         selectedGstPercentage = jsonData['gst_percentage'].toString();
-        selectedChallanGst = jsonData['gst'].toString();
-        selectedChallanOther_charges = jsonData['other_charges'].toString();
         selectedChallanGrand_total = jsonData['total'].toString();
 
 
@@ -1380,9 +1144,6 @@ class _CreateChallanState extends State<CreateChallan> {
           gst_no_controller.text=selectedChallanGstno;
           vehicle_no_controller.text=selectedChallanVehicleno;
           supply_place_controller.text=selectedChallanSupplyPlace;
-          subtotal = double.parse(selectedChallanSubtotal);
-          gst=double.parse(selectedChallanGst);
-          other_charges_controller.text = selectedChallanOther_charges;
           grand_total = double.parse(selectedChallanGrand_total);
 
           placeHolder=createChallanView("########",DateFormat('dd/MM/yyyy').format(DateTime.now()));
@@ -1411,7 +1172,7 @@ class _CreateChallanState extends State<CreateChallan> {
     });
     List<notEditableChallanItem> not_challan_items=[];
     for(int i =0; i<editable_challan_list.length; i++){
-      notEditableChallanItem a = notEditableChallanItem(description: editable_challan_list[i].description.toString(),quantity: editable_challan_list[i].quantity.toString(),rate: editable_challan_list[i].rate!.toStringAsFixed(2),totalAmount: editable_challan_list[i].totalAmount!.toStringAsFixed(2));
+      notEditableChallanItem a = notEditableChallanItem(description: editable_challan_list[i].description.toString(),quantity: editable_challan_list[i].quantity.toString(),hsn: editable_challan_list[i].hsn!,totalAmount: editable_challan_list[i].totalAmount!.toStringAsFixed(2));
       not_challan_items.add(a);
     }
     String challan_item_list=jsonEncode(not_challan_items);
@@ -1422,10 +1183,6 @@ class _CreateChallanState extends State<CreateChallan> {
       "gst_number": gst_no_controller.text,
       "vehicle_number": vehicle_no_controller.text,
       "supply_place": supply_place_controller.text,
-      "subtotal": subtotal.toStringAsFixed(2),
-      "gst_percentage": gst_controller.text,
-      "gst": gst.toStringAsFixed(2),
-      "other_charges": other_charges_controller.text,
       "total": grand_total.toStringAsFixed(2),
       "challan_items": challan_item_list
     };
@@ -1434,7 +1191,7 @@ class _CreateChallanState extends State<CreateChallan> {
       String myData = response.body;
       var jsonData = jsonDecode(myData);
       if (jsonData['status'] == "success") {
-        generatePdf(selectedChallanNumber, formattedDate(selectedChallanDate), recipient_controller.text, not_challan_items, gst_controller.text,subtotal.toStringAsFixed(2), gst.toStringAsFixed(2),other_charges_controller.text, grand_total.toStringAsFixed(2));
+        generatePdf(selectedChallanNumber, formattedDate(selectedChallanDate), recipient_controller.text, not_challan_items, grand_total.toStringAsFixed(2));
         setState(() {
           placeHolder = challanView(
               selectedChallanNumber,
@@ -1444,10 +1201,6 @@ class _CreateChallanState extends State<CreateChallan> {
               vehicle_no_controller.text,
               supply_place_controller.text,
               not_challan_items,
-              gst_controller.text,
-              subtotal.toStringAsFixed(2),
-              gst.toStringAsFixed(2),
-              other_charges_controller.text,
               grand_total.toStringAsFixed(2));
         });
       } else {
@@ -1480,6 +1233,39 @@ class _CreateChallanState extends State<CreateChallan> {
           fontSize: 16.0
       );
     }
+  }
+
+
+  String amountToWords(int amount) {
+    if(amount==0){
+      return "";
+    }
+
+    String words = capitalizeSentence(NumberToWord().convert('en-in', amount).trim()) + ' rupees only';
+
+    return words;
+  }
+
+  String capitalizeSentence(String sentence) {
+    if(sentence.length == 0){
+      return "";
+    }
+    List<String> words = sentence.split(' ');
+    List<String> capitalizedWords = [];
+
+    String capitalizedWord="";
+    for (String word in words) {
+      if(word.length>=2){
+        capitalizedWord = word.substring(0, 1).toUpperCase() + word.substring(1);
+      }else{
+        capitalizedWord = word.substring(0, 1).toUpperCase();
+      }
+
+      capitalizedWords.add(capitalizedWord);
+    }
+
+    String capitalizedSentence = capitalizedWords.join(' ');
+    return capitalizedSentence;
   }
 
 

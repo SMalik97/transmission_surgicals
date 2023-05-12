@@ -53,7 +53,7 @@ class _ChallanListState extends State<ChallanList> {
             child: Row(
               children: [
                 SizedBox(width: 15,),
-                Text("Road Challan", style: TextStyle(fontWeight: FontWeight.w500, color: Colors.white, fontSize: 18),),
+                Text("Delivery Challan", style: TextStyle(fontWeight: FontWeight.w500, color: Colors.white, fontSize: 18),),
                 Expanded(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
@@ -455,7 +455,7 @@ class _ChallanListState extends State<ChallanList> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
-                              Text("Road Challan",style: GoogleFonts.alata(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.black),),
+                              Text("Delivery Challan",style: GoogleFonts.alata(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.black),),
                               SizedBox(height: 5,),
                               Text("Challan Number : "+selectedChallanNumber,style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
                               Text("Challan Date : "+formattedDate(selectedChallanDate),style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
@@ -492,8 +492,8 @@ class _ChallanListState extends State<ChallanList> {
                               cells: [
                                 DataCell(Text((item.key + 1).toString() + ".")),
                                 DataCell(Text(item.value.description.toString())),
+                                DataCell(Text(item.value.hsn.toString())),
                                 DataCell(Text(item.value.quantity.toString())),
-                                DataCell(Text(item.value.rate.toString())),
                                 DataCell(Text(item.value.totalAmount.toString())),
                               ],
                             );
@@ -734,7 +734,7 @@ class _ChallanListState extends State<ChallanList> {
           mainAxisAlignment: pw.MainAxisAlignment.start,
           crossAxisAlignment: pw.CrossAxisAlignment.end,
           children: [
-            pw.Text("Road Challan",style: pw.TextStyle(fontSize: 16,fontWeight:pw.FontWeight.bold,color: PdfColors.black),),
+            pw.Text("Delivery Challan",style: pw.TextStyle(fontSize: 16,fontWeight:pw.FontWeight.bold,color: PdfColors.black),),
             pw.SizedBox(height: 5,),
             pw.Text("Challan Number : $challan_no",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
             pw.Text("Challan Date : "+challan_date,style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
@@ -756,8 +756,8 @@ class _ChallanListState extends State<ChallanList> {
           ...challan_item_list.asMap().entries.map((item) => [
             (item.key+1).toString()+".",
             item.value.description.toString(),
+            item.value.hsn.toString(),
             item.value.quantity.toString(),
-            item.value.rate.toString(),
             item.value.totalAmount.toString(),
           ]).toList(),
         ],
