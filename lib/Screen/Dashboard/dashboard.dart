@@ -5,7 +5,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart';
 import 'package:transmission_surgicals/Utils/shared_preferences.dart';
-
+import 'package:get/get.dart' as getX;
+import '../../Service/auth_service.dart';
 import '../../Utils/urls.dart';
 import '../Invoice/View/invoice_list.dart';
 import '../Product/View/products.dart';
@@ -133,16 +134,84 @@ class _DashboardState extends State<Dashboard> {
                                   thickness: 0.5,
                                   color: Colors.white30,
                                 ),
-                                Container(
-                                  height: 32,
-                                  color: Colors.red.withOpacity(0.2),
-                                  child: Row(
-                                    children: [
-                                      SizedBox(width: 10,),
-                                      Icon(Icons.power_settings_new, color: Colors.red,size: 20,),
-                                      SizedBox(width: 8,),
-                                      Text("LOGOUT",style: TextStyle(color: Colors.red,fontWeight: FontWeight.w600,fontSize: 14),)
-                                    ],
+                                InkWell(
+                                  onTap: (){
+                                    Dialog delete = Dialog(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(5),
+                                      ),
+                                      child: Wrap(
+                                        children: [
+                                          Container(
+                                            padding: EdgeInsets.symmetric(horizontal: 20),
+                                            width: 320,
+                                            color: Colors.white,
+                                            child: Column(
+                                              children: [
+                                                SizedBox(height: 15,),
+                                                Text("Confirmation?", style: TextStyle(color: Colors.black,fontSize: 16,fontWeight: FontWeight.bold),),
+                                                SizedBox(height: 15,),
+                                                Text("Are you sure you want to logout from your account?",style: TextStyle(color: Colors.black,fontSize: 14,fontWeight: FontWeight.w500)),
+                                                SizedBox(height: 25,),
+                                                Row(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                                  children: [
+                                                    InkWell(
+                                                      onTap: (){
+                                                        getX.Get.back();
+                                                      },
+                                                      child: Container(
+                                                        height: 30,
+                                                        width: 80,
+                                                        decoration: BoxDecoration(
+                                                            borderRadius: BorderRadius.circular(2),
+                                                            border: Border.all(color: Colors.red, width: 0.7),
+                                                            color: Colors.red.withOpacity(0.1)
+                                                        ),
+                                                        child: Center(child: Text("Cancel", style: TextStyle(color: Colors.red,fontSize: 14,fontWeight: FontWeight.w600))),
+                                                      ),
+                                                    ),
+
+                                                    InkWell(
+                                                      onTap: (){
+                                                        clearAllData();
+                                                        final authService = getX.Get.find<AuthService>();
+                                                        authService.isLogin = "0";
+                                                        getX.Get.offAndToNamed("/login");
+                                                      },
+                                                      child: Container(
+                                                        height: 30,
+                                                        width: 80,
+                                                        decoration: BoxDecoration(
+                                                            borderRadius: BorderRadius.circular(2),
+                                                            border: Border.all(color: Colors.blue, width: 0.7),
+                                                            color: Colors.blue.withOpacity(0.1)
+                                                        ),
+                                                        child: Center(child: Text("Logout", style: TextStyle(color: Colors.blue,fontSize: 14,fontWeight: FontWeight.w600))),
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                                SizedBox(height: 15,),
+                                              ],
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    );
+                                    showDialog(context: context, builder: (context)=>delete);
+                                  },
+                                  child: Container(
+                                    height: 32,
+                                    color: Colors.red.withOpacity(0.2),
+                                    child: Row(
+                                      children: [
+                                        SizedBox(width: 10,),
+                                        Icon(Icons.power_settings_new, color: Colors.red,size: 20,),
+                                        SizedBox(width: 8,),
+                                        Text("LOGOUT",style: TextStyle(color: Colors.red,fontWeight: FontWeight.w600,fontSize: 14),)
+                                      ],
+                                    ),
                                   ),
                                 ),
 

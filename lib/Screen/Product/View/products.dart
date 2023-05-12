@@ -66,6 +66,13 @@ class _ProductsState extends State<Products> {
                         InkWell(
                           onTap: (){
 
+                            setState(() {
+                              product_list.clear();
+                              isProductFetching=true;
+                            });
+
+                            fetchAllProduct();
+                            
                             Fluttertoast.showToast(
                                 msg: "Refreshing...",
                                 toastLength: Toast.LENGTH_SHORT,
@@ -94,7 +101,20 @@ class _ProductsState extends State<Products> {
             ),
           ),
           Expanded(
-              child: Container(
+              child: isProductFetching==true ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: 25, height: 25,
+                      child: CircularProgressIndicator(color: Colors.blue,),
+                    ),
+                    SizedBox(height: 10,),
+                    Text("Getting Product List ..", style: TextStyle(color: Colors.blue, fontSize: 14, fontWeight: FontWeight.w600),)
+                  ],
+                ),
+              ) :Container(
                 color: Color(0xffb3b3ff),
                 child: GridView.builder(
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -106,7 +126,6 @@ class _ProductsState extends State<Products> {
                   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                   shrinkWrap: true,
                   itemCount: product_list.length,
-
                   itemBuilder: (context, index){
                     return Container(
                       decoration: BoxDecoration(
@@ -150,21 +169,26 @@ class _ProductsState extends State<Products> {
                                              children: [
                                                Container(
                                                  width: 80,
-                                                 height: 25,
+                                                 height: 28,
                                                  decoration: BoxDecoration(
                                                      color: Colors.blue,
                                                      borderRadius: BorderRadius.circular(5)
                                                  ),
                                                  child: Center(child: Text("Edit", style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.w500),)),
                                                ),
-                                               Container(
-                                                 width: 80,
-                                                 height: 25,
-                                                 decoration: BoxDecoration(
-                                                     color: Colors.red,
-                                                     borderRadius: BorderRadius.circular(5)
+                                               InkWell(
+                                                 onTap: (){
+                                                   deleteProduct(index);
+                                                 },
+                                                 child: Container(
+                                                   width: 80,
+                                                   height: 28,
+                                                   decoration: BoxDecoration(
+                                                       color: Colors.red,
+                                                       borderRadius: BorderRadius.circular(5)
+                                                   ),
+                                                   child: Center(child: Text("Delete", style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.w500),)),
                                                  ),
-                                                 child: Center(child: Text("Delete", style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.w500),)),
                                                ),
                                              ],
                                            ),
@@ -540,21 +564,113 @@ class _ProductsState extends State<Products> {
         });
 
       }
-    // }else{
-    //   Fluttertoast.showToast(
-    //       msg: "No product found",
-    //       toastLength: Toast.LENGTH_SHORT,
-    //       gravity: ToastGravity.BOTTOM_RIGHT,
-    //       timeInSecForIosWeb: 1,
-    //       backgroundColor: Colors.red,
-    //       textColor: Colors.white,
-    //       webBgColor: "linear-gradient(to right, #C62828, #C62828)",
-    //       fontSize: 16.0
-    //   );
-    // }
     setState(() {
       isProductFetching=false;
     });
+  }
+
+
+  deleteProduct(int index){
+    Dialog delete = Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: Wrap(
+        children: [
+          Container(
+            width: 320,
+            color: Colors.white,
+            child: Column(
+              children: [
+                SizedBox(height: 15,),
+                Text("Delete?", style: TextStyle(color: Colors.black,fontSize: 16,fontWeight: FontWeight.bold),),
+                SizedBox(height: 15,),
+                Text("Are you sure you want to delete this product?",style: TextStyle(color: Colors.black,fontSize: 14,fontWeight: FontWeight.w500)),
+                SizedBox(height: 25,),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    InkWell(
+                      onTap: (){
+                        getX.Get.back();
+                      },
+                      child: Container(
+                        height: 32,
+                        width: 80,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(2),
+                            border: Border.all(color: Colors.red, width: 0.7),
+                            color: Colors.red.withOpacity(0.1)
+                        ),
+                        child: Center(child: Text("Cancel", style: TextStyle(color: Colors.red,fontSize: 14,fontWeight: FontWeight.w600))),
+                      ),
+                    ),
+
+                    InkWell(
+                      onTap: (){
+                        setState(() {
+                          deleteProductApi(product_list[index].productId.toString());
+                          product_list.removeAt(index);
+                        });
+                        getX.Get.back();
+                      },
+                      child: Container(
+                        height: 32,
+                        width: 80,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(2),
+                            border: Border.all(color: Colors.blue, width: 0.7),
+                            color: Colors.blue.withOpacity(0.1)
+                        ),
+                        child: Center(child: Text("Delete", style: TextStyle(color: Colors.blue,fontSize: 14,fontWeight: FontWeight.w600))),
+                      ),
+                    )
+                  ],
+                ),
+                SizedBox(height: 15,),
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+    showDialog(context: context, builder: (context)=>delete);
+  }
+
+
+  deleteProductApi(product_id) async {
+    var url = Uri.parse(delete_product);
+    Map<String, String> body = {"product_id": product_id};
+    Response response = await post(url, body: body);
+    if(response.statusCode==200){
+      String myData = response.body;
+      var jsonData=jsonDecode(myData);
+      if(jsonData['status']=="success"){
+        setState(() {});
+      }else{
+        Fluttertoast.showToast(
+            msg: "Error while loading",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM_RIGHT,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            webBgColor: "linear-gradient(to right, #C62828, #C62828)",
+            fontSize: 16.0
+        );
+      }
+    }else{
+      Fluttertoast.showToast(
+          msg: "Some error has occurred",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM_RIGHT,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          webBgColor: "linear-gradient(to right, #C62828, #C62828)",
+          fontSize: 16.0
+      );
+    }
   }
 
 }

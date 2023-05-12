@@ -8,6 +8,8 @@ import 'package:http/http.dart';
 import 'package:transmission_surgicals/Utils/shared_preferences.dart';
 import 'package:transmission_surgicals/Utils/urls.dart';
 
+import '../Service/auth_service.dart';
+
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
 
@@ -255,6 +257,10 @@ class _LoginState extends State<Login> {
         writeSharedPreferences(USER_ID, jsonData['id']);
         writeSharedPreferences(USER_EMAIL, jsonData['email']);
         writeSharedPreferences(USER_NAME, jsonData['name']);
+
+        final authService = getX.Get.find<AuthService>();
+        authService.isLogin = "1";
+
         getX.Get.toNamed("/dashboard");
 
       }else{

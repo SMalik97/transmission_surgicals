@@ -12,7 +12,7 @@ import 'package:pdf/pdf.dart';
 import 'package:transmission_surgicals/Screen/RoadChallan/Model/editableChallanModel.dart';
 import 'package:pdf/widgets.dart' as pw;
 import '../../../Utils/urls.dart';
-import '../Model/challan_item_model.dart';
+import '../Model/noteditableChallanModel.dart';
 
 class CreateChallan extends StatefulWidget {
   const CreateChallan({Key? key}) : super(key: key);
@@ -32,15 +32,16 @@ class _CreateChallanState extends State<CreateChallan> {
   final gst_no_controller=TextEditingController();
   final vehicle_no_controller=TextEditingController();
   final supply_place_controller=TextEditingController();
+  final received_by_controller=TextEditingController();
+  final delivery_by_controller=TextEditingController();
 
   List<editableChallanModel> editable_challan_list=[];
 
-  double grand_total=0.00;
+  int total_quantity=0;
   String purpose="";
   final pdf = pw.Document();
 
-  String selectedChallanId="", selectedChallanNumber="", selectedChallanDate="", selectedChallanRecipientDetails="", selectedChallanGstno="", selectedChallanVehicleno="", selectedChallanSupplyPlace="", selectedGstPercentage="";
-  String selectedChallanGrand_total="0.00";
+  String selectedChallanId="", selectedChallanNumber="", selectedChallanDate="", selectedChallanRecipientDetails="", selectedChallanGstno="", selectedChallanVehicleno="", selectedChallanSupplyPlace="", selectedTotalQuantity="", selectedReceivedBy="", selectedDeliveryBy="";
   List<notEditableChallanItem> challan_list=[];
 
 
@@ -83,7 +84,11 @@ class _CreateChallanState extends State<CreateChallan> {
                        InkWell(
                             onTap: (){
                               createChallan();
-                                                         },
+                              // List<notEditableChallanItem> challan_items = [];
+                              // notEditableChallanItem a= notEditableChallanItem(description: "description", quantity: "2", hsn: "hsn", totalAmount: "14");
+                              // challan_list.add(a);
+                              // generatePdf("selectedChallanId", DateFormat('dd/MM/yyyy').format(DateTime.now()), "recipient_controller.text", "gst number", "vehicle number", "place of supply", challan_list, "total_quantity", "received by", "delivery by");
+                              },
                             child: Opacity(
                               opacity: isGenerating==true? 0.7:1,
                               child: Container(
@@ -287,7 +292,8 @@ class _CreateChallanState extends State<CreateChallan> {
                       ),
 
                       SizedBox(height: 30,),
-                      Text("TO :",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 18,color: Colors.black),),
+                      Text("Delivery Challan for :",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15,color: Colors.black),),
+                      SizedBox(height: 3,),
                       Row(
                         children: [
                           Container(
@@ -330,11 +336,20 @@ class _CreateChallanState extends State<CreateChallan> {
                           ),
                           Column(
                             children: [
-                              Text(" : ", style: GoogleFonts.roboto(fontWeight: FontWeight.w500, fontSize: 13, color: Colors.black),),
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 10),
+                                child: Text(" : ", style: GoogleFonts.roboto(fontWeight: FontWeight.w500, fontSize: 13, color: Colors.black),),
+                              ),
                               SizedBox(height: 15,),
-                              Text(" : ", style: GoogleFonts.roboto(fontWeight: FontWeight.w500, fontSize: 13, color: Colors.black),),
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 10),
+                                child: Text(" : ", style: GoogleFonts.roboto(fontWeight: FontWeight.w500, fontSize: 13, color: Colors.black),),
+                              ),
                               SizedBox(height: 15,),
-                              Text(" : ", style: GoogleFonts.roboto(fontWeight: FontWeight.w500, fontSize: 13, color: Colors.black),),
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 10),
+                                child: Text(" : ", style: GoogleFonts.roboto(fontWeight: FontWeight.w500, fontSize: 13, color: Colors.black),),
+                              ),
                             ],
                           ),
                           Column(
@@ -406,14 +421,14 @@ class _CreateChallanState extends State<CreateChallan> {
                             height: 30,
                             decoration: BoxDecoration(
                                 border: Border(
-                                  left: BorderSide(color: Colors.black87, width: 1),
-                                  top: BorderSide(color: Colors.black87, width: 1),
-                                  bottom: BorderSide(color: Colors.black87, width: 1),
+                                  left: BorderSide(color: Colors.blue, width: 1),
+                                  top: BorderSide(color: Colors.blue, width: 1),
+                                  bottom: BorderSide(color: Colors.blue, width: 1),
                                 ),
-                                color: Colors.black54
+                                color: Colors.blue.shade100
                             ),
                             child: Center(
-                                child: Text("Sl. No.", style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w600),)
+                                child: Text("Sl. No.", style: TextStyle(color: Colors.blue, fontSize: 15, fontWeight: FontWeight.w600),)
                             ),
                           ),
                           Expanded(
@@ -423,14 +438,14 @@ class _CreateChallanState extends State<CreateChallan> {
                                 height: 30,
                                 decoration: BoxDecoration(
                                     border: Border(
-                                      left: BorderSide(color: Colors.black87, width: 1),
-                                      top: BorderSide(color: Colors.black87, width: 1),
-                                      bottom: BorderSide(color: Colors.black87, width: 1),
+                                      left: BorderSide(color: Colors.blue, width: 1),
+                                      top: BorderSide(color: Colors.blue, width: 1),
+                                      bottom: BorderSide(color: Colors.blue, width: 1),
                                     ),
-                                    color: Colors.black54
+                                    color: Colors.blue.shade100
                                 ),
                                 child: Center(
-                                    child: Text("Description", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),)
+                                    child: Text("Description", style: TextStyle(color: Colors.blue, fontSize: 16, fontWeight: FontWeight.w600),)
                                 ),
                               )),
 
@@ -441,16 +456,34 @@ class _CreateChallanState extends State<CreateChallan> {
                                 height: 30,
                                 decoration: BoxDecoration(
                                     border: Border(
-                                      left: BorderSide(color: Colors.black87, width: 1),
-                                      top: BorderSide(color: Colors.black87, width: 1),
-                                      bottom: BorderSide(color: Colors.black87, width: 1),
+                                      left: BorderSide(color: Colors.blue, width: 1),
+                                      top: BorderSide(color: Colors.blue, width: 1),
+                                      bottom: BorderSide(color: Colors.blue, width: 1),
                                     ),
-                                    color: Colors.black54
+                                    color: Colors.blue.shade100
                                 ),
                                 child: Center(
-                                    child: Text("HSN/SAC", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),)
+                                    child: Text("HSN/SAC", style: TextStyle(color: Colors.blue, fontSize: 16, fontWeight: FontWeight.w600),)
                                 ),
                               )),
+
+                          Expanded(
+                        flex: 3,
+                        child: Container(
+                          width: 80,
+                          height: 30,
+                          decoration: BoxDecoration(
+                              border: Border(
+                                left: BorderSide(color: Colors.blue, width: 1),
+                                top: BorderSide(color: Colors.blue, width: 1),
+                                bottom: BorderSide(color: Colors.blue, width: 1),
+                              ),
+                              color: Colors.blue.shade100
+                          ),
+                          child: Center(
+                              child: Text("MRP", style: TextStyle(color: Colors.blue, fontSize: 16, fontWeight: FontWeight.w600),)
+                          ),
+                        )),
 
                           Expanded(
                               flex: 3,
@@ -459,35 +492,18 @@ class _CreateChallanState extends State<CreateChallan> {
                                 height: 30,
                                 decoration: BoxDecoration(
                                     border: Border(
-                                      left: BorderSide(color: Colors.black87, width: 1),
-                                      top: BorderSide(color: Colors.black87, width: 1),
-                                      bottom: BorderSide(color: Colors.black87, width: 1),
+                                      left: BorderSide(color: Colors.blue, width: 1),
+                                      top: BorderSide(color: Colors.blue, width: 1),
+                                      bottom: BorderSide(color: Colors.blue, width: 1),
+                                      right: BorderSide(color: Colors.blue, width: 1),
                                     ),
-                                    color: Colors.black54
+                                    color: Colors.blue.shade100
                                 ),
                                 child: Center(
-                                    child: Text("Quantity", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),)
+                                    child: Text("Quantity", style: TextStyle(color: Colors.blue, fontSize: 16, fontWeight: FontWeight.w600),)
                                 ),
                               )),
 
-                          Expanded(
-                              flex: 3,
-                              child: Container(
-                                width: 80,
-                                height: 30,
-                                decoration: BoxDecoration(
-                                    border: Border(
-                                      left: BorderSide(color: Colors.black87, width: 1),
-                                      right: BorderSide(color: Colors.black87, width: 1),
-                                      top: BorderSide(color: Colors.black87, width: 1),
-                                      bottom: BorderSide(color: Colors.black87, width: 1),
-                                    ),
-                                    color: Colors.black54
-                                ),
-                                child: Center(
-                                    child: Text("MRP", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),)
-                                ),
-                              )),
                         ],
                       ),
                       ListView.builder(
@@ -505,8 +521,8 @@ class _CreateChallanState extends State<CreateChallan> {
                                   ),
                                   decoration: BoxDecoration(
                                     border: Border(
-                                      left: BorderSide(color: Colors.black87, width: 1),
-                                      bottom: BorderSide(color: Colors.black87, width: 1),
+                                      left: BorderSide(color: Colors.blue, width: 1),
+                                      bottom: BorderSide(color: Colors.blue, width: 1),
                                     ),
                                   ),
                                   child: Center(
@@ -525,8 +541,8 @@ class _CreateChallanState extends State<CreateChallan> {
                                       ),
                                       decoration: BoxDecoration(
                                         border: Border(
-                                          left: BorderSide(color: Colors.black87, width: 1),
-                                          bottom: BorderSide(color: Colors.black87, width: 1),
+                                          left: BorderSide(color: Colors.blue, width: 1),
+                                          bottom: BorderSide(color: Colors.blue, width: 1),
                                         ),
                                       ),
                                       child: TextField(
@@ -552,8 +568,8 @@ class _CreateChallanState extends State<CreateChallan> {
                                       ),
                                       decoration: BoxDecoration(
                                         border: Border(
-                                          left: BorderSide(color: Colors.black87, width: 1),
-                                          bottom: BorderSide(color: Colors.black87, width: 1),
+                                          left: BorderSide(color: Colors.blue, width: 1),
+                                          bottom: BorderSide(color: Colors.blue, width: 1),
                                         ),
                                       ),
                                       child: TextField(
@@ -571,6 +587,42 @@ class _CreateChallanState extends State<CreateChallan> {
                                       ),
                                     )),
 
+                                /// MRP .............
+                                Expanded(
+                                    flex: 3,
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(horizontal: 7),
+                                      width: 80,
+                                      constraints: BoxConstraints(
+                                          minHeight: 30
+                                      ),
+                                      decoration: BoxDecoration(
+                                        border: Border(
+                                          left: BorderSide(color: Colors.blue, width: 1),
+                                          bottom: BorderSide(color: Colors.blue, width: 1),
+                                        ),
+
+                                      ),
+                                      child: TextField(
+                                        controller: editable_challan_list[index].amount_controller,
+                                        inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*$'))],
+                                        decoration: InputDecoration(
+                                            isDense: true,
+                                            border: InputBorder.none
+                                        ),
+                                        onChanged: (v){
+                                          if(editable_challan_list[index].amount_controller!.text.isNotEmpty){
+                                            setState((){
+                                              editable_challan_list[index].totalAmount =double.parse(editable_challan_list[index].amount_controller!.text);
+                                              calculateChallan();
+                                            });
+                                          }
+
+
+                                        },
+                                      ),
+                                    )),
+
                                 ///Quantity .......
                                 Expanded(
                                     flex: 3,
@@ -582,8 +634,9 @@ class _CreateChallanState extends State<CreateChallan> {
                                       ),
                                       decoration: BoxDecoration(
                                         border: Border(
-                                          left: BorderSide(color: Colors.black87, width: 1),
-                                          bottom: BorderSide(color: Colors.black87, width: 1),
+                                          left: BorderSide(color: Colors.blue, width: 1),
+                                          bottom: BorderSide(color: Colors.blue, width: 1),
+                                          right: BorderSide(color: Colors.blue, width: 1),
                                         ),
 
                                       ),
@@ -599,43 +652,6 @@ class _CreateChallanState extends State<CreateChallan> {
                                             editable_challan_list[index].quantity = int.parse(editable_challan_list[index].quantity_controller!.text);
                                           }
                                           calculateChallan();
-                                        },
-                                      ),
-                                    )),
-
-                                /// MRP .............
-                                Expanded(
-                                    flex: 3,
-                                    child: Container(
-                                      padding: EdgeInsets.symmetric(horizontal: 7),
-                                      width: 80,
-                                      constraints: BoxConstraints(
-                                          minHeight: 30
-                                      ),
-                                      decoration: BoxDecoration(
-                                        border: Border(
-                                          left: BorderSide(color: Colors.black87, width: 1),
-                                          right: BorderSide(color: Colors.black87, width: 1),
-                                          bottom: BorderSide(color: Colors.black87, width: 1),
-                                        ),
-
-                                      ),
-                                      child: TextField(
-                                        controller: editable_challan_list[index].amount_controller,
-                                        inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*$'))],
-                                        decoration: InputDecoration(
-                                            isDense: true,
-                                            border: InputBorder.none
-                                        ),
-                                        onChanged: (v){
-                                          if(editable_challan_list[index].amount_controller!.text.isNotEmpty){
-                                           setState((){
-                                             editable_challan_list[index].totalAmount =double.parse(editable_challan_list[index].amount_controller!.text);
-                                             calculateChallan();
-                                           });
-                                          }
-
-
                                         },
                                       ),
                                     )),
@@ -670,29 +686,79 @@ class _CreateChallanState extends State<CreateChallan> {
                             mainAxisAlignment: MainAxisAlignment.end,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("Total", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
+                              Text("Total Quantity", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
 
                               Text(" : ", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
 
-                              Text(grand_total.toStringAsFixed(2), style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
+                              Text(total_quantity.toString(), style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
                             ],
                           ),
                         ],
                       ),
 
-                      if(amountToWords(int.parse(grand_total.round().toString())).isNotEmpty)
-                      SizedBox(height: 20,),
-                      if(amountToWords(int.parse(grand_total.round().toString())).isNotEmpty)
+                      SizedBox(height: 30,),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          Container(
-                              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                              color: Colors.grey.shade300,
-                              child: Text("Total: "+amountToWords(int.parse(grand_total.round().toString())), style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.black),)
-                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("Received By:", style: TextStyle(fontSize: 14,color: Colors.black,fontWeight: FontWeight.w600),),
+                              SizedBox(height: 3,),
+                              Container(
+                                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                                width: 250,
+                                decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.black54, width: 0.7)
+                                ),
+                                child: TextField(
+                                  decoration: InputDecoration(
+                                    isDense: true,
+                                    border: InputBorder.none,
+                                    hintText: "Type details here",
+                                    hintStyle: TextStyle(color: Colors.grey,fontWeight: FontWeight.w500,fontSize: 14,)
+                                  ),
+                                  style: TextStyle(color: Colors.black,fontWeight: FontWeight.w500,fontSize: 14,),
+                                  maxLines: 5,
+                                ),
+                              ),
+                            ],
+                          )
                         ],
                       ),
+                      SizedBox(height: 15,),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("Delivery By:", style: TextStyle(fontSize: 14,color: Colors.black,fontWeight: FontWeight.w600),),
+                              SizedBox(height: 3,),
+                              Container(
+                                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                                width: 250,
+                                decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.black54, width: 0.7)
+                                ),
+                                child: TextField(
+                                  decoration: InputDecoration(
+                                      isDense: true,
+                                      border: InputBorder.none,
+                                      hintText: "Type details here",
+                                      hintStyle: TextStyle(color: Colors.grey,fontWeight: FontWeight.w500,fontSize: 14,)
+                                  ),
+                                  style: TextStyle(color: Colors.black,fontWeight: FontWeight.w500,fontSize: 14,),
+                                  maxLines: 5,
+                                ),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                      SizedBox(height: 20,),
+                      Text("Thanks for your business!", style: TextStyle(fontSize: 14,fontWeight: FontWeight.w500,color: Colors.black),),
+
 
                       SizedBox(height: 50,),
                     ],
@@ -708,15 +774,15 @@ class _CreateChallanState extends State<CreateChallan> {
   }
 
   calculateChallan(){
-      grand_total = 0.00;
+      total_quantity = 0;
       for(int i=0; i<editable_challan_list.length; i++){
-          grand_total = grand_total + editable_challan_list[i].totalAmount!;
+          total_quantity = total_quantity + editable_challan_list[i].quantity!;
       }
   }
 
 
   ///not editable challan view
-  Widget challanView(String challan_no, String challan_date, String recipient_details, String gst_no, String vehicle_no, String supply_place, List<notEditableChallanItem> challan_list, String grand_total){
+  Widget challanView(String challan_no, String challan_date, String recipient_details, String gst_no, String vehicle_no, String supply_place, List<notEditableChallanItem> challan_list, String total_quantity, String received_by, String delivery_by){
     return Expanded(
       child: ListView(
         shrinkWrap: true,
@@ -766,7 +832,7 @@ class _CreateChallanState extends State<CreateChallan> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
-                              Text("Road Challan",style: GoogleFonts.alata(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.black),),
+                              Text("Delivery Challan",style: GoogleFonts.alata(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.black),),
                               SizedBox(height: 5,),
                               Text("Challan Number : "+challan_no,style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
                               Text("Challan Date : "+formattedDate(challan_date),style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
@@ -777,7 +843,7 @@ class _CreateChallanState extends State<CreateChallan> {
                       ),
 
                       SizedBox(height: 30,),
-                      Text("TO :",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 18,color: Colors.black),),
+                      Text("Delivery Challan for :",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15,color: Colors.black),),
                       Text(recipient_details,style: TextStyle(fontWeight: FontWeight.w500,fontSize: 13,color: Colors.black),),
 
                       SizedBox(height: 15,),
@@ -793,9 +859,9 @@ class _CreateChallanState extends State<CreateChallan> {
                         columns: [
                           DataColumn(label: Text('Sl. No.'),),
                           DataColumn(label: Text('Description')),
-                          DataColumn(label: Text('Quantity')),
                           DataColumn(label: Text('HSN/SAC')),
                           DataColumn(label: Text('MRP')),
+                          DataColumn(label: Text('Quantity')),
                         ],
                         rows: [
                           ...challan_list.asMap().entries.map((item) {
@@ -803,19 +869,19 @@ class _CreateChallanState extends State<CreateChallan> {
                               cells: [
                                 DataCell(Text((item.key + 1).toString() + ".")),
                                 DataCell(Text(item.value.description.toString())),
-                                DataCell(Text(item.value.quantity.toString())),
                                 DataCell(Text(item.value.hsn.toString())),
                                 DataCell(Text(item.value.totalAmount.toString())),
+                                DataCell(Text(item.value.quantity.toString())),
                               ],
                             );
                           }).toList(),
                         ],
 
                         columnSpacing: 10,
-                        headingRowColor: MaterialStateProperty.resolveWith<Color?>((states) => Colors.black54),
-                        border: TableBorder.all(color: Colors.black87,width: 1),
+                        headingRowColor: MaterialStateProperty.resolveWith<Color?>((states) => Colors.blue.shade100),
+                        border: TableBorder.all(color: Colors.blue,width: 1),
                         headingRowHeight: 30,
-                        headingTextStyle: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                        headingTextStyle: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue),
 
 
                       ),
@@ -825,32 +891,49 @@ class _CreateChallanState extends State<CreateChallan> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Text("Total", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
+                          Text("Total Quantity", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
                           SizedBox(width: 10,),
                           Text(" : ", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
                           SizedBox(width: 10,),
-                          Text(grand_total, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                        ],
-                      ),
-
-                      SizedBox(height: 30,),
-
-                      if(amountToWords(int.parse(grand_total)).isNotEmpty)
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Container(
-                              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                              color: Colors.grey.shade300,
-                              child: Text("Total: "+amountToWords(int.parse(grand_total)), style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.black),)
-                          ),
+                          Text(total_quantity, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
                         ],
                       ),
 
                       SizedBox(height: 50,),
 
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("Received By:", style: TextStyle(fontSize: 14,color: Colors.black,fontWeight: FontWeight.w600),),
+                              SizedBox(height: 3,),
+                              Text(received_by,style: TextStyle(color: Colors.black,fontWeight: FontWeight.w500,fontSize: 14,),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                      SizedBox(height: 15,),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("Delivery By:", style: TextStyle(fontSize: 14,color: Colors.black,fontWeight: FontWeight.w600),),
+                              SizedBox(height: 3,),
+                              Text(delivery_by,style: TextStyle(color: Colors.black,fontWeight: FontWeight.w500,fontSize: 14,)),
+                            ],
+                          )
+                        ],
+                      ),
 
-                      SizedBox(height: 80,),
+                      SizedBox(height: 20,),
+                      Text("Thanks for your business!", style: TextStyle(fontSize: 14,fontWeight: FontWeight.w500,color: Colors.black),),
+
+                      SizedBox(height: 50,),
                     ],
                   ),
                 ),
@@ -892,12 +975,16 @@ class _CreateChallanState extends State<CreateChallan> {
       challan_items.add(a);
     }
     String challan_item_list = jsonEncode(challan_items);
+    print(challan_item_list);
     var url = Uri.parse(create_challan);
     Map<String, String> body = {
       "recipient_address": recipient_controller.text.trim(),
+      "gst_number": gst_no_controller.text,
       "vehicle_number": vehicle_no_controller.text,
       "supply_place": supply_place_controller.text,
-      "total": grand_total.toStringAsFixed(2),
+      "received_by": received_by_controller.text,
+      "delivery_by": delivery_by_controller.text,
+      "total_quantity": total_quantity.toStringAsFixed(2),
       "challan_items": challan_item_list
     };
     Response response = await post(url, body: body);
@@ -906,7 +993,7 @@ class _CreateChallanState extends State<CreateChallan> {
       var jsonData = jsonDecode(myData);
       if (jsonData['status'] == "success") {
         selectedChallanNumber = jsonData['challan_no'];
-        generatePdf(selectedChallanId, DateFormat('dd/MM/yyyy').format(DateTime.now()), recipient_controller.text, challan_items, grand_total.toStringAsFixed(2));
+        generatePdf(selectedChallanId, DateFormat('dd/MM/yyyy').format(DateTime.now()), recipient_controller.text, gst_no_controller.text, vehicle_no_controller.text, supply_place_controller.text, challan_items, total_quantity.toString(),received_by_controller.text, delivery_by_controller.text);
         setState(() {
           placeHolder = challanView(
               selectedChallanNumber,
@@ -916,7 +1003,9 @@ class _CreateChallanState extends State<CreateChallan> {
               vehicle_no_controller.text,
               supply_place_controller.text,
               challan_items,
-              grand_total.toStringAsFixed(2));
+              total_quantity.toString(),
+              received_by_controller.text,
+              delivery_by_controller.text);
         });
       } else {
         setState(() {
@@ -954,11 +1043,7 @@ class _CreateChallanState extends State<CreateChallan> {
 
 
 
-
-
-
-
-  generatePdf(String challan_no, String challan_date, String recipient_details, List<notEditableChallanItem> challan_item_list, String grand_total) async {
+  generatePdf(String challan_no, String challan_date, String recipient_details, String gst_no, String vehicle_no, String supply_place, List<notEditableChallanItem> challan_item_list, String total_qty, String received_by, String delivery_by) async {
     final invoiceLogo = await getAssetsImage("assets/logo/logo.png");
     List<pw.Widget> widgets = [];
     widgets.add(pw.SizedBox(height: 60,),);
@@ -1004,25 +1089,42 @@ class _CreateChallanState extends State<CreateChallan> {
     widgets.add(pw.Text("Delivery Challan For :",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 12,color: PdfColors.black),),);
     widgets.add(pw.Text(recipient_details,style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 12,color: PdfColors.black),),);
     widgets.add(pw.SizedBox(height: 30,),);
+    widgets.add(
+      pw.Row(
+        mainAxisAlignment: pw.MainAxisAlignment.start,
+        children: [
+         pw.Column(
+           crossAxisAlignment: pw.CrossAxisAlignment.start,
+           children: [
+             pw.Text("GSTIN : $gst_no"),
+             pw.Text("Vehicle Number : $vehicle_no"),
+             pw.Text("Place of Supply : $supply_place"),
+           ]
+         )
+        ]
+      )
+    );
+
+    widgets.add(pw.SizedBox(height: 20,),);
 
 
     widgets.add(pw.Table.fromTextArray(
         data: [
-          ['Sl. No.','Description', 'HSN/SAC', 'Quantity', 'MRP'],
+          ['Sl. No.','Description', 'HSN/SAC', 'MRP', 'Quantity'],
           ...challan_item_list.asMap().entries.map((item) => [
             (item.key+1).toString()+".",
             item.value.description.toString(),
             item.value.hsn.toString(),
-            item.value.quantity.toString(),
             item.value.totalAmount.toString(),
+            item.value.quantity.toString(),
           ]).toList(),
         ],
         cellAlignment: pw.Alignment.centerRight,
         cellStyle: pw.TextStyle(fontWeight: pw.FontWeight.normal),
-        headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: PdfColors.white),
-        border: pw.TableBorder.all(width: 1, color: PdfColors.black),
+        headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: PdfColors.blue, fontSize: 10),
+        border: pw.TableBorder.all(width: 1, color: PdfColors.blue),
         headerDecoration: pw.BoxDecoration(
-          color: PdfColors.grey600,
+          color: PdfColors.blue100,
         ),
         columnWidths: {
           0:pw.FlexColumnWidth(1),
@@ -1042,26 +1144,57 @@ class _CreateChallanState extends State<CreateChallan> {
       mainAxisAlignment: pw.MainAxisAlignment.end,
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
-        pw.Text("Subtotal", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+        pw.Text("Total Quantity", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
         pw.Text(" : ", style:pw. TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
 
-        pw.Text(grand_total, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+        pw.Text(total_qty, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
       ],
     ),);
 
 
+    widgets.add(
+      pw.SizedBox(height: 15),
+    );
 
-    widgets.add(pw.SizedBox(height:20,),);
-    widgets.add(pw.Row(
-      mainAxisAlignment: pw.MainAxisAlignment.end,
-      children: [
-        pw.Container(
-            padding: pw.EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-            color: PdfColors.grey200,
-            child: pw.Text("Total : "+amountToWords(int.parse(grand_total)), style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold, color: PdfColors.grey900),)
-        ),
-      ],
-    ),);
+    widgets.add(
+      pw.Row(
+        mainAxisAlignment: pw.MainAxisAlignment.start,
+        children: [
+          pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Text("Received By:", style: pw.TextStyle(fontSize: 10,color: PdfColors.black,fontWeight: pw.FontWeight.bold),),
+              pw.SizedBox(height: 3,),
+              pw.Text(received_by,style: pw.TextStyle(color: PdfColors.black,fontWeight: pw.FontWeight.normal, fontSize: 10,),
+              ),
+            ],
+          )
+        ],
+      ),
+    );
+
+    widgets.add(pw.SizedBox(height: 15,),);
+
+    widgets.add(
+      pw.Row(
+        mainAxisAlignment: pw.MainAxisAlignment.start,
+        children: [
+          pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Text("Delivery By:", style: pw.TextStyle(fontSize: 10,color: PdfColors.black,fontWeight: pw.FontWeight.bold),),
+              pw.SizedBox(height: 3,),
+              pw.Text(delivery_by,style: pw.TextStyle(color: PdfColors.black,fontWeight: pw.FontWeight.normal,fontSize: 10,)),
+            ],
+          )
+        ],
+      ),
+    );
+
+    widgets.add(pw.SizedBox(height: 20,),);
+
+    widgets.add(pw.Text("Thanks for your business!", style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),);
+    widgets.add(pw.SizedBox(height: 30,),);
 
 
 
@@ -1073,6 +1206,26 @@ class _CreateChallanState extends State<CreateChallan> {
     );
 
     pdf_bytes=await pdf.save();
+
+    final blob = html.Blob([pdf_bytes], 'application/pdf');
+    final url = html.Url.createObjectUrlFromBlob(blob);
+    final anchor = html.document.createElement('a') as html.AnchorElement
+      ..href = url
+      ..download = "Challan$selectedChallanNumber.pdf";
+    html.document.body?.children.add(anchor);
+    anchor.click();
+    html.document.body?.children.remove(anchor);
+    html.Url.revokeObjectUrl(url);
+    Fluttertoast.showToast(
+        msg: "Downloading...",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM_RIGHT,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        webBgColor: "linear-gradient(to right, #1da241, #1da241)",
+        fontSize: 16.0
+    );
 
     setState(() {
       isGenerating = false;
@@ -1117,6 +1270,9 @@ class _CreateChallanState extends State<CreateChallan> {
         selectedChallanGstno = jsonData['gst_number'].toString();
         selectedChallanVehicleno = jsonData['vehicle_number'].toString();
         selectedChallanSupplyPlace = jsonData['supply_place'].toString();
+        selectedTotalQuantity = jsonData['total_quantity'].toString();
+        selectedReceivedBy = jsonData['received_by'].toString();
+        selectedDeliveryBy = jsonData['delivery_by'].toString();
 
         challan_list.clear();
         jsonData['challan_items'].forEach((jsonResponse) {
@@ -1135,16 +1291,12 @@ class _CreateChallanState extends State<CreateChallan> {
           editable_challan_list[i].hsn_controller!.text=challan_list[i].hsn.toString();
         }
 
-        selectedGstPercentage = jsonData['gst_percentage'].toString();
-        selectedChallanGrand_total = jsonData['total'].toString();
-
 
         setState(() {
           recipient_controller.text = selectedChallanRecipientDetails;
           gst_no_controller.text=selectedChallanGstno;
           vehicle_no_controller.text=selectedChallanVehicleno;
           supply_place_controller.text=selectedChallanSupplyPlace;
-          grand_total = double.parse(selectedChallanGrand_total);
 
           placeHolder=createChallanView("########",DateFormat('dd/MM/yyyy').format(DateTime.now()));
 
@@ -1183,7 +1335,9 @@ class _CreateChallanState extends State<CreateChallan> {
       "gst_number": gst_no_controller.text,
       "vehicle_number": vehicle_no_controller.text,
       "supply_place": supply_place_controller.text,
-      "total": grand_total.toStringAsFixed(2),
+      "received_by": received_by_controller.text,
+      "delivery_by": delivery_by_controller.text,
+      "total_quantity": total_quantity.toStringAsFixed(2),
       "challan_items": challan_item_list
     };
     Response response = await post(url, body: body);
@@ -1191,7 +1345,7 @@ class _CreateChallanState extends State<CreateChallan> {
       String myData = response.body;
       var jsonData = jsonDecode(myData);
       if (jsonData['status'] == "success") {
-        generatePdf(selectedChallanNumber, formattedDate(selectedChallanDate), recipient_controller.text, not_challan_items, grand_total.toStringAsFixed(2));
+        generatePdf(selectedChallanNumber, formattedDate(selectedChallanDate), recipient_controller.text,  gst_no_controller.text, vehicle_no_controller.text, supply_place_controller.text,not_challan_items, total_quantity.toString(), received_by_controller.text, delivery_by_controller.text);
         setState(() {
           placeHolder = challanView(
               selectedChallanNumber,
@@ -1201,7 +1355,9 @@ class _CreateChallanState extends State<CreateChallan> {
               vehicle_no_controller.text,
               supply_place_controller.text,
               not_challan_items,
-              grand_total.toStringAsFixed(2));
+              total_quantity.toString(),
+              received_by_controller.text,
+              delivery_by_controller.text);
         });
       } else {
         setState(() {
@@ -1236,37 +1392,7 @@ class _CreateChallanState extends State<CreateChallan> {
   }
 
 
-  String amountToWords(int amount) {
-    if(amount==0){
-      return "";
-    }
 
-    String words = capitalizeSentence(NumberToWord().convert('en-in', amount).trim()) + ' rupees only';
-
-    return words;
-  }
-
-  String capitalizeSentence(String sentence) {
-    if(sentence.length == 0){
-      return "";
-    }
-    List<String> words = sentence.split(' ');
-    List<String> capitalizedWords = [];
-
-    String capitalizedWord="";
-    for (String word in words) {
-      if(word.length>=2){
-        capitalizedWord = word.substring(0, 1).toUpperCase() + word.substring(1);
-      }else{
-        capitalizedWord = word.substring(0, 1).toUpperCase();
-      }
-
-      capitalizedWords.add(capitalizedWord);
-    }
-
-    String capitalizedSentence = capitalizedWords.join(' ');
-    return capitalizedSentence;
-  }
 
 
 }

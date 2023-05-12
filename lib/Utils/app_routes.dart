@@ -6,12 +6,14 @@ import '../Screen/Invoice/View/invoice_list.dart';
 import '../Screen/RoadChallan/View/challan_list.dart';
 import '../Screen/RoadChallan/View/create_challan.dart';
 import '../Screen/splash_screen.dart';
+import '../Service/auth_guard.dart';
 
 appRoutes()=>[
   GetPage(
     name: '/splash-screen',
     page: () => SplashScreen(),
     transition: Transition.fade,
+    middlewares: [AuthGuard()],
     transitionDuration: Duration(milliseconds: 300),
   ),
 
@@ -19,6 +21,7 @@ appRoutes()=>[
     name: '/login',
     page: () => Login(),
     transition: Transition.fade,
+    middlewares: [AuthGuard()],
     transitionDuration: Duration(milliseconds: 300),
   ),
 
@@ -26,6 +29,7 @@ appRoutes()=>[
     name: '/dashboard',
     page: () => Dashboard(),
     transition: Transition.fade,
+    middlewares: [AuthGuard()],
     transitionDuration: Duration(milliseconds: 300),
   ),
 
@@ -33,6 +37,7 @@ appRoutes()=>[
     name: '/invoice-list',
     page: () => InvoiceList(),
     transition: Transition.fade,
+    middlewares: [AuthGuard()],
     transitionDuration: Duration(milliseconds: 300),
   ),
 
@@ -40,6 +45,7 @@ appRoutes()=>[
     name: '/create-invoice',
     page: () => InvoiceCreate(),
     transition: Transition.fade,
+    middlewares: [AuthGuard()],
     transitionDuration: Duration(milliseconds: 300),
   ),
 
@@ -47,6 +53,7 @@ appRoutes()=>[
     name: '/challan-invoice',
     page: () => ChallanList(),
     transition: Transition.fade,
+    middlewares: [AuthGuard()],
     transitionDuration: Duration(milliseconds: 300),
   ),
 
@@ -54,6 +61,7 @@ appRoutes()=>[
     name: '/create-challan',
     page: () => CreateChallan(),
     transition: Transition.fade,
+    middlewares: [AuthGuard()],
     transitionDuration: Duration(milliseconds: 300),
   ),
 

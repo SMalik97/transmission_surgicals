@@ -11,7 +11,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'dart:html' as html;
-import 'package:transmission_surgicals/Screen/RoadChallan/Model/challan_item_model.dart';
+import 'package:transmission_surgicals/Screen/RoadChallan/Model/noteditableChallanModel.dart';
 import 'package:transmission_surgicals/Screen/RoadChallan/Model/challan_list_model.dart';
 
 import '../../../Utils/urls.dart';
@@ -27,12 +27,12 @@ class _ChallanListState extends State<ChallanList> {
 
   bool isListLoading=true;
   bool isChallanLoading=false;
-  String selectedChallanId="", selectedChallanNumber="", selectedChallanDate="", selectedChallanRecipientDetails="", selectedChallanGstno="", selectedChallanVehicleno="", selectedChallanSupplyPlace="", selectedGstPercentage="";
+  String selectedChallanId="", selectedReceivedBy="", selectedDeliveryBy="", selectedChallanNumber="", selectedChallanDate="", selectedChallanRecipientDetails="", selectedChallanGstno="", selectedChallanVehicleno="", selectedChallanSupplyPlace="", selectedGstPercentage="";
 
   List<notEditableChallanItem> challan_list=[];
   List<ChallanListModel> road_challan_list=[];
 
-  String selectedChallanSubtotal="0.00", selectedChallanGst="0.00", selectedChallanOther_charges="0.00", selectedChallanGrand_total="0.00";
+  String selectedTotalQuantity="0.00";
 
   late Uint8List pdf_bytes;
   final pdf = pw.Document();
@@ -192,22 +192,28 @@ class _ChallanListState extends State<ChallanList> {
                                               ],
                                             ),
                                             SizedBox(height: 15,),
-                                            Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              children: [
-                                                Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(road_challan_list[index].recipientAddress.toString(), style: TextStyle(fontWeight: FontWeight.w500, color: Colors.white.withOpacity(0.90), fontSize: 13),),
-                                                  ],
-                                                ),
-                                                Column(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  children: [
-                                                    Text("₹"+road_challan_list[index].total.toString(), style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),)
-                                                  ],
-                                                )
-                                              ],
+                                            Expanded(
+                                              child: Row(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Expanded(
+                                                    child: Column(
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: [
+                                                        Text(road_challan_list[index].recipientAddress.toString(), style: TextStyle(fontWeight: FontWeight.w500, color: Colors.white.withOpacity(0.90), fontSize: 12),overflow: TextOverflow.fade,),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  SizedBox(width: 15,),
+                                                  Column(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    children: [
+                                                      Text("₹"+road_challan_list[index].total.toString(), style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),)
+                                                    ],
+                                                  ),
+                                                  SizedBox(width: 5,),
+                                                ],
+                                              ),
                                             )
                                           ],
                                         ),
@@ -338,8 +344,8 @@ class _ChallanListState extends State<ChallanList> {
                                         webBgColor: "linear-gradient(to right, #1da241, #1da241)",
                                         fontSize: 16.0
                                     );
-                                    Timer(Duration(milliseconds: 100),(){
-                                      generatePdf(selectedChallanNumber, selectedChallanDate, selectedChallanRecipientDetails, challan_list, selectedGstPercentage, selectedChallanSubtotal, selectedChallanGst, selectedChallanOther_charges, selectedChallanGrand_total);
+                                    Timer(Duration(milliseconds: 300),(){
+                                      generatePdf(selectedChallanNumber, selectedChallanDate, selectedChallanRecipientDetails, challan_list, selectedTotalQuantity, selectedReceivedBy, selectedDeliveryBy);
                                     });
                                   },
                                   child: Container(
@@ -466,7 +472,7 @@ class _ChallanListState extends State<ChallanList> {
                       ),
 
                       SizedBox(height: 30,),
-                      Text("TO :",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 18,color: Colors.black),),
+                      Text("Delivery Challan for :",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15,color: Colors.black),),
                       Text(selectedChallanRecipientDetails,style: TextStyle(fontWeight: FontWeight.w500,fontSize: 13,color: Colors.black),),
 
                       SizedBox(height: 15,),
@@ -482,9 +488,9 @@ class _ChallanListState extends State<ChallanList> {
                         columns: [
                           DataColumn(label: Text('Sl. No.'),),
                           DataColumn(label: Text('Description')),
+                          DataColumn(label: Text('HSN/SAC')),
+                          DataColumn(label: Text('MRP')),
                           DataColumn(label: Text('Quantity')),
-                          DataColumn(label: Text('Price')),
-                          DataColumn(label: Text('Total')),
                         ],
                         rows: [
                           ...challan_list.asMap().entries.map((item) {
@@ -493,18 +499,18 @@ class _ChallanListState extends State<ChallanList> {
                                 DataCell(Text((item.key + 1).toString() + ".")),
                                 DataCell(Text(item.value.description.toString())),
                                 DataCell(Text(item.value.hsn.toString())),
-                                DataCell(Text(item.value.quantity.toString())),
                                 DataCell(Text(item.value.totalAmount.toString())),
+                                DataCell(Text(item.value.quantity.toString())),
                               ],
                             );
                           }).toList(),
                         ],
 
                         columnSpacing: 10,
-                        headingRowColor: MaterialStateProperty.resolveWith<Color?>((states) => Colors.black54),
-                        border: TableBorder.all(color: Colors.black87,width: 1),
+                        headingRowColor: MaterialStateProperty.resolveWith<Color?>((states) => Colors.blue.shade100),
+                        border: TableBorder.all(color: Colors.blue,width: 1),
                         headingRowHeight: 30,
-                        headingTextStyle: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                        headingTextStyle: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue),
 
 
                       ),
@@ -514,93 +520,48 @@ class _ChallanListState extends State<ChallanList> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          Text("Total Quantity", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
+                          Text(" : ", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
+                          Text(selectedTotalQuantity, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
+                        ],
+                      ),
+
+
+                      SizedBox(height: 50,),
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("Subtotal", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                              SizedBox(height: 2,),
-                              Text("GST ($selectedGstPercentage%)", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                              SizedBox(height: 2,),
-                              Text("Other charges", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                              SizedBox(height: 2,),
-                              Text("Grand Total", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                              SizedBox(height: 2,),
-
+                              Text("Received By:", style: TextStyle(fontSize: 14,color: Colors.black,fontWeight: FontWeight.w600),),
+                              SizedBox(height: 3,),
+                              Text(selectedReceivedBy,style: TextStyle(color: Colors.black,fontWeight: FontWeight.w500,fontSize: 14,),
+                              ),
                             ],
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(" : ", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                              SizedBox(height: 2,),
-                              Text(" : ", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                              SizedBox(height: 2,),
-                              Text(" : ", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                              SizedBox(height: 2,),
-                              Text(" : ", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                              SizedBox(height: 2,),
-
-                            ],
-                          ),
-
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text(selectedChallanSubtotal, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                              SizedBox(height: 2,),
-                              Text(selectedChallanGst, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                              SizedBox(height: 2,),
-                              Text(selectedChallanOther_charges, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                              SizedBox(height: 2,),
-                              Text(selectedChallanGrand_total, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                              SizedBox(height: 2,),
-                            ],
-                          ),
+                          )
                         ],
                       ),
                       SizedBox(height: 15,),
-
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          Container(
-                            padding: EdgeInsets.symmetric(horizontal: 3, vertical: 3),
-                            width: 250,
-                            decoration: BoxDecoration(
-                                color: Colors.black.withOpacity(0.1)
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text("Total Amount", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                                  ],
-                                ),
-                                SizedBox(width: 10,),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(" : ", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                                  ],
-                                ),
-                                SizedBox(width: 10,),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Text(selectedChallanGrand_total, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("Delivery By:", style: TextStyle(fontSize: 14,color: Colors.black,fontWeight: FontWeight.w600),),
+                              SizedBox(height: 3,),
+                              Text(selectedDeliveryBy,style: TextStyle(color: Colors.black,fontWeight: FontWeight.w500,fontSize: 14,)),
+                            ],
+                          )
                         ],
                       ),
-                      SizedBox(height: 50,),
-                      
 
-                      SizedBox(height: 80,),
+                      SizedBox(height: 20,),
+                      Text("Thanks for your business!", style: TextStyle(fontSize: 14,fontWeight: FontWeight.w500,color: Colors.black),),
+
+                      SizedBox(height: 50,),
                     ],
                   ),
                 ),
@@ -666,6 +627,9 @@ class _ChallanListState extends State<ChallanList> {
         selectedChallanGstno = jsonData['gst_number'].toString();
         selectedChallanVehicleno = jsonData['vehicle_number'].toString();
         selectedChallanSupplyPlace = jsonData['supply_place'].toString();
+        selectedTotalQuantity = jsonData['total_quantity'].toString();
+        selectedReceivedBy = jsonData['received_by'].toString();
+        selectedDeliveryBy = jsonData['delivery_by'].toString();
 
         challan_list.clear();
         jsonData['challan_items'].forEach((jsonResponse) {
@@ -675,11 +639,6 @@ class _ChallanListState extends State<ChallanList> {
           });
         });
 
-        selectedChallanSubtotal = jsonData['subtotal'].toString();
-        selectedGstPercentage = jsonData['gst_percentage'].toString();
-        selectedChallanGst = jsonData['gst'].toString();
-        selectedChallanOther_charges = jsonData['other_charges'].toString();
-        selectedChallanGrand_total = jsonData['total'].toString();
 
 
         setState(() {
@@ -702,7 +661,7 @@ class _ChallanListState extends State<ChallanList> {
   }
 
 
-  generatePdf(String challan_no, String challan_date, String recipient_details, List<notEditableChallanItem> challan_item_list, String gst_percentage, String subtotal, String gst, String other_charges, String grand_total) async {
+  generatePdf(String challan_no, String challan_date, String recipient_details, List<notEditableChallanItem> challan_item_list, String total_qty, String received_by, String delivery_by) async {
     final invoiceLogo = await getAssetsImage("assets/logo/logo.png");
     List<pw.Widget> widgets = [];
     widgets.add(pw.SizedBox(height: 60,),);
@@ -745,28 +704,44 @@ class _ChallanListState extends State<ChallanList> {
 
     widgets.add( pw.SizedBox(height: 30,),);
 
-    widgets.add(pw.Text("TO :",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 13,color: PdfColors.black),),);
+    widgets.add(pw.Text("Delivery Challan for :",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 11,color: PdfColors.black),),);
     widgets.add(pw.Text(recipient_details,style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 12,color: PdfColors.black),),);
     widgets.add(pw.SizedBox(height: 30,),);
+    widgets.add(
+        pw.Row(
+            mainAxisAlignment: pw.MainAxisAlignment.start,
+            children: [
+              pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    pw.Text("GSTIN : $selectedChallanGstno"),
+                    pw.Text("Vehicle Number : $selectedChallanVehicleno"),
+                    pw.Text("Place of Supply : $selectedChallanSupplyPlace"),
+                  ]
+              )
+            ]
+        )
+    );
+    widgets.add(pw.SizedBox(height: 20,),);
 
 
     widgets.add(pw.Table.fromTextArray(
         data: [
-          ['Sl. No.','Description', 'Quantity', 'Rate', 'Total'],
+          ['Sl. No.','Description', 'HSN/SAC', 'MRP', 'Quantity'],
           ...challan_item_list.asMap().entries.map((item) => [
             (item.key+1).toString()+".",
             item.value.description.toString(),
             item.value.hsn.toString(),
-            item.value.quantity.toString(),
             item.value.totalAmount.toString(),
+            item.value.quantity.toString(),
           ]).toList(),
         ],
         cellAlignment: pw.Alignment.centerRight,
         cellStyle: pw.TextStyle(fontWeight: pw.FontWeight.normal),
-        headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: PdfColors.white),
-        border: pw.TableBorder.all(width: 1, color: PdfColors.black),
+        headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: PdfColors.blue, fontSize: 10),
+        border: pw.TableBorder.all(width: 1, color: PdfColors.blue),
         headerDecoration: pw.BoxDecoration(
-          color: PdfColors.grey600,
+          color: PdfColors.blue100,
         ),
         columnWidths: {
           0:pw.FlexColumnWidth(1),
@@ -786,77 +761,60 @@ class _ChallanListState extends State<ChallanList> {
       mainAxisAlignment: pw.MainAxisAlignment.end,
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
-        pw.Column(
-          crossAxisAlignment:pw. CrossAxisAlignment.start,
-          children: [
-            pw.Text("Subtotal", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-            pw.Text("GST ($gst_percentage%)", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-            pw.Text("Other charges", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-          ],
-        ),
-        pw.Column(
-          crossAxisAlignment: pw.CrossAxisAlignment.start,
-          children: [
-            pw.Text(" : ", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-            pw.Text(" : ", style: pw.TextStyle(fontWeight:pw. FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-            pw.Text(" : ", style:pw. TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-          ],
-        ),
-
-        pw.Column(
-          crossAxisAlignment: pw.CrossAxisAlignment.end,
-          children: [
-            pw.Text(subtotal, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-            pw.Text(gst, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-            pw.Text(other_charges, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-
-          ],
-        ),
+        pw.Text("Total Quantity", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+        pw.Text(" : ", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+        pw.Text(total_qty, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
       ],
     ),);
 
 
     widgets.add(pw.SizedBox(height: 10,),);
 
+
+    widgets.add(
+      pw.SizedBox(height: 15),
+    );
+
     widgets.add(
       pw.Row(
-        mainAxisAlignment: pw.MainAxisAlignment.end,
+        mainAxisAlignment: pw.MainAxisAlignment.start,
         children: [
-          pw.Container(
-            padding: pw.EdgeInsets.symmetric(horizontal: 3, vertical: 3),
-            width: 250,
-            decoration: pw.BoxDecoration(
-                color: PdfColors.grey300
-            ),
-            child: pw.Row(
-              mainAxisAlignment: pw.MainAxisAlignment.end,
-              children: [
-                pw.Column(
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                  children: [
-                    pw.Text("Total Amount", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-                  ],
-                ),
-                pw.SizedBox(width: 10,),
-                pw.Column(
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                  children: [
-                    pw.Text(" : ", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-                  ],
-                ),
-                pw.SizedBox(width: 10,),
-                pw.Column(
-                  crossAxisAlignment: pw.CrossAxisAlignment.end,
-                  children: [
-                    pw.Text(grand_total, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-                  ],
-                ),
-              ],
-            ),
-          ),
+          pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Text("Received By:", style: pw.TextStyle(fontSize: 10,color: PdfColors.black,fontWeight: pw.FontWeight.bold),),
+              pw.SizedBox(height: 3,),
+              pw.Text(received_by,style: pw.TextStyle(color: PdfColors.black,fontWeight: pw.FontWeight.normal, fontSize: 10,),
+              ),
+            ],
+          )
         ],
       ),
     );
+
+    widgets.add(pw.SizedBox(height: 15,),);
+
+    widgets.add(
+      pw.Row(
+        mainAxisAlignment: pw.MainAxisAlignment.start,
+        children: [
+          pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Text("Delivery By:", style: pw.TextStyle(fontSize: 10,color: PdfColors.black,fontWeight: pw.FontWeight.bold),),
+              pw.SizedBox(height: 3,),
+              pw.Text(delivery_by,style: pw.TextStyle(color: PdfColors.black,fontWeight: pw.FontWeight.normal,fontSize: 10,)),
+            ],
+          )
+        ],
+      ),
+    );
+
+    widgets.add(pw.SizedBox(height: 20,),);
+
+    widgets.add(pw.Text("Thanks for your business!", style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),);
+    widgets.add(pw.SizedBox(height: 30,),);
+
 
 
 

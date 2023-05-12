@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 
+import 'Service/auth_service.dart';
 import 'Utils/app_routes.dart';
 
-void main() {
+Future<void> main() async {
   usePathUrlStrategy();
-  runApp(const MyApp());
+  await initServices();
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
 
   // This widget is the root of your application.
   @override
@@ -30,11 +32,15 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-        initialRoute: '/dashboard',  //  "/splash-screen",
+        initialRoute: '/splash-screen',  //  "/splash-screen",
         getPages: appRoutes()
     );
   }
+}
 
+
+Future<void> initServices() async {
+  Get.put(AuthService());
 }
 
 
