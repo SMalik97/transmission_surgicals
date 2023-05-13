@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:transmission_surgicals/Screen/Dashboard/dashboard.dart';
+import 'package:transmission_surgicals/Screen/Quotation/View/create_quotation.dart';
 import 'package:transmission_surgicals/Screen/login.dart';
 import '../Screen/Invoice/View/create_invoice.dart';
 import '../Screen/Invoice/View/invoice_list.dart';
@@ -60,6 +61,14 @@ appRoutes()=>[
   GetPage(
     name: '/create-challan',
     page: () => CreateChallan(),
+    transition: Transition.fade,
+    middlewares: [AuthGuard()],
+    transitionDuration: Duration(milliseconds: 300),
+  ),
+
+  GetPage(
+    name: '/create-quotation',
+    page: () => CreateQuotation(),
     transition: Transition.fade,
     middlewares: [AuthGuard()],
     transitionDuration: Duration(milliseconds: 300),

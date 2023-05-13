@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-        initialRoute: '/splash-screen',  //  "/splash-screen",
+        initialRoute: '/create-quotation',  //  "/splash-screen",
         getPages: appRoutes()
     );
   }

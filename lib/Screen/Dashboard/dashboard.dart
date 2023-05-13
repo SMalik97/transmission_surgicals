@@ -10,6 +10,7 @@ import '../../Service/auth_service.dart';
 import '../../Utils/urls.dart';
 import '../Invoice/View/invoice_list.dart';
 import '../Product/View/products.dart';
+import '../Quotation/View/quotation_list.dart';
 import '../RoadChallan/View/challan_list.dart';
 
 class Dashboard extends StatefulWidget {
@@ -89,13 +90,7 @@ class _DashboardState extends State<Dashboard> {
                         SizedBox(height: 5,),
                         InkWell(
                           onTap: (){
-                            setState(() {
-                              isDrawerSelected=false;
-                              isQuotationSelected=true;
-                              isRoadChallanSelected=false;
-                              isInvoiceSelected=false;
-                              isProductSelected=false;
-                            });
+                            selectQuotation();
                           },
                             child: drawerItem(isQuotationSelected, "Quotations", Icons.inventory_outlined)
                         ),
@@ -396,15 +391,21 @@ class _DashboardState extends State<Dashboard> {
                           ],
                         ),
                         SizedBox(height: 20,),
-                        Container(
-                          height: 35,
-                          width: 200,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5),
-                              color: Color(0xff003366).withOpacity(0.8)
-                          ),
-                          child: Center(
-                            child: Text("Manage Quotation", style: TextStyle(color: Colors.white,fontWeight: FontWeight.w500, fontSize: 14),),
+                        InkWell(
+                          onTap: (){
+                            selectQuotation();
+                          },
+
+                          child: Container(
+                            height: 35,
+                            width: 200,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                color: Color(0xff003366).withOpacity(0.8)
+                            ),
+                            child: Center(
+                              child: Text("Manage Quotation", style: TextStyle(color: Colors.white,fontWeight: FontWeight.w500, fontSize: 14),),
+                            ),
                           ),
                         )
                       ],
@@ -811,6 +812,18 @@ class _DashboardState extends State<Dashboard> {
       isProductSelected=false;
 
       placeHolder = ChallanList();
+    });
+  }
+
+  selectQuotation(){
+    setState(() {
+      isDrawerSelected=false;
+      isQuotationSelected=true;
+      isRoadChallanSelected=false;
+      isInvoiceSelected=false;
+      isProductSelected=false;
+
+      placeHolder = QuotationList();
     });
   }
 
