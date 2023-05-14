@@ -25,7 +25,7 @@ class InvoiceCreate extends StatefulWidget {
 
 class _InvoiceCreateState extends State<InvoiceCreate> {
 
-  final pdf = pw.Document();
+  late pw.Document pdf;
   late Uint8List pdf_bytes;
   List<editableInvoiceItem> invoice_data=[];
   final billing_address_controller=TextEditingController();
@@ -193,38 +193,62 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
 
                         SizedBox(width: 15,),
                         if(isDownloadViewShowing==true)
-                        InkWell(
-                          onTap: (){
-                            final blob = html.Blob([pdf_bytes], 'application/pdf');
-                            final url = html.Url.createObjectUrlFromBlob(blob);
-                            final anchor = html.document.createElement('a') as html.AnchorElement
-                              ..href = url
-                              ..download = "Invoice$invoice_no.pdf";
-                            html.document.body?.children.add(anchor);
-                            anchor.click();
-                            html.document.body?.children.remove(anchor);
-                            html.Url.revokeObjectUrl(url);
-                            Fluttertoast.showToast(
-                                msg: "Downloading...",
-                                toastLength: Toast.LENGTH_SHORT,
-                                gravity: ToastGravity.BOTTOM_RIGHT,
-                                timeInSecForIosWeb: 1,
-                                backgroundColor: Colors.red,
-                                textColor: Colors.white,
-                                webBgColor: "linear-gradient(to right, #1da241, #1da241)",
-                                fontSize: 16.0
-                            );
-                          },
-                          child: Container(
-                            height: 30,
-                            padding: EdgeInsets.symmetric(horizontal: 10),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(3),
-                                color: Color(0xff00802b)
+                        Row(
+                          children: [
+                            InkWell(
+                              onTap: (){
+                                final blob = html.Blob([pdf_bytes], 'application/pdf');
+                                final url = html.Url.createObjectUrlFromBlob(blob);
+                                final anchor = html.document.createElement('a') as html.AnchorElement
+                                  ..href = url
+                                  ..download = "Invoice$invoice_no.pdf";
+                                html.document.body?.children.add(anchor);
+                                anchor.click();
+                                html.document.body?.children.remove(anchor);
+                                html.Url.revokeObjectUrl(url);
+                                Fluttertoast.showToast(
+                                    msg: "Downloading...",
+                                    toastLength: Toast.LENGTH_SHORT,
+                                    gravity: ToastGravity.BOTTOM_RIGHT,
+                                    timeInSecForIosWeb: 1,
+                                    backgroundColor: Colors.red,
+                                    textColor: Colors.white,
+                                    webBgColor: "linear-gradient(to right, #1da241, #1da241)",
+                                    fontSize: 16.0
+                                );
+                              },
+                              child: Container(
+                                height: 30,
+                                padding: EdgeInsets.symmetric(horizontal: 10),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(3),
+                                    color: Colors.green,
+                                ),
+                                child: Center(child: Text("Download Invoice", style: TextStyle(color: Colors.white,fontSize: 14, fontWeight: FontWeight.w500),)),
+                              ),
                             ),
-                            child: Center(child: Text("Download Invoice", style: TextStyle(color: Colors.white,fontSize: 14, fontWeight: FontWeight.w500),)),
-                          ),
+                            SizedBox(width: 15,),
+                            InkWell(
+                              onTap: (){
+                                final blob = html.Blob([pdf_bytes], 'application/pdf');
+                                final url = html.Url.createObjectUrlFromBlob(blob);
+                                final windowFeatures = 'resizable,scrollbars,status,titlebar';
+                                html.window.open(url, "Print Invoice", windowFeatures);
+                                html.Url.revokeObjectUrl(url);
+                              },
+                              child: Container(
+                                height: 30,
+                                padding: EdgeInsets.symmetric(horizontal: 10),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(3),
+                                    color: Colors.blue
+                                ),
+                                child: Center(child: Text("Print Invoice", style: TextStyle(color: Colors.white,fontSize: 14, fontWeight: FontWeight.w500),)),
+                              ),
+                            ),
+                          ],
                         ),
+
                         SizedBox(width: 25,),
                         InkWell(
                           onTap: (){
@@ -297,10 +321,6 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         setState(() {
           placeHolder=createInvoiceView();
-          // noteditableInvoiceItem a= noteditableInvoiceItem(hsn: "jkhj", gst: "52",gst_percentage: "7",totalAmount: "5263", price: "52.00", quantity: "4", description: "fdf hgfhf g");
-          // List<noteditableInvoiceItem> invoice_item_details=[];
-          // invoice_item_details.add(a);
-          // placeHolder = invoiceView("478596","2023/02/10", "String billing_address", "String shipping_address", invoice_item_details, "4563", "74", "45", "79", "0", "4", "String comments");
         });
       });
     }else{
@@ -1728,76 +1748,85 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
 
 
   generatePdf(String invoice_no, String invoice_date, String billing_details, String shipping_details,  List<noteditableInvoiceItem> invoice_items, String subtotal, String gst, String other_charges, String grand_total, String paid, String due, String comments) async {
+    pdf = pw.Document();
     final invoiceLogo = await getAssetsImage("assets/logo/logo.png");
     List<pw.Widget> widgets = [];
 
 
-    widgets.add(pw.SizedBox(height: 60,),);
+    widgets.add(pw.SizedBox(height: 20,),);
 
-    widgets.add(pw.Row(
-      mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: pw.CrossAxisAlignment.start,
-      children: [
-        pw.Column(
+    widgets.add(
+      pw.Padding(
+        padding: pw.EdgeInsets.symmetric(horizontal: 15),
+        child: pw.Row(
+          mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
           crossAxisAlignment: pw.CrossAxisAlignment.start,
-          mainAxisAlignment: pw.MainAxisAlignment.start,
           children: [
-            pw.Row(
-              crossAxisAlignment: pw.CrossAxisAlignment.center,
+            pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
               mainAxisAlignment: pw.MainAxisAlignment.start,
               children: [
-                pw.Image(pw.MemoryImage(invoiceLogo), width: 50,height: 50),
-                pw.SizedBox(width: 8,),
-                pw. Text("Transmission Surgicals", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 18,color: PdfColors.lightBlue),),
+                pw.Row(
+                  crossAxisAlignment: pw.CrossAxisAlignment.center,
+                  mainAxisAlignment: pw.MainAxisAlignment.start,
+                  children: [
+                    pw.Image(pw.MemoryImage(invoiceLogo), width: 50,height: 50),
+                    pw.SizedBox(width: 8,),
+                    pw. Text("Transmission Surgicals", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 18,color: PdfColors.lightBlue),),
+                  ],
+                ),
+                pw.SizedBox(height: 2,),
+                pw.Text("333 J.C. Bose Road, PallyShree\nSodepur, Kolkata - 700110 \nPhone : +91 0333335980722 / 7278360630 / 9836947573\nEmail : surgicaltrans@gmail.com",style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 10,color: PdfColors.black),),
+
               ],
             ),
-            pw.SizedBox(height: 2,),
-            pw.Text("333 J.C. Bose Road, PallyShree\nSodepur, Kolkata - 700110 \nPhone : +91 0333335980722 / 7278360630 / 9836947573\nEmail : surgicaltrans@gmail.com",style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 10,color: PdfColors.black),),
-
+            pw.Column(
+              mainAxisAlignment: pw.MainAxisAlignment.start,
+              crossAxisAlignment: pw.CrossAxisAlignment.end,
+              children: [
+                pw.Text("TAX INVOICE",style: pw.TextStyle(fontSize: 16,fontWeight:pw.FontWeight.bold,color: PdfColors.black),),
+                pw.SizedBox(height: 5,),
+                pw.Text("Invoice Number $invoice_no",style: pw.TextStyle(fontSize: 12,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
+                pw.Text("Invoice Date "+formattedDate(invoice_date),style: pw.TextStyle(fontSize: 12,fontWeight: pw.FontWeight.normal,color: PdfColors.black),)
+              ],
+            ),
           ],
-        ),
-        pw.Column(
-          mainAxisAlignment: pw.MainAxisAlignment.start,
-          crossAxisAlignment: pw.CrossAxisAlignment.end,
-          children: [
-            pw.Text("TAX INVOICE",style: pw.TextStyle(fontSize: 16,fontWeight:pw.FontWeight.bold,color: PdfColors.black),),
-            pw.SizedBox(height: 5,),
-            pw.Text("Invoice Number $invoice_no",style: pw.TextStyle(fontSize: 12,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
-            pw.Text("Invoice Date "+formattedDate(invoice_date),style: pw.TextStyle(fontSize: 12,fontWeight: pw.FontWeight.normal,color: PdfColors.black),)
-          ],
-        ),
-      ],
-    ));
+        )
+      )
+    );
 
 
     widgets.add( pw.SizedBox(height: 30,),);
 
     widgets.add(
-      pw.Row(
-        children: [
-          pw.Expanded(
-            child: pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.start,
-              children: [
-                pw.Text("Billing Address :",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 12,color: PdfColors.black),),
-                pw.Text(billing_details,style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 10,color: PdfColors.black),),
-              ]
+      pw.Padding(
+        padding: pw.EdgeInsets.symmetric(horizontal: 15),
+        child: pw.Row(
+          children: [
+            pw.Expanded(
+                child: pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
+                    children: [
+                      pw.Text("Billing Address :",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 12,color: PdfColors.black),),
+                      pw.Text(billing_details,style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 10,color: PdfColors.black),),
+                    ]
+                )
+            ),
+
+            pw.SizedBox(width: 25),
+
+            pw.Expanded(
+                child: pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
+                    children: [
+                      pw.Text("Shipping Address :",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 12,color: PdfColors.black),),
+                      pw.Text(shipping_details,style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 10,color: PdfColors.black),),
+                    ]
+                )
             )
-          ),
-
-          pw.SizedBox(width: 25),
-
-          pw.Expanded(
-              child: pw.Column(
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                  children: [
-                    pw.Text("Shipping Address :",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 12,color: PdfColors.black),),
-                    pw.Text(shipping_details,style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 10,color: PdfColors.black),),
-                  ]
-              )
-          )
-        ],
-      ),
+          ],
+        ),
+      )
     );
 
     widgets.add(pw.SizedBox(height: 30,),);
@@ -1805,114 +1834,158 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
 
 
 
-    widgets.add(pw.Table.fromTextArray(
-        data: [
-          ['Sl. No.','Description', 'HSN/SAC', 'Quantity', 'Price', 'GST', 'Total'],
-          ...invoice_items.asMap().entries.map((item) => [
-            (item.key+1).toString()+".",
-            item.value.description.toString(),
-            item.value.hsn.toString(),
-            item.value.quantity.toString(),
-            item.value.price.toString(),
-            item.value.gst.toString()+"\n"+item.value.gst_percentage.toString()+"%",
-            item.value.totalAmount.toString(),
-          ]).toList(),
-        ],
-        cellAlignment: pw.Alignment.centerRight,
-        cellStyle: pw.TextStyle(fontWeight: pw.FontWeight.normal),
-        headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10),
-        border: pw.TableBorder.all(width: 1, color: PdfColors.blue),
-        headerDecoration: pw.BoxDecoration(
-          color: PdfColors.blue100,
+    widgets.add(
+      pw.Padding(
+        padding: pw.EdgeInsets.symmetric(horizontal: 15),
+        child: pw.Table.fromTextArray(
+            data: [
+              ['Sl. No.','Description', 'HSN/SAC', 'Quantity', 'Price', 'GST', 'Total'],
+              ...invoice_items.asMap().entries.map((item) => [
+                (item.key+1).toString()+".",
+                item.value.description.toString(),
+                item.value.hsn.toString(),
+                item.value.quantity.toString(),
+                item.value.price.toString(),
+                item.value.gst.toString()+"\n"+item.value.gst_percentage.toString()+"%",
+                item.value.totalAmount.toString(),
+              ]).toList(),
+            ],
+            cellAlignment: pw.Alignment.centerRight,
+            cellStyle: pw.TextStyle(fontWeight: pw.FontWeight.normal),
+            headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10),
+            border: pw.TableBorder.all(width: 1, color: PdfColors.blue),
+            headerDecoration: pw.BoxDecoration(
+              color: PdfColors.blue100,
+            ),
+            columnWidths: {
+              0:pw.FlexColumnWidth(1),
+              1:pw.FlexColumnWidth(3),
+              2:pw.FlexColumnWidth(2),
+              3:pw.FlexColumnWidth(2),
+              4:pw.FlexColumnWidth(2),
+              5:pw.FlexColumnWidth(2),
+              6:pw.FlexColumnWidth(2),
+            }
         ),
-        columnWidths: {
-          0:pw.FlexColumnWidth(1),
-          1:pw.FlexColumnWidth(3),
-          2:pw.FlexColumnWidth(2),
-          3:pw.FlexColumnWidth(2),
-          4:pw.FlexColumnWidth(2),
-          5:pw.FlexColumnWidth(2),
-          6:pw.FlexColumnWidth(2),
-        }
-    ),);
+      )
+    );
 
 
     widgets.add(pw.SizedBox(height: 5,),);
 
-    widgets.add(pw.Row(
-      mainAxisAlignment: pw.MainAxisAlignment.end,
-      crossAxisAlignment: pw.CrossAxisAlignment.start,
-      children: [
-        pw.Column(
-          crossAxisAlignment:pw. CrossAxisAlignment.start,
-          children: [
-            pw.Text("Subtotal", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-            pw.Text("GST", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-            pw.Text("Other charges", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-            pw.Text("Grand Total", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-            pw.Text("Paid", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-            pw.Text("Due", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-          ],
-        ),
-        pw.Column(
+    widgets.add(
+      pw.Padding(
+        padding: pw.EdgeInsets.symmetric(horizontal: 15),
+        child: pw.Row(
+          mainAxisAlignment: pw.MainAxisAlignment.end,
           crossAxisAlignment: pw.CrossAxisAlignment.start,
           children: [
-            pw.Text(" : ", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-            pw.Text(" : ", style: pw.TextStyle(fontWeight:pw. FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-            pw.Text(" : ", style:pw. TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-            pw.Text(" : ", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-            pw.Text(" : ", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-            pw.Text(" : ", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-          ],
-        ),
+            pw.Column(
+              crossAxisAlignment:pw. CrossAxisAlignment.start,
+              children: [
+                pw.Text("Subtotal", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+                pw.Text("GST", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+                pw.Text("Other charges", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+                pw.Text("Grand Total", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+                pw.Text("Paid", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+                pw.Text("Due", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+              ],
+            ),
+            pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                pw.Text(" : ", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+                pw.Text(" : ", style: pw.TextStyle(fontWeight:pw. FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+                pw.Text(" : ", style:pw. TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+                pw.Text(" : ", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+                pw.Text(" : ", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+                pw.Text(" : ", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+              ],
+            ),
 
-        pw.Column(
-          crossAxisAlignment: pw.CrossAxisAlignment.end,
-          children: [
-            pw.Text(subtotal, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-            pw.Text(gst, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-            pw.Text(other_charges, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-            pw.Text(grand_total, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-            pw.Text(paid, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-            pw.Text(due, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+            pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.end,
+              children: [
+                pw.Text(subtotal, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+                pw.Text(gst, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+                pw.Text(other_charges, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+                pw.Text(grand_total, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+                pw.Text(paid, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+                pw.Text(due, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+              ],
+            ),
           ],
         ),
-      ],
-    ),);
+      )
+    );
 
     widgets.add(pw.SizedBox(height: 30,),);
-    widgets.add(pw.Row(
-      mainAxisAlignment: pw.MainAxisAlignment.end,
-      children: [
-        pw.Container(
-            padding: pw.EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-            color: PdfColors.grey200,
-            child: pw.Text("Total : "+amountToWords(int.parse(due_amount.round().toString())), style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold, color: PdfColors.grey900),)
+    widgets.add(
+      pw.Padding(
+        padding: pw.EdgeInsets.symmetric(horizontal: 15),
+        child: pw.Row(
+          mainAxisAlignment: pw.MainAxisAlignment.end,
+          children: [
+            pw.Container(
+                padding: pw.EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                color: PdfColors.grey200,
+                child: pw.Text("Total : "+amountToWords(int.parse(due_amount.round().toString())), style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold, color: PdfColors.grey900),)
+            ),
+          ],
         ),
-      ],
-    ),);
+      )
+    );
 
     widgets.add(pw.SizedBox(height: 50,),);
 
-    widgets.add(pw.Text("COMMENTS OR SPECIAL INSTRUCTIONS:",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 12,color: PdfColors.black),),);
+    widgets.add(pw.Padding(
+      padding: pw.EdgeInsets.symmetric(horizontal: 15),
+      child: pw.Text("COMMENTS OR SPECIAL INSTRUCTIONS:",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 12,color: PdfColors.black),),
+    ));
     widgets.add(pw.SizedBox(height: 3,),);
-    widgets.add(pw.Text(comments,style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 11,color: PdfColors.black),),);
+    widgets.add(
+      pw.Padding(
+        padding: pw.EdgeInsets.symmetric(horizontal: 15),
+        child: pw.Text(comments,style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 11,color: PdfColors.black),),
+      )
+    );
     widgets.add(pw.SizedBox(height: 30,),);
-    widgets.add(pw.Row(
-      mainAxisAlignment: pw.MainAxisAlignment.center,
-      crossAxisAlignment: pw.CrossAxisAlignment.end,
-      children: [
-        pw.Text("THANK YOU FOR YOUR BUSINESS!",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 14,color:PdfColors.black),),
+    widgets.add(
+      pw.Padding(
+        padding: pw.EdgeInsets.symmetric(horizontal: 15),
+        child: pw.Row(
+          mainAxisAlignment: pw.MainAxisAlignment.center,
+          crossAxisAlignment: pw.CrossAxisAlignment.end,
+          children: [
+            pw.Text("THANK YOU FOR YOUR BUSINESS!",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 14,color:PdfColors.black),),
+          ],
+        ),
+      )
+    );
 
-      ],
-    ),);
-
-    widgets.add(pw.SizedBox(height: 80,),);
+    widgets.add(pw.SizedBox(height: 30,),);
 
 
     pdf.addPage(
       pw.MultiPage(
-        pageFormat: PdfPageFormat.a4,
+        pageTheme: pw.PageTheme(
+          buildBackground: (context){
+            return pw.Container(
+                width: double.infinity,
+                height: double.infinity,
+                decoration: pw.BoxDecoration(
+                  border: pw.Border.all(
+                      color: PdfColors.black,
+                      width: 0.5
+                  ),
+                )
+            );
+          },
+
+          pageFormat: PdfPageFormat.a4,
+
+          margin: pw.EdgeInsets.all(30),
+        ),
 
         build: (context) => widgets,
       ),

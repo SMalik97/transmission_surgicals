@@ -33,7 +33,7 @@ class _InvoiceListState extends State<InvoiceList> {
   String selectedInvoiceId="", selectedInvoiceNumber="", selectedInvoiceShippingAddress="", selectedInvoiceBillingAddress="", selectedInvoiceSubtotal="";
   String selectedInvoiceGst="", selectedInvoiceOther_charges="", selectedInvoiceGrand_total="", selectedInvoicePaid="";
   String selectedInvoiceDue="", selectedInvoiceDate="", selectedInvoiceCustom_note="";
-  final pdf = pw.Document();
+  late pw.Document pdf;
   late Uint8List pdf_bytes;
 
   List<noteditableInvoiceItem> invoice_details_list=[];
@@ -264,6 +264,7 @@ class _InvoiceListState extends State<InvoiceList> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
+                              /// Invoice number ------------------
                               Container(
                                 padding: EdgeInsets.symmetric(horizontal: 10,vertical: 7),
                                   decoration: BoxDecoration(
@@ -273,24 +274,28 @@ class _InvoiceListState extends State<InvoiceList> {
                                   child: Text("Invoice #"+selectedInvoiceNumber, style: TextStyle(fontWeight: FontWeight.w600,color: Colors.black, fontSize: 14),)
                               ),
                               SizedBox(width: 20,),
+
+                              ///Edit Invoice ---------------------
                               InkWell(
                                 onTap: () async {
                                   await getX.Get.toNamed("/create-invoice?purpose=edit&id=$selectedInvoiceId");
                                   fetch_invoice_list();
                                 },
                                 child: Container(
-                                    width: 120,
-                                    height: 35,
+                                    width: 90,
+                                    height: 30,
                                     decoration: BoxDecoration(
                                         color: Color(0xff006666),
-                                        borderRadius: BorderRadius.circular(20)
+                                        borderRadius: BorderRadius.circular(15)
                                     ),
                                     child: Center(
-                                        child: Text("Edit Invoice", style: TextStyle(fontWeight: FontWeight.w500,color: Colors.white, fontSize: 14),)
+                                        child: Text("Edit Invoice", style: TextStyle(fontWeight: FontWeight.w500,color: Colors.white, fontSize: 12),)
                                     )
                                 ),
                               ),
                               SizedBox(width: 20,),
+
+                              ///Copy Invoice -------------------------
                               InkWell(
                                 onTap: () async {
                                  await getX.Get.toNamed("/create-invoice?purpose=copy&id=$selectedInvoiceId");
@@ -298,18 +303,21 @@ class _InvoiceListState extends State<InvoiceList> {
 
                                 },
                                 child: Container(
-                                    width: 120,
-                                    height: 35,
+                                    width: 90,
+                                    height: 30,
                                     decoration: BoxDecoration(
                                         color: Color(0xff003366),
-                                        borderRadius: BorderRadius.circular(20)
+                                        borderRadius: BorderRadius.circular(15)
                                     ),
                                     child: Center(
-                                        child: Text("Copy Invoice", style: TextStyle(fontWeight: FontWeight.w500,color: Colors.white, fontSize: 14),)
+                                        child: Text("Copy Invoice", style: TextStyle(fontWeight: FontWeight.w500,color: Colors.white, fontSize: 12),)
                                     )
                                 ),
                               ),
                               SizedBox(width: 20,),
+
+
+                              ///Download Invoice ---------------------
                               InkWell(
                                 onTap: (){
                                   Fluttertoast.showToast(
@@ -322,36 +330,70 @@ class _InvoiceListState extends State<InvoiceList> {
                                       webBgColor: "linear-gradient(to right, #1da241, #1da241)",
                                       fontSize: 16.0
                                   );
-                                  Timer(Duration(milliseconds: 100),(){
-                                    generatePdf(selectedInvoiceNumber, selectedInvoiceBillingAddress, selectedInvoiceShippingAddress,  invoice_details_list, selectedInvoiceSubtotal, selectedInvoiceGst, selectedInvoiceOther_charges, selectedInvoiceGrand_total, selectedInvoicePaid, selectedInvoiceDue, selectedInvoiceCustom_note);
+                                  Timer(Duration(milliseconds: 300),(){
+                                    generatePdf("download",selectedInvoiceNumber, selectedInvoiceBillingAddress, selectedInvoiceShippingAddress,  invoice_details_list, selectedInvoiceSubtotal, selectedInvoiceGst, selectedInvoiceOther_charges, selectedInvoiceGrand_total, selectedInvoicePaid, selectedInvoiceDue, selectedInvoiceCustom_note);
                                   });
                                 },
                                 child: Container(
-                                    width: 120,
-                                    height: 35,
+                                    width: 90,
+                                    height: 30,
                                     decoration: BoxDecoration(
                                         color: Color(0xff00802b),
-                                        borderRadius: BorderRadius.circular(20)
+                                        borderRadius: BorderRadius.circular(15)
                                     ),
                                     child: Center(
-                                        child: Text("Download", style: TextStyle(fontWeight: FontWeight.w500,color: Colors.white, fontSize: 14),)
+                                        child: Text("Download", style: TextStyle(fontWeight: FontWeight.w500,color: Colors.white, fontSize: 12),)
                                     )
                                 ),
                               ),
                               SizedBox(width: 20,),
+
+                              ///Print Invoice ---------------------
+                              InkWell(
+                                onTap: (){
+                                  Fluttertoast.showToast(
+                                      msg: "Initializing printer ...",
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.BOTTOM_RIGHT,
+                                      timeInSecForIosWeb: 1,
+                                      backgroundColor: Colors.red,
+                                      textColor: Colors.white,
+                                      webBgColor: "linear-gradient(to right, #1da241, #1da241)",
+                                      fontSize: 16.0
+                                  );
+                                  Timer(Duration(milliseconds: 300),(){
+                                    generatePdf("print",selectedInvoiceNumber, selectedInvoiceBillingAddress, selectedInvoiceShippingAddress,  invoice_details_list, selectedInvoiceSubtotal, selectedInvoiceGst, selectedInvoiceOther_charges, selectedInvoiceGrand_total, selectedInvoicePaid, selectedInvoiceDue, selectedInvoiceCustom_note);
+                                  });
+
+                                },
+                                child: Container(
+                                    width: 90,
+                                    height: 30,
+                                    decoration: BoxDecoration(
+                                        color: Colors.blue,
+                                        borderRadius: BorderRadius.circular(15)
+                                    ),
+                                    child: Center(
+                                        child: Text("Print", style: TextStyle(fontWeight: FontWeight.w500,color: Colors.white, fontSize: 12),)
+                                    )
+                                ),
+                              ),
+                              SizedBox(width: 20,),
+
+                              ///Delete Invoice ---------------------
                               InkWell(
                                 onTap: (){
                                   deleteInvoice();
                                 },
                                 child: Container(
-                                    width: 120,
-                                    height: 35,
+                                    width: 90,
+                                    height: 30,
                                     decoration: BoxDecoration(
                                         color: Colors.red.shade600,
-                                        borderRadius: BorderRadius.circular(20)
+                                        borderRadius: BorderRadius.circular(15)
                                     ),
                                     child: Center(
-                                        child: Text("Delete", style: TextStyle(fontWeight: FontWeight.w500,color: Colors.white, fontSize: 14),)
+                                        child: Text("Delete", style: TextStyle(fontWeight: FontWeight.w500,color: Colors.white, fontSize: 12),)
                                     )
                                 ),
                               ),
@@ -788,7 +830,6 @@ class _InvoiceListState extends State<InvoiceList> {
     Response response = await post(url, body: body);
     if(response.statusCode==200){
       String myData = response.body;
-      print(myData);
       var jsonData=jsonDecode(myData);
       if(jsonData['status']=="Success"){
 
@@ -819,76 +860,89 @@ class _InvoiceListState extends State<InvoiceList> {
     }
   }
 
-  generatePdf(String invoice_no, String billing_address,String shipping_address,  List<noteditableInvoiceItem> invoice_items, String subtotal, String gst, String other_charges, String grand_total, String paid, String due, String comments) async {
-
+  generatePdf(String purpose, String invoice_no, String billing_address,String shipping_address,  List<noteditableInvoiceItem> invoice_items, String subtotal, String gst, String other_charges, String grand_total, String paid, String due, String comments) async {
+    pdf = pw.Document();
     final invoiceLogo = await getAssetsImage("assets/logo/logo.png");
     List<pw.Widget> widgets = [];
 
 
-    widgets.add(pw.SizedBox(height: 60,),);
+    widgets.add(
+      pw.Padding(
+        padding: pw.EdgeInsets.symmetric(horizontal: 15),
+        child: pw.SizedBox(height: 20,),
+      )
+    );
 
-    widgets.add(pw.Row(
-      mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: pw.CrossAxisAlignment.start,
-      children: [
-        pw.Column(
+    widgets.add(
+      pw.Padding(
+        padding: pw.EdgeInsets.symmetric(horizontal: 10),
+        child: pw.Row(
+          mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
           crossAxisAlignment: pw.CrossAxisAlignment.start,
-          mainAxisAlignment: pw.MainAxisAlignment.start,
           children: [
-            pw.Row(
-              crossAxisAlignment: pw.CrossAxisAlignment.center,
+            pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
               mainAxisAlignment: pw.MainAxisAlignment.start,
               children: [
-                pw.Image(pw.MemoryImage(invoiceLogo), width: 50,height: 50),
-                pw.SizedBox(width: 8,),
-                pw. Text("Transmission Surgicals", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 18,color: PdfColors.lightBlue),),
+                pw.Row(
+                  crossAxisAlignment: pw.CrossAxisAlignment.center,
+                  mainAxisAlignment: pw.MainAxisAlignment.start,
+                  children: [
+                    pw.Image(pw.MemoryImage(invoiceLogo), width: 50,height: 50),
+                    pw.SizedBox(width: 8,),
+                    pw. Text("Transmission Surgicals", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 18,color: PdfColors.lightBlue),),
+                  ],
+                ),
+                pw.SizedBox(height: 2,),
+                pw.Text("333 J.C. Bose Road, PallyShree\nSodepur, Kolkata - 700110 \nPhone : +91 0333335980722 / 7278360630 / 9836947573\nEmail : surgicaltrans@gmail.com",style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 10,color: PdfColors.black),),
+
               ],
             ),
-            pw.SizedBox(height: 2,),
-            pw.Text("333 J.C. Bose Road, PallyShree\nSodepur, Kolkata - 700110 \nPhone : +91 0333335980722 / 7278360630 / 9836947573\nEmail : surgicaltrans@gmail.com",style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 10,color: PdfColors.black),),
-
+            pw.Column(
+              mainAxisAlignment: pw.MainAxisAlignment.start,
+              crossAxisAlignment: pw.CrossAxisAlignment.end,
+              children: [
+                pw.Text("TAX INVOICE",style: pw.TextStyle(fontSize: 16,fontWeight:pw.FontWeight.bold,color: PdfColors.black),),
+                pw.SizedBox(height: 5,),
+                pw.Text("Invoice Number $invoice_no",style: pw.TextStyle(fontSize: 12,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
+                pw.Text("Invoice Date "+DateFormat('dd/MM/yyyy').format(DateTime.now()),style: pw.TextStyle(fontSize: 12,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
+              ],
+            ),
           ],
-        ),
-        pw.Column(
-          mainAxisAlignment: pw.MainAxisAlignment.start,
-          crossAxisAlignment: pw.CrossAxisAlignment.end,
-          children: [
-            pw.Text("TAX INVOICE",style: pw.TextStyle(fontSize: 16,fontWeight:pw.FontWeight.bold,color: PdfColors.black),),
-            pw.SizedBox(height: 5,),
-            pw.Text("Invoice Number $invoice_no",style: pw.TextStyle(fontSize: 12,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
-            pw.Text("Invoice Date "+DateFormat('dd/MM/yyyy').format(DateTime.now()),style: pw.TextStyle(fontSize: 12,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
-          ],
-        ),
-      ],
-    ));
+        )
+      )
+    );
 
 
     widgets.add( pw.SizedBox(height: 30,),);
 
     widgets.add(
-        pw.Row(
-          mainAxisAlignment: pw.MainAxisAlignment.start,
-            children: [
-              pw.Expanded(
-                  child:pw.Column(
-                    crossAxisAlignment: pw.CrossAxisAlignment.start,
-                    children: [
-                      pw.Text("Billing Address :",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 12,color: PdfColors.black),),
-                      pw.Text(billing_address,style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 11,color: PdfColors.black),),
-                    ]
-                  )
-              ),
-              pw.SizedBox(width: 25),
-              pw.Expanded(
-                  child:pw.Column(
-                      crossAxisAlignment: pw.CrossAxisAlignment.start,
-                      children: [
-                        pw.Text("Shipping Address :",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 12,color: PdfColors.black),),
-                        pw.Text(shipping_address,style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 11,color: PdfColors.black),),
-                      ]
-                  )
-              )
-            ]
+        pw.Padding(
+          padding: pw.EdgeInsets.symmetric(horizontal: 15),
+          child: pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.start,
+              children: [
+                pw.Expanded(
+                    child:pw.Column(
+                        crossAxisAlignment: pw.CrossAxisAlignment.start,
+                        children: [
+                          pw.Text("Billing Address :",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 12,color: PdfColors.black),),
+                          pw.Text(billing_address,style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 11,color: PdfColors.black),),
+                        ]
+                    )
+                ),
+                pw.SizedBox(width: 25),
+                pw.Expanded(
+                    child:pw.Column(
+                        crossAxisAlignment: pw.CrossAxisAlignment.start,
+                        children: [
+                          pw.Text("Shipping Address :",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 12,color: PdfColors.black),),
+                          pw.Text(shipping_address,style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 11,color: PdfColors.black),),
+                        ]
+                    )
+                )
+              ]
+          ),
         )
     );
     widgets.add(pw.SizedBox(height: 30,),);
@@ -896,113 +950,160 @@ class _InvoiceListState extends State<InvoiceList> {
 
 
 
-    widgets.add(pw.Table.fromTextArray(
-        data: [
-          ['Sl. No.','Description','HSN/SAC', 'Quantity', 'Price', 'GST', 'Total'],
-          ...invoice_items.asMap().entries.map((item) => [
-            (item.key+1).toString()+".",
-            item.value.description.toString(),
-            item.value.hsn.toString(),
-            item.value.quantity.toString(),
-            item.value.price.toString(),
-            item.value.gst.toString()+"\n"+item.value.gst_percentage.toString()+"%",
-            item.value.totalAmount.toString(),
-          ]).toList(),
-        ],
-        cellAlignment: pw.Alignment.centerRight,
-        cellStyle: pw.TextStyle(fontWeight: pw.FontWeight.normal, fontSize: 10),
-        headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10),
-        border: pw.TableBorder.all(width: 1, color: PdfColors.blue),
-        headerDecoration: pw.BoxDecoration(
-          color: PdfColors.blue100,
-        ),
-        columnWidths: {
-          0:pw.FlexColumnWidth(1),
-          1:pw.FlexColumnWidth(3),
-          2:pw.FlexColumnWidth(2),
-          3:pw.FlexColumnWidth(2),
-          4:pw.FlexColumnWidth(2),
-        }
-    ),);
+    widgets.add(
+        pw.Padding(
+          padding: pw.EdgeInsets.symmetric(horizontal: 15),
+          child: pw.Table.fromTextArray(
+              data: [
+                ['Sl. No.','Description','HSN/SAC', 'Quantity', 'Price', 'GST', 'Total'],
+                ...invoice_items.asMap().entries.map((item) => [
+                  (item.key+1).toString()+".",
+                  item.value.description.toString(),
+                  item.value.hsn.toString(),
+                  item.value.quantity.toString(),
+                  item.value.price.toString(),
+                  item.value.gst.toString()+"\n"+item.value.gst_percentage.toString()+"%",
+                  item.value.totalAmount.toString(),
+                ]).toList(),
+              ],
+              cellAlignment: pw.Alignment.centerRight,
+              cellStyle: pw.TextStyle(fontWeight: pw.FontWeight.normal, fontSize: 10),
+              headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10),
+              border: pw.TableBorder.all(width: 1, color: PdfColors.blue),
+              headerDecoration: pw.BoxDecoration(
+                color: PdfColors.blue100,
+              ),
+              columnWidths: {
+                0:pw.FlexColumnWidth(1),
+                1:pw.FlexColumnWidth(3),
+                2:pw.FlexColumnWidth(2),
+                3:pw.FlexColumnWidth(2),
+                4:pw.FlexColumnWidth(2),
+              }
+          ),
+        )
+    );
 
 
     widgets.add(pw.SizedBox(height: 5,),);
 
-    widgets.add(pw.Row(
-      mainAxisAlignment: pw.MainAxisAlignment.end,
-      crossAxisAlignment: pw.CrossAxisAlignment.start,
-      children: [
-        pw.Column(
-          crossAxisAlignment:pw. CrossAxisAlignment.start,
-          children: [
-            pw.Text("Subtotal", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-            pw.Text("GST", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-            pw.Text("Other charges", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-            pw.Text("Grand Total", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-            pw.Text("Paid", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-            pw.Text("Due", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-          ],
-        ),
-        pw.Column(
+    widgets.add(
+      pw.Padding(
+        padding: pw.EdgeInsets.symmetric(horizontal: 15),
+        child: pw.Row(
+          mainAxisAlignment: pw.MainAxisAlignment.end,
           crossAxisAlignment: pw.CrossAxisAlignment.start,
           children: [
-            pw.Text(" : ", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-            pw.Text(" : ", style: pw.TextStyle(fontWeight:pw. FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-            pw.Text(" : ", style:pw. TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-            pw.Text(" : ", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-            pw.Text(" : ", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-            pw.Text(" : ", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-          ],
-        ),
+            pw.Column(
+              crossAxisAlignment:pw. CrossAxisAlignment.start,
+              children: [
+                pw.Text("Subtotal", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+                pw.Text("GST", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+                pw.Text("Other charges", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+                pw.Text("Grand Total", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+                pw.Text("Paid", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+                pw.Text("Due", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+              ],
+            ),
+            pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                pw.Text(" : ", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+                pw.Text(" : ", style: pw.TextStyle(fontWeight:pw. FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+                pw.Text(" : ", style:pw. TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+                pw.Text(" : ", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+                pw.Text(" : ", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+                pw.Text(" : ", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+              ],
+            ),
 
-        pw.Column(
-          crossAxisAlignment: pw.CrossAxisAlignment.end,
-          children: [
-            pw.Text(subtotal, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-            pw.Text(gst, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-            pw.Text(other_charges, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-            pw.Text(grand_total, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-            pw.Text(paid, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-            pw.Text(due, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+            pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.end,
+              children: [
+                pw.Text(subtotal, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+                pw.Text(gst, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+                pw.Text(other_charges, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+                pw.Text(grand_total, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+                pw.Text(paid, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+                pw.Text(due, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+              ],
+            ),
           ],
         ),
-      ],
-    ),);
+      )
+      );
 
     widgets.add(pw.SizedBox(height: 30,));
 
-    widgets.add(pw.Row(
-      mainAxisAlignment: pw.MainAxisAlignment.end,
-      children: [
-        pw.Container(
-            padding: pw.EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-            color: PdfColors.grey200,
-            child: pw.Text("Total : "+amountToWords(int.parse(double.parse(selectedInvoiceDue).round().toString())), style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold, color: PdfColors.grey900),)
+    widgets.add(
+      pw.Padding(
+        padding: pw.EdgeInsets.symmetric(horizontal: 15),
+        child: pw.Row(
+          mainAxisAlignment: pw.MainAxisAlignment.end,
+          children: [
+            pw.Container(
+                padding: pw.EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                color: PdfColors.grey200,
+                child: pw.Text("Total : "+amountToWords(int.parse(double.parse(selectedInvoiceDue).round().toString())), style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold, color: PdfColors.grey900),)
+            ),
+          ],
         ),
-      ],
-    ),);
+      )
+    );
 
     widgets.add(pw.SizedBox(height: 50,),);
 
-    widgets.add(pw.Text("COMMENTS OR SPECIAL INSTRUCTIONS:",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 12,color: PdfColors.black),),);
+    widgets.add(
+      pw.Padding(
+        padding: pw.EdgeInsets.symmetric(horizontal: 15),
+        child: pw.Text("COMMENTS OR SPECIAL INSTRUCTIONS:",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 12,color: PdfColors.black),),
+      )
+    );
     widgets.add(pw.SizedBox(height: 3,),);
-    widgets.add(pw.Text(comments,style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 11,color: PdfColors.black),),);
+    widgets.add(
+      pw.Padding(
+        padding: pw.EdgeInsets.symmetric(horizontal: 15),
+        child: pw.Text(comments,style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 11,color: PdfColors.black),),
+      )
+    );
     widgets.add(pw.SizedBox(height: 30,),);
-    widgets.add(pw.Row(
-      mainAxisAlignment: pw.MainAxisAlignment.center,
-      crossAxisAlignment: pw.CrossAxisAlignment.end,
-      children: [
-        pw.Text("THANK YOU FOR YOUR BUSINESS!",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 14,color:PdfColors.black),),
+    widgets.add(
+      pw.Padding(
+        padding: pw.EdgeInsets.symmetric(horizontal: 15),
+        child: pw.Row(
+          mainAxisAlignment: pw.MainAxisAlignment.center,
+          crossAxisAlignment: pw.CrossAxisAlignment.end,
+          children: [
+            pw.Text("THANK YOU FOR YOUR BUSINESS!",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 14,color:PdfColors.black),),
 
-      ],
-    ),);
+          ],
+        ),
+      )
+    );
 
-    widgets.add(pw.SizedBox(height: 80,),);
+    widgets.add(pw.SizedBox(height: 20,),);
 
 
     pdf.addPage(
       pw.MultiPage(
-        pageFormat: PdfPageFormat.a4,
+        pageTheme: pw.PageTheme(
+          buildBackground: (context){
+            return pw.Container(
+                width: double.infinity,
+                height: double.infinity,
+                decoration: pw.BoxDecoration(
+                  border: pw.Border.all(
+                      color: PdfColors.black,
+                      width: 0.5
+                  ),
+                )
+            );
+          },
+
+          pageFormat: PdfPageFormat.a4,
+
+          margin: pw.EdgeInsets.all(30),
+        ),
         build: (context) {
            return widgets;
         }
@@ -1013,15 +1114,26 @@ class _InvoiceListState extends State<InvoiceList> {
     pdf_bytes=await pdf.save();
 
 
-    final blob = html.Blob([pdf_bytes], 'application/pdf');
-    final url = html.Url.createObjectUrlFromBlob(blob);
-    final anchor = html.document.createElement('a') as html.AnchorElement
-      ..href = url
-      ..download = "Invoice$invoice_no.pdf";
-    html.document.body?.children.add(anchor);
-    anchor.click();
-    html.document.body?.children.remove(anchor);
-    html.Url.revokeObjectUrl(url);
+    if(purpose=="download"){
+      final blob = html.Blob([pdf_bytes], 'application/pdf');
+      final url = html.Url.createObjectUrlFromBlob(blob);
+      final anchor = html.document.createElement('a') as html.AnchorElement
+        ..href = url
+        ..download = "Invoice$invoice_no.pdf";
+      html.document.body?.children.add(anchor);
+      anchor.click();
+      html.document.body?.children.remove(anchor);
+      html.Url.revokeObjectUrl(url);
+    }
+
+    if(purpose=="print"){
+      final blob = html.Blob([pdf_bytes], 'application/pdf');
+      final url = html.Url.createObjectUrlFromBlob(blob);
+      final windowFeatures = 'resizable,scrollbars,status,titlebar';
+      html.window.open(url, "Print Invoice", windowFeatures);
+      html.Url.revokeObjectUrl(url);
+    }
+
 
 
   }

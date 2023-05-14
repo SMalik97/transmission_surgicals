@@ -17,3 +17,4 @@ const road_challan_dashboard=api_base_path+"road_challan_dashboard";
 const add_new_product=api_base_path+"create_product";
 const fetch_all_product=api_base_path+"all_product";
 const delete_product=api_base_path+"delete_product";
+const create_general_quotation=api_base_path+"create_general_quotation";

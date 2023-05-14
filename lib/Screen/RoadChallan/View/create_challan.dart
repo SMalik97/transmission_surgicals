@@ -39,7 +39,7 @@ class _CreateChallanState extends State<CreateChallan> {
 
   int total_quantity=0;
   String purpose="";
-  final pdf = pw.Document();
+  late pw.Document pdf;
 
   String selectedChallanId="", selectedChallanNumber="", selectedChallanDate="", selectedChallanRecipientDetails="", selectedChallanGstno="", selectedChallanVehicleno="", selectedChallanSupplyPlace="", selectedTotalQuantity="", selectedReceivedBy="", selectedDeliveryBy="";
   List<notEditableChallanItem> challan_list=[];
@@ -104,42 +104,83 @@ class _CreateChallanState extends State<CreateChallan> {
                           ),
 
                        if(isDownloadViewShowing==true)
-                       InkWell(
-                            onTap: (){
-                              final blob = html.Blob([pdf_bytes], 'application/pdf');
-                              final url = html.Url.createObjectUrlFromBlob(blob);
-                              final anchor = html.document.createElement('a') as html.AnchorElement
-                                ..href = url
-                                ..download = "Challan$selectedChallanNumber.pdf";
-                              html.document.body?.children.add(anchor);
-                              anchor.click();
-                              html.document.body?.children.remove(anchor);
-                              html.Url.revokeObjectUrl(url);
-                              Fluttertoast.showToast(
-                                  msg: "Downloading...",
-                                  toastLength: Toast.LENGTH_SHORT,
-                                  gravity: ToastGravity.BOTTOM_RIGHT,
-                                  timeInSecForIosWeb: 1,
-                                  backgroundColor: Colors.red,
-                                  textColor: Colors.white,
-                                  webBgColor: "linear-gradient(to right, #1da241, #1da241)",
-                                  fontSize: 16.0
-                              );
+                       Row(
+                         children: [
+                           /// Download ------------
+                           InkWell(
+                                onTap: (){
+                                  final blob = html.Blob([pdf_bytes], 'application/pdf');
+                                  final url = html.Url.createObjectUrlFromBlob(blob);
+                                  final anchor = html.document.createElement('a') as html.AnchorElement
+                                    ..href = url
+                                    ..download = "Challan$selectedChallanNumber.pdf";
+                                  html.document.body?.children.add(anchor);
+                                  anchor.click();
+                                  html.document.body?.children.remove(anchor);
+                                  html.Url.revokeObjectUrl(url);
+                                  Fluttertoast.showToast(
+                                      msg: "Downloading...",
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.BOTTOM_RIGHT,
+                                      timeInSecForIosWeb: 1,
+                                      backgroundColor: Colors.red,
+                                      textColor: Colors.white,
+                                      webBgColor: "linear-gradient(to right, #1da241, #1da241)",
+                                      fontSize: 16.0
+                                  );
 
-                            },
-                            child: Opacity(
-                              opacity: isGenerating==true? 0.7:1,
-                              child: Container(
-                                height: 30,
-                                padding: EdgeInsets.symmetric(horizontal: 10),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(3),
-                                    color: Color(0xff00802b)
+                                },
+                                child: Opacity(
+                                  opacity: isGenerating==true? 0.7:1,
+                                  child: Container(
+                                    height: 30,
+                                    padding: EdgeInsets.symmetric(horizontal: 15),
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(3),
+                                        color: Color(0xff00802b)
+                                    ),
+                                    child: Center(child: Text("Download", style: TextStyle(color: Colors.white,fontSize: 14, fontWeight: FontWeight.w500),)),
+                                  ),
                                 ),
-                                child: Center(child: Text("Download Challan", style: TextStyle(color: Colors.white,fontSize: 14, fontWeight: FontWeight.w500),)),
                               ),
-                            ),
-                          ),
+                           SizedBox(width: 20,),
+
+                           /// Print ------------
+                           InkWell(
+                             onTap: (){
+                               final blob = html.Blob([pdf_bytes], 'application/pdf');
+                               final url = html.Url.createObjectUrlFromBlob(blob);
+                               final windowFeatures = 'resizable,scrollbars,status,titlebar';
+                               html.window.open(url, "Print Challan", windowFeatures);
+                               html.Url.revokeObjectUrl(url);
+
+                               Fluttertoast.showToast(
+                                   msg: "Initializing printer...",
+                                   toastLength: Toast.LENGTH_SHORT,
+                                   gravity: ToastGravity.BOTTOM_RIGHT,
+                                   timeInSecForIosWeb: 1,
+                                   backgroundColor: Colors.red,
+                                   textColor: Colors.white,
+                                   webBgColor: "linear-gradient(to right, #1da241, #1da241)",
+                                   fontSize: 16.0
+                               );
+
+                             },
+                             child: Opacity(
+                               opacity: isGenerating==true? 0.7:1,
+                               child: Container(
+                                 height: 30,
+                                 padding: EdgeInsets.symmetric(horizontal: 15),
+                                 decoration: BoxDecoration(
+                                     borderRadius: BorderRadius.circular(3),
+                                     color: Colors.blue
+                                 ),
+                                 child: Center(child: Text("Print", style: TextStyle(color: Colors.white,fontSize: 14, fontWeight: FontWeight.w500),)),
+                               ),
+                             ),
+                           ),
+                            ],
+                       ),
 
                         SizedBox(width: 15,),
                         InkWell(
@@ -1044,163 +1085,231 @@ class _CreateChallanState extends State<CreateChallan> {
 
 
   generatePdf(String challan_no, String challan_date, String recipient_details, String gst_no, String vehicle_no, String supply_place, List<notEditableChallanItem> challan_item_list, String total_qty, String received_by, String delivery_by) async {
+    pdf= pw.Document();
     final invoiceLogo = await getAssetsImage("assets/logo/logo.png");
     List<pw.Widget> widgets = [];
     widgets.add(pw.SizedBox(height: 60,),);
 
 
-    widgets.add(pw.Row(
-      mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: pw.CrossAxisAlignment.start,
-      children: [
-        pw.Column(
-          crossAxisAlignment: pw.CrossAxisAlignment.start,
-          mainAxisAlignment: pw.MainAxisAlignment.start,
-          children: [
-            pw.Row(
-              crossAxisAlignment: pw.CrossAxisAlignment.center,
-              mainAxisAlignment: pw.MainAxisAlignment.start,
-              children: [
-                pw.Image(pw.MemoryImage(invoiceLogo), width: 50,height: 50),
-                pw.SizedBox(width: 8,),
-                pw. Text("Transmission Surgicals", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 18,color: PdfColors.lightBlue),),
-              ],
-            ),
-            pw.SizedBox(height: 2,),
-            pw.Text("333 J.C. Bose Road, PallyShree\nSodepur, Kolkata - 700110 \nPhone : +91 0333335980722 / 7278360630 / 9836947573\nEmail : surgicaltrans@gmail.com",style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 10,color: PdfColors.black),),
+    widgets.add(
+        pw.Padding(
+          padding: pw.EdgeInsets.symmetric(horizontal: 15),
+          child: pw.Row(
+            mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                mainAxisAlignment: pw.MainAxisAlignment.start,
+                children: [
+                  pw.Row(
+                    crossAxisAlignment: pw.CrossAxisAlignment.center,
+                    mainAxisAlignment: pw.MainAxisAlignment.start,
+                    children: [
+                      pw.Image(pw.MemoryImage(invoiceLogo), width: 50,height: 50),
+                      pw.SizedBox(width: 8,),
+                      pw. Text("Transmission Surgicals", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 18,color: PdfColors.lightBlue),),
+                    ],
+                  ),
+                  pw.SizedBox(height: 2,),
+                  pw.Text("333 J.C. Bose Road, PallyShree\nSodepur, Kolkata - 700110 \nPhone : +91 0333335980722 / 7278360630 / 9836947573\nEmail : surgicaltrans@gmail.com",style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 10,color: PdfColors.black),),
 
-          ],
-        ),
-        pw.Column(
-          mainAxisAlignment: pw.MainAxisAlignment.start,
-          crossAxisAlignment: pw.CrossAxisAlignment.end,
-          children: [
-            pw.Text("Road Challan",style: pw.TextStyle(fontSize: 16,fontWeight:pw.FontWeight.bold,color: PdfColors.black),),
-            pw.SizedBox(height: 5,),
-            pw.Text("Challan Number $challan_no",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
-            pw.Text("Challan Date "+challan_date,style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
-          ],
-        ),
-      ],
-    ));
+                ],
+              ),
+              pw.Column(
+                mainAxisAlignment: pw.MainAxisAlignment.start,
+                crossAxisAlignment: pw.CrossAxisAlignment.end,
+                children: [
+                  pw.Text("Road Challan",style: pw.TextStyle(fontSize: 16,fontWeight:pw.FontWeight.bold,color: PdfColors.black),),
+                  pw.SizedBox(height: 5,),
+                  pw.Text("Challan Number $challan_no",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
+                  pw.Text("Challan Date "+challan_date,style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
+                ],
+              ),
+            ],
+          ),
+        )
+    );
+
 
     widgets.add( pw.SizedBox(height: 30,),);
 
-    widgets.add(pw.Text("Delivery Challan For :",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 12,color: PdfColors.black),),);
-    widgets.add(pw.Text(recipient_details,style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 12,color: PdfColors.black),),);
-    widgets.add(pw.SizedBox(height: 30,),);
     widgets.add(
-      pw.Row(
-        mainAxisAlignment: pw.MainAxisAlignment.start,
-        children: [
-         pw.Column(
-           crossAxisAlignment: pw.CrossAxisAlignment.start,
-           children: [
-             pw.Text("GSTIN : $gst_no"),
-             pw.Text("Vehicle Number : $vehicle_no"),
-             pw.Text("Place of Supply : $supply_place"),
-           ]
-         )
-        ]
-      )
+        pw.Padding(
+          padding: pw.EdgeInsets.symmetric(horizontal: 15),
+          child: pw.Text("Delivery Challan For :",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 12,color: PdfColors.black),),
+        )
     );
+
+    widgets.add(
+        pw.Padding(
+          padding: pw.EdgeInsets.symmetric(horizontal: 15),
+          child: pw.Text(recipient_details,style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 12,color: PdfColors.black),),
+        )
+    );
+
+    widgets.add(pw.SizedBox(height: 30,),);
+
+    widgets.add(
+        pw.Padding(
+          padding: pw.EdgeInsets.symmetric(horizontal: 15),
+          child: pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.start,
+              children: [
+                pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
+                    children: [
+                      pw.Text("GSTIN : $gst_no"),
+                      pw.Text("Vehicle Number : $vehicle_no"),
+                      pw.Text("Place of Supply : $supply_place"),
+                    ]
+                )
+              ]
+          )
+        )
+    );
+
 
     widgets.add(pw.SizedBox(height: 20,),);
 
 
-    widgets.add(pw.Table.fromTextArray(
-        data: [
-          ['Sl. No.','Description', 'HSN/SAC', 'MRP', 'Quantity'],
-          ...challan_item_list.asMap().entries.map((item) => [
-            (item.key+1).toString()+".",
-            item.value.description.toString(),
-            item.value.hsn.toString(),
-            item.value.totalAmount.toString(),
-            item.value.quantity.toString(),
-          ]).toList(),
-        ],
-        cellAlignment: pw.Alignment.centerRight,
-        cellStyle: pw.TextStyle(fontWeight: pw.FontWeight.normal),
-        headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: PdfColors.blue, fontSize: 10),
-        border: pw.TableBorder.all(width: 1, color: PdfColors.blue),
-        headerDecoration: pw.BoxDecoration(
-          color: PdfColors.blue100,
-        ),
-        columnWidths: {
-          0:pw.FlexColumnWidth(1),
-          1:pw.FlexColumnWidth(3),
-          2:pw.FlexColumnWidth(2),
-          3:pw.FlexColumnWidth(2),
-          4:pw.FlexColumnWidth(2),
-        }
-    ),);
+    widgets.add(
+        pw.Padding(
+          padding: pw.EdgeInsets.symmetric(horizontal: 15),
+          child: pw.Table.fromTextArray(
+              data: [
+                ['Sl. No.','Description', 'HSN/SAC', 'MRP', 'Quantity'],
+                ...challan_item_list.asMap().entries.map((item) => [
+                  (item.key+1).toString()+".",
+                  item.value.description.toString(),
+                  item.value.hsn.toString(),
+                  item.value.totalAmount.toString(),
+                  item.value.quantity.toString(),
+                ]).toList(),
+              ],
+              cellAlignment: pw.Alignment.centerRight,
+              cellStyle: pw.TextStyle(fontWeight: pw.FontWeight.normal),
+              headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: PdfColors.blue, fontSize: 10),
+              border: pw.TableBorder.all(width: 1, color: PdfColors.blue),
+              headerDecoration: pw.BoxDecoration(
+                color: PdfColors.blue100,
+              ),
+              columnWidths: {
+                0:pw.FlexColumnWidth(1),
+                1:pw.FlexColumnWidth(3),
+                2:pw.FlexColumnWidth(2),
+                3:pw.FlexColumnWidth(2),
+                4:pw.FlexColumnWidth(2),
+              }
+          ),
+        )
+    );
 
 
 
     widgets.add(pw.SizedBox(height: 5,),);
 
+    widgets.add(
+        pw.Padding(
+          padding: pw.EdgeInsets.symmetric(horizontal: 15),
+          child: pw.Row(
+            mainAxisAlignment: pw.MainAxisAlignment.end,
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Text("Total Quantity", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+              pw.Text(" : ", style:pw. TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
 
-    widgets.add(pw.Row(
-      mainAxisAlignment: pw.MainAxisAlignment.end,
-      crossAxisAlignment: pw.CrossAxisAlignment.start,
-      children: [
-        pw.Text("Total Quantity", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-        pw.Text(" : ", style:pw. TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+              pw.Text(total_qty, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
+            ],
+          ),
+        )
+    );
 
-        pw.Text(total_qty, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-      ],
-    ),);
+
 
 
     widgets.add(
       pw.SizedBox(height: 15),
     );
 
+
     widgets.add(
-      pw.Row(
-        mainAxisAlignment: pw.MainAxisAlignment.start,
-        children: [
-          pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
+        pw.Padding(
+          padding: pw.EdgeInsets.symmetric(horizontal: 15),
+          child: pw.Row(
+            mainAxisAlignment: pw.MainAxisAlignment.start,
             children: [
-              pw.Text("Received By:", style: pw.TextStyle(fontSize: 10,color: PdfColors.black,fontWeight: pw.FontWeight.bold),),
-              pw.SizedBox(height: 3,),
-              pw.Text(received_by,style: pw.TextStyle(color: PdfColors.black,fontWeight: pw.FontWeight.normal, fontSize: 10,),
-              ),
+              pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                children: [
+                  pw.Text("Received By:", style: pw.TextStyle(fontSize: 10,color: PdfColors.black,fontWeight: pw.FontWeight.bold),),
+                  pw.SizedBox(height: 3,),
+                  pw.Text(received_by,style: pw.TextStyle(color: PdfColors.black,fontWeight: pw.FontWeight.normal, fontSize: 10,),
+                  ),
+                ],
+              )
             ],
-          )
-        ],
-      ),
+          ),
+        )
     );
+
+
 
     widgets.add(pw.SizedBox(height: 15,),);
 
     widgets.add(
-      pw.Row(
-        mainAxisAlignment: pw.MainAxisAlignment.start,
-        children: [
-          pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
+        pw.Padding(
+          padding: pw.EdgeInsets.symmetric(horizontal: 15),
+          child: pw.Row(
+            mainAxisAlignment: pw.MainAxisAlignment.start,
             children: [
-              pw.Text("Delivery By:", style: pw.TextStyle(fontSize: 10,color: PdfColors.black,fontWeight: pw.FontWeight.bold),),
-              pw.SizedBox(height: 3,),
-              pw.Text(delivery_by,style: pw.TextStyle(color: PdfColors.black,fontWeight: pw.FontWeight.normal,fontSize: 10,)),
+              pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                children: [
+                  pw.Text("Delivery By:", style: pw.TextStyle(fontSize: 10,color: PdfColors.black,fontWeight: pw.FontWeight.bold),),
+                  pw.SizedBox(height: 3,),
+                  pw.Text(delivery_by,style: pw.TextStyle(color: PdfColors.black,fontWeight: pw.FontWeight.normal,fontSize: 10,)),
+                ],
+              )
             ],
-          )
-        ],
-      ),
+          ),
+        )
     );
+
+
 
     widgets.add(pw.SizedBox(height: 20,),);
 
-    widgets.add(pw.Text("Thanks for your business!", style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),);
+    widgets.add(
+        pw.Padding(
+          padding: pw.EdgeInsets.symmetric(horizontal: 15),
+          child: pw.Text("Thanks for your business!", style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
+        )
+    );
     widgets.add(pw.SizedBox(height: 30,),);
 
 
 
     pdf.addPage(
       pw.MultiPage(
-        pageFormat: PdfPageFormat.a4,
+        pageTheme: pw.PageTheme(
+          buildBackground: (context){
+            return pw.Container(
+                width: double.infinity,
+                height: double.infinity,
+                decoration: pw.BoxDecoration(
+                  border: pw.Border.all(
+                      color: PdfColors.black,
+                      width: 0.5
+                  ),
+                )
+            );
+          },
+
+          pageFormat: PdfPageFormat.a4,
+
+          margin: pw.EdgeInsets.all(30),
+        ),
         build: (context) => widgets,
       ),
     );

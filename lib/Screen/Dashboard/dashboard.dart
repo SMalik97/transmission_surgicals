@@ -550,7 +550,7 @@ class _DashboardState extends State<Dashboard> {
                     ),
                     child: Column(
                       children: [
-                        Text("INVOICE", style: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.w600),),
+                        Text("TAX INVOICE", style: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.w600),),
                         SizedBox(height: 25,),
                         Row(
                           children: [
