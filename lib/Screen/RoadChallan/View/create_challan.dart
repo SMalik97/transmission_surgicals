@@ -753,6 +753,7 @@ class _CreateChallanState extends State<CreateChallan> {
                                     border: Border.all(color: Colors.black54, width: 0.7)
                                 ),
                                 child: TextField(
+                                  controller: received_by_controller,
                                   decoration: InputDecoration(
                                     isDense: true,
                                     border: InputBorder.none,
@@ -783,6 +784,7 @@ class _CreateChallanState extends State<CreateChallan> {
                                     border: Border.all(color: Colors.black54, width: 0.7)
                                 ),
                                 child: TextField(
+                                  controller: delivery_by_controller,
                                   decoration: InputDecoration(
                                       isDense: true,
                                       border: InputBorder.none,
@@ -1406,6 +1408,8 @@ class _CreateChallanState extends State<CreateChallan> {
           gst_no_controller.text=selectedChallanGstno;
           vehicle_no_controller.text=selectedChallanVehicleno;
           supply_place_controller.text=selectedChallanSupplyPlace;
+          delivery_by_controller.text=selectedDeliveryBy;
+          received_by_controller.text=selectedReceivedBy;
 
           placeHolder=createChallanView("########",DateFormat('dd/MM/yyyy').format(DateTime.now()));
 
