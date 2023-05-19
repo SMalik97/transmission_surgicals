@@ -10,6 +10,6 @@ class QuotationList extends StatefulWidget {
 class _QuotationListState extends State<QuotationList> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold();
   }
 }

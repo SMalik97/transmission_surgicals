@@ -13,11 +13,13 @@ class GeneralQuotationEditableModel {
   TextEditingController? quantity_controller;
   TextEditingController? rate_controller;
   TextEditingController? gst_controller;
+  TextEditingController? gst_percentage_controller;
+  TextEditingController? amount_controller;
 
 
   GeneralQuotationEditableModel({required this.product_name, required this.hsn_no, required this.quantity,
       required this.rate,required this.gst,required this.gst_percentage, required this.amount, required this.product_name_controller,
-      required this.hsn_no_controller, required this.quantity_controller, required this.rate_controller, required this.gst_controller});
+      required this.hsn_no_controller, required this.quantity_controller, required this.rate_controller,required this.gst_controller, required this.gst_percentage_controller, required this.amount_controller});
 
   GeneralQuotationEditableModel.fromJson(Map<String, dynamic> json) {
     product_name = json['product_name'];
@@ -32,6 +34,8 @@ class GeneralQuotationEditableModel {
     quantity_controller = TextEditingController();
     rate_controller = TextEditingController();
     gst_controller = TextEditingController();
+    gst_percentage_controller = TextEditingController();
+    amount_controller = TextEditingController();
   }
 
   Map<String, dynamic> toJson() {
@@ -48,6 +52,8 @@ class GeneralQuotationEditableModel {
     quantity_controller = this.quantity_controller;
     rate_controller = this.rate_controller;
     gst_controller = this.gst_controller;
+    gst_percentage_controller = this.gst_percentage_controller;
+    amount_controller = this.amount_controller;
     return data;
   }
 }

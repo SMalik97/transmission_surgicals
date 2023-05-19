@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart';
+import 'package:transmission_surgicals/Screen/Quotation/View/create_quotation.dart';
 import 'package:transmission_surgicals/Utils/shared_preferences.dart';
 import 'package:get/get.dart' as getX;
 import '../../Service/auth_service.dart';
@@ -823,7 +824,7 @@ class _DashboardState extends State<Dashboard> {
       isInvoiceSelected=false;
       isProductSelected=false;
 
-      placeHolder = QuotationList();
+      placeHolder = CreateQuotation();
     });
   }
 
