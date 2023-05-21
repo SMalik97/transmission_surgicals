@@ -4,6 +4,7 @@ import 'package:transmission_surgicals/Screen/Quotation/View/create_quotation.da
 import 'package:transmission_surgicals/Screen/login.dart';
 import '../Screen/Invoice/View/create_invoice.dart';
 import '../Screen/Invoice/View/invoice_list.dart';
+import '../Screen/Quotation/View/quotation_list.dart';
 import '../Screen/RoadChallan/View/challan_list.dart';
 import '../Screen/RoadChallan/View/create_challan.dart';
 import '../Screen/splash_screen.dart';
@@ -69,6 +70,14 @@ appRoutes()=>[
   GetPage(
     name: '/create-quotation',
     page: () => CreateQuotation(),
+    transition: Transition.fade,
+    middlewares: [AuthGuard()],
+    transitionDuration: Duration(milliseconds: 300),
+  ),
+
+  GetPage(
+    name: '/quotation-list',
+    page: () => QuotationList(),
     transition: Transition.fade,
     middlewares: [AuthGuard()],
     transitionDuration: Duration(milliseconds: 300),

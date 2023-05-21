@@ -19,3 +19,7 @@ const fetch_all_product=api_base_path+"all_product";
 const delete_product=api_base_path+"delete_product";
 const create_general_quotation=api_base_path+"create_general_quotation";
 const search_product_image=api_base_path+"getProductImage";
+const fetch_general_quotation=api_base_path+"general_quotation";
+const general_quotation_details=api_base_path+"get_general_quotation";
+const delete_general_quotation=api_base_path+"delete_general_quotation";
+const update_general_quotation=api_base_path+"edit_general_quotation";

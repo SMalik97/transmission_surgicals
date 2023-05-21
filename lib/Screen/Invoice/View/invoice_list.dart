@@ -836,7 +836,7 @@ class _InvoiceListState extends State<InvoiceList> {
         setState(() {});
       }else{
         Fluttertoast.showToast(
-            msg: "Error while loading",
+            msg: "Error while deleting",
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM_RIGHT,
             timeInSecForIosWeb: 1,
@@ -1146,7 +1146,7 @@ class _InvoiceListState extends State<InvoiceList> {
 
   refreshIndex(){
     for(int i=0; i<invoice_list.length; i++){
-      if(invoice_list[i].invoiceId == invoice_list){
+      if(invoice_list[i].invoiceId == selectedInvoiceId){
         selectedIndex = i;
       }
     }

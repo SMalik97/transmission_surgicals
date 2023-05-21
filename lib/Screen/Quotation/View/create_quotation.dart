@@ -51,7 +51,10 @@ class _CreateQuotationState extends State<CreateQuotation> {
   final total_amount_controller =TextEditingController();
   bool isGenerating=false;
   int selectedTab=1;
-  String quotation_id="", quotation_no="";
+  String selectedQuotationId="", quotation_no="", purpose="",selectedQuotationBuyerName="", selectedQuotationBuyerAddress="", selectedQuotationBuyerContactDetails="", selectedQuotationBuyerGst="";
+  String selectedQuotationDate = "",selectedQuotationSellerContactDetails="", selectedQuotationPackagingFee="", selectedQuotationSubtotal="",selectedQuotationGst="",selectedQuotationTotalAmount="";
+  String selectedQuotationNo = "", selectedQuotationTitle="";
+  bool isQuotationLoading=false;
 
   @override
   Widget build(BuildContext context) {
@@ -141,7 +144,28 @@ class _CreateQuotationState extends State<CreateQuotation> {
                             child: Center(child: Text("Download", style: TextStyle(color: Colors.white,fontSize: 14, fontWeight: FontWeight.w500),)),
                           ),
                         )
-                            : InkWell(
+                        : (getX.Get.parameters['purpose'].toString()=="edit") ?  InkWell(
+                          onTap: isGenerating ==true? null :(){
+                            List<GeneralQuotationNotEditableModel> quotation_item_list=[];
+                            for(int i=0; i<general_quotation_editable_list.length; i++){
+                              GeneralQuotationNotEditableModel a= GeneralQuotationNotEditableModel(productName: general_quotation_editable_list[i].product_name, hsn_code: general_quotation_editable_list[i].hsn_no, amount: general_quotation_editable_list[i].amount, rate: general_quotation_editable_list[i].rate, quantity: general_quotation_editable_list[i].quantity, gst_percentage: general_quotation_editable_list[i].gst_percentage, gst: general_quotation_editable_list[i].gst);
+                              quotation_item_list.add(a);
+                            }
+                            updateGeneralQuotation(selectedQuotationId,quotation_title_controller.text,buyer_controller.text, buyer_address_controller.text, buyer_contact_details.text, buyer_gst_no_controller.text, quotation_date_controller.text, seller_contact_details.text, packaging_controller.text, subtotal_controller.text, gst_controller.text, total_amount_controller.text, quotation_item_list);
+                          },
+                          child: Opacity(
+                            opacity: isGenerating ? 0.5 : 1,
+                            child: Container(
+                              height: 30,
+                              padding: EdgeInsets.symmetric(horizontal: 10),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(3),
+                                  color: Color(0xff00802b)
+                              ),
+                              child: Center(child: Text(isGenerating ? 'Updating...' : "Update Quotation", style: TextStyle(color: Colors.white,fontSize: 14, fontWeight: FontWeight.w500),)),
+                            ),
+                          ),
+                        ) : InkWell(
                             onTap: isGenerating ==true? null :(){
                               List<GeneralQuotationNotEditableModel> quotation_item_list=[];
                               for(int i=0; i<general_quotation_editable_list.length; i++){
@@ -169,7 +193,7 @@ class _CreateQuotationState extends State<CreateQuotation> {
                             if(getX.Get.parameters['id'] == null){
                               getX.Get.offAndToNamed("/create-quotation");
                             }else{
-                              // getX.Get.offAndToNamed("/create-quotation?purpose=$purpose&id=$invoice_id",);
+                              getX.Get.offAndToNamed("/create-quotation?purpose=$purpose&id=$selectedQuotationId",);
                             }
                             Fluttertoast.showToast(
                                 msg: "Refreshing...",
@@ -234,20 +258,67 @@ class _CreateQuotationState extends State<CreateQuotation> {
     image_quotation_editable_list.add(b);
     packaging_controller.text="00";
 
-
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      setState(() {
-        placeHolder=editableGenerateQuotation();
+    if(getX.Get.parameters['id']==null){
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        setState(() {
+          placeHolder=editableGenerateQuotation();
+        });
       });
-    });
+    }else{
+      purpose=getX.Get.parameters['purpose']!;
+      selectedQuotationId=getX.Get.parameters['id']!;
+
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        setState(() {
+          placeHolder=Expanded(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: 25,height: 25,
+                    child: CircularProgressIndicator(),
+                  ),
+                  SizedBox(height: 5,),
+                  Text("Getting ready...", style: TextStyle(color: Colors.blue, fontWeight: FontWeight.w600,fontSize: 15),)
+                ],
+              ),
+            ),
+          );
+        });
+      });
+
+      fetchGeneralQuotationDetails();
+
+    }
+
 
     super.initState();
   }
 
   /// General quotation editable widget
   Widget editableGenerateQuotation(){
-    quotation_no_controller.text="Auto Generated";
-    quotation_date_controller.text="Auto Generated";
+    if(getX.Get.parameters['id'] == null){
+      quotation_no_controller.text="Auto Generated";
+      quotation_date_controller.text="Auto Generated";
+    }else{
+      quotation_no_controller.text=selectedQuotationNo;
+      quotation_date_controller.text=selectedQuotationDate;
+      quotation_title_controller.text=selectedQuotationTitle;
+      buyer_controller.text=selectedQuotationBuyerName;
+      buyer_address_controller.text=selectedQuotationBuyerAddress;
+      buyer_contact_details.text=selectedQuotationBuyerContactDetails;
+      buyer_gst_no_controller.text=selectedQuotationBuyerGst;
+      seller_contact_details.text=selectedQuotationSellerContactDetails;
+      subtotal_controller.text=selectedQuotationSubtotal;
+      packaging_controller.text=selectedQuotationPackagingFee;
+      gst_controller.text=selectedQuotationGst;
+      total_amount_controller.text=selectedQuotationTotalAmount;
+
+
+
+    }
+
     return StatefulBuilder(
       builder: (context,setState) {
         return Expanded(
@@ -3953,7 +4024,7 @@ class _CreateQuotationState extends State<CreateQuotation> {
     final url = html.Url.createObjectUrlFromBlob(blob);
     final anchor = html.document.createElement('a') as html.AnchorElement
       ..href = url
-      ..download = quotation_id+'.pdf';
+      ..download = "Quotation"+selectedQuotationId+'.pdf';
     html.document.body?.children.add(anchor);
     anchor.click();
     html.document.body?.children.remove(anchor);
@@ -3981,6 +4052,49 @@ class _CreateQuotationState extends State<CreateQuotation> {
           placeHolder=notEditableGeneralQuotation(quotation_title, buyer_name, quotation_no, buyer_address, DateFormat('dd/MM/yyyy').format(DateTime.now()), buyer_gst, buyer_contact_details, seller_contact_details, quotation_item_list, packaging_fee, subtotal, gst, total_amount);
         });
         generateGeneralPdf(quotation_title, buyer_name, buyer_address, buyer_contact_details, quotation_no, DateFormat('dd/MM/yyyy').format(DateTime.now()), buyer_gst, seller_contact_details, quotation_item_list, packaging_fee, subtotal, gst, total_amount);
+      } else {
+        Fluttertoast.showToast(
+            msg: "Some error has occurred",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM_RIGHT,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            webBgColor: "linear-gradient(to right, #C62828, #C62828)",
+            fontSize: 16.0
+        );
+      }
+    }else{
+      Fluttertoast.showToast(
+          msg: "Some error has occurred",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM_RIGHT,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          webBgColor: "linear-gradient(to right, #C62828, #C62828)",
+          fontSize: 16.0
+      );
+    }
+  }
+
+  updateGeneralQuotation(String quotation_id,String quotation_title,String buyer_name, String buyer_address, String buyer_contact_details, String buyer_gst, String date, String seller_contact_details, String packaging_fee, String subtotal, String gst, String total_amount, List<GeneralQuotationNotEditableModel> quotation_item_list) async {
+    setState(() {
+      isGenerating=true;
+    });
+    String item_list=jsonEncode(quotation_item_list);
+    var url = Uri.parse(update_general_quotation);
+    Map<String, String> body = {"id":quotation_id,"quotation_title":quotation_title,"buyer_name": buyer_name, "buyer_address" : buyer_address, "buyer_contact_details":buyer_contact_details, "buyer_gst":buyer_gst, "date":date, "seller_contact_details":seller_contact_details, "quotations_details":item_list, "packaging_fee":packaging_fee, "subtotal":subtotal, "gst":gst, "total_amount":total_amount};
+    Response response = await post(url, body: body);
+    if (response.statusCode == 200) {
+      String myData = response.body;
+      var jsonData = jsonDecode(myData);
+      print(myData+" .........");
+      if (jsonData['status'] == "success") {
+        setState(() {
+          placeHolder=notEditableGeneralQuotation(quotation_title, buyer_name, selectedQuotationNo, buyer_address, selectedQuotationDate, buyer_gst, buyer_contact_details, seller_contact_details, quotation_item_list, packaging_fee, subtotal, gst, total_amount);
+        });
+        generateGeneralPdf(quotation_title, buyer_name, buyer_address, buyer_contact_details, selectedQuotationNo, selectedQuotationDate, buyer_gst, seller_contact_details, quotation_item_list, packaging_fee, subtotal, gst, total_amount);
       } else {
         Fluttertoast.showToast(
             msg: "Some error has occurred",
@@ -4053,6 +4167,67 @@ class _CreateQuotationState extends State<CreateQuotation> {
     });
 
   }
+
+
+
+  fetchGeneralQuotationDetails() async {
+    setState(() {
+      isQuotationLoading = true;
+    });
+
+    var url = Uri.parse(general_quotation_details);
+    Map<String, String> body = {"id": selectedQuotationId};
+    Response response = await post(url, body: body);
+    if (response.statusCode == 200) {
+      String myData = response.body;
+      var jsonData = jsonDecode(myData);
+      selectedQuotationId = jsonData['id'].toString();
+      selectedQuotationBuyerName = jsonData['buyer_name'].toString();
+      selectedQuotationBuyerAddress = jsonData['buyer_address'].toString();
+      selectedQuotationBuyerContactDetails = jsonData['buyer_contact_details'].toString();
+      selectedQuotationBuyerGst = jsonData['buyer_gst'].toString();
+      selectedQuotationDate = jsonData['date'].toString();
+      selectedQuotationSellerContactDetails = jsonData['seller_contact_details'].toString();
+      selectedQuotationPackagingFee = jsonData['packaging_fee'].toString();
+      selectedQuotationSubtotal = jsonData['subtotal'].toString();
+      selectedQuotationGst = jsonData['gst'].toString();
+      selectedQuotationTotalAmount = jsonData['total_amount'].toString();
+      selectedQuotationNo = jsonData['quotation_no'].toString();
+      selectedQuotationTitle = jsonData['quotation_title'].toString();
+
+      List<GeneralQuotationNotEditableModel> general_quotation_items_list=[];
+
+      jsonData['quotations_details'].forEach((jsonResponse) {
+        GeneralQuotationNotEditableModel obj = new GeneralQuotationNotEditableModel.fromJson(jsonResponse);
+        general_quotation_items_list.add(obj);
+      });
+
+
+      general_quotation_editable_list.clear();
+      for(int i=0; i<general_quotation_items_list.length; i++){
+        GeneralQuotationEditableModel a =GeneralQuotationEditableModel(product_name: general_quotation_items_list[i].productName.toString(), hsn_no: general_quotation_items_list[i].hsn_code.toString(), quantity: general_quotation_items_list[i].quantity.toString(), rate: general_quotation_items_list[i].rate.toString(), gst: general_quotation_items_list[i].gst.toString(), gst_percentage: general_quotation_items_list[i].gst_percentage.toString(), amount: general_quotation_items_list[i].amount.toString(), product_name_controller: TextEditingController(), hsn_no_controller: TextEditingController(), quantity_controller: TextEditingController(), rate_controller: TextEditingController(), gst_controller: gst_controller, gst_percentage_controller: TextEditingController(), amount_controller: TextEditingController());
+        general_quotation_editable_list.add(a);
+        general_quotation_editable_list[i].product_name_controller!.text=general_quotation_items_list[i].productName.toString();
+        general_quotation_editable_list[i].hsn_no_controller!.text=general_quotation_items_list[i].hsn_code.toString();
+        general_quotation_editable_list[i].quantity_controller!.text=general_quotation_items_list[i].quantity.toString();
+        general_quotation_editable_list[i].rate_controller!.text=general_quotation_items_list[i].rate.toString();
+        general_quotation_editable_list[i].gst_controller!.text=general_quotation_items_list[i].gst.toString();
+        general_quotation_editable_list[i].gst_percentage_controller!.text=general_quotation_items_list[i].gst_percentage.toString();
+        general_quotation_editable_list[i].amount_controller!.text=general_quotation_items_list[i].amount.toString();
+      }
+
+    }
+
+
+    placeHolder = editableGenerateQuotation();
+
+    setState(() {
+      isQuotationLoading = false;
+    });
+  }
+
+
+
 
 
 

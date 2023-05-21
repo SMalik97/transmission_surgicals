@@ -824,7 +824,7 @@ class _DashboardState extends State<Dashboard> {
       isInvoiceSelected=false;
       isProductSelected=false;
 
-      placeHolder = CreateQuotation();
+      placeHolder = QuotationList();
     });
   }
 
