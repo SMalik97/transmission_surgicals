@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:motion_toast/motion_toast.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart' as getX;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart';
@@ -83,16 +83,11 @@ class _ChallanListState extends State<ChallanList> {
                               selectedIndex=0;
                               selectedChallanId="";
                             });
-                            Fluttertoast.showToast(
-                                msg: "Refreshing...",
-                                toastLength: Toast.LENGTH_SHORT,
-                                gravity: ToastGravity.BOTTOM_RIGHT,
-                                timeInSecForIosWeb: 1,
-                                backgroundColor: Colors.red,
-                                textColor: Colors.white,
-                                webBgColor: "linear-gradient(to right, #1da241, #1da241)",
-                                fontSize: 16.0
-                            );
+                            MotionToast.success(
+                              title:  Text("Message", style: TextStyle(fontWeight: FontWeight.bold),),
+                              description:  Text("Refreshing..."),
+                            ).show(context);
+
                           },
                           child: Container(
                             width: 30, height: 30,
@@ -343,16 +338,10 @@ class _ChallanListState extends State<ChallanList> {
                                 ///Download -----------------------------
                                 InkWell(
                                   onTap: (){
-                                    Fluttertoast.showToast(
-                                        msg: "Please wait, downloading...",
-                                        toastLength: Toast.LENGTH_SHORT,
-                                        gravity: ToastGravity.BOTTOM_RIGHT,
-                                        timeInSecForIosWeb: 1,
-                                        backgroundColor: Colors.red,
-                                        textColor: Colors.white,
-                                        webBgColor: "linear-gradient(to right, #1da241, #1da241)",
-                                        fontSize: 16.0
-                                    );
+                                    MotionToast.success(
+                                      title:  Text("Message", style: TextStyle(fontWeight: FontWeight.bold),),
+                                      description:  Text("Please wait, downloading..."),
+                                    ).show(context);
                                     Timer(Duration(milliseconds: 300),(){
                                       generatePdf("download",selectedChallanNumber, selectedChallanDate, selectedChallanRecipientDetails, challan_list, selectedTotalQuantity, selectedReceivedBy, selectedDeliveryBy);
                                     });
@@ -374,16 +363,11 @@ class _ChallanListState extends State<ChallanList> {
                                 ///Print -----------------------------
                                 InkWell(
                                   onTap: (){
-                                    Fluttertoast.showToast(
-                                        msg: "Initialing printer ...",
-                                        toastLength: Toast.LENGTH_SHORT,
-                                        gravity: ToastGravity.BOTTOM_RIGHT,
-                                        timeInSecForIosWeb: 1,
-                                        backgroundColor: Colors.red,
-                                        textColor: Colors.white,
-                                        webBgColor: "linear-gradient(to right, #1da241, #1da241)",
-                                        fontSize: 16.0
-                                    );
+                                    MotionToast.success(
+                                      title:  Text("Message", style: TextStyle(fontWeight: FontWeight.bold),),
+                                      description:  Text("Initialing printer ..."),
+                                    ).show(context);
+
                                     Timer(Duration(milliseconds: 300),(){
                                       generatePdf("print",selectedChallanNumber, selectedChallanDate, selectedChallanRecipientDetails, challan_list, selectedTotalQuantity, selectedReceivedBy, selectedDeliveryBy);
                                     });
@@ -636,16 +620,11 @@ class _ChallanListState extends State<ChallanList> {
       }
 
     }else{
-      Fluttertoast.showToast(
-          msg: "Some error has occurred!",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM_RIGHT,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          webBgColor: "linear-gradient(to right, #C62828, #C62828)",
-          fontSize: 16.0
-      );
+      MotionToast.error(
+        title:  Text("Message", style: TextStyle(fontWeight: FontWeight.bold),),
+        description:  Text("Some error has occurred!"),
+      ).show(context);
+
     }
     setState(() {
       isListLoading=false;
@@ -689,16 +668,11 @@ class _ChallanListState extends State<ChallanList> {
 
       }
     }else{
-      Fluttertoast.showToast(
-          msg: "No challan found",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM_RIGHT,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          webBgColor: "linear-gradient(to right, #C62828, #C62828)",
-          fontSize: 16.0
-      );
+      MotionToast.error(
+        title:  Text("Message", style: TextStyle(fontWeight: FontWeight.bold),),
+        description:  Text("No challan found"),
+      ).show(context);
+
     }
   }
 
@@ -946,16 +920,11 @@ class _ChallanListState extends State<ChallanList> {
       html.Url.revokeObjectUrl(url);
 
 
-      Fluttertoast.showToast(
-          msg: "Challan Downloaded!",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM_RIGHT,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          webBgColor: "linear-gradient(to right, #1da241, #1da241)",
-          fontSize: 16.0
-      );
+      MotionToast.success(
+        title:  Text("Message", style: TextStyle(fontWeight: FontWeight.bold),),
+        description:  Text("Challan Downloaded!"),
+      ).show(context);
+
     }
 
     if(purpose=="print"){
@@ -1067,28 +1036,18 @@ class _ChallanListState extends State<ChallanList> {
       if(jsonData['status']=="success"){
         setState(() {});
       }else{
-        Fluttertoast.showToast(
-            msg: "Error while loading",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM_RIGHT,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.red,
-            textColor: Colors.white,
-            webBgColor: "linear-gradient(to right, #C62828, #C62828)",
-            fontSize: 16.0
-        );
+        MotionToast.error(
+          title:  Text("Message", style: TextStyle(fontWeight: FontWeight.bold),),
+          description:  Text("Error while loading"),
+        ).show(context);
+
       }
     }else{
-      Fluttertoast.showToast(
-          msg: "Some error has occurred",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM_RIGHT,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          webBgColor: "linear-gradient(to right, #C62828, #C62828)",
-          fontSize: 16.0
-      );
+      MotionToast.error(
+        title:  Text("Message", style: TextStyle(fontWeight: FontWeight.bold),),
+        description:  Text("Some error has occurred"),
+      ).show(context);
+
     }
   }
 

@@ -2,9 +2,9 @@ import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart' as getX;
 import 'package:http/http.dart';
+import 'package:motion_toast/motion_toast.dart';
 import 'package:transmission_surgicals/Utils/shared_preferences.dart';
 import 'package:transmission_surgicals/Utils/urls.dart';
 
@@ -123,27 +123,16 @@ class _LoginState extends State<Login> {
                                     obscureText: isPasswordHide,
                                     onSubmitted: (v){
                                       if(user_id_controller.text.isEmpty){
-                                        Fluttertoast.showToast(
-                                            msg: "Please enter user id",
-                                            toastLength: Toast.LENGTH_SHORT,
-                                            gravity: ToastGravity.BOTTOM_RIGHT,
-                                            timeInSecForIosWeb: 1,
-                                            backgroundColor: Colors.red,
-                                            textColor: Colors.white,
-                                            webBgColor: "linear-gradient(to right, #C62828, #C62828)",
-                                            fontSize: 16.0
-                                        );
+                                        MotionToast.error(
+                                          title:  Text("Message"),
+                                          description:  Text("Please enter user id"),
+                                        ).show(context);
                                       }else  if(password_controller.text.isEmpty){
-                                        Fluttertoast.showToast(
-                                            msg: "Please enter password",
-                                            toastLength: Toast.LENGTH_SHORT,
-                                            gravity: ToastGravity.BOTTOM_RIGHT,
-                                            timeInSecForIosWeb: 1,
-                                            backgroundColor: Colors.red,
-                                            textColor: Colors.white,
-                                            webBgColor: "linear-gradient(to right, #C62828, #C62828)",
-                                            fontSize: 16.0
-                                        );
+
+                                        MotionToast.error(
+                                          title:  Text("Message"),
+                                          description:  Text("Please enter password"),
+                                        ).show(context);
                                       }else{
                                         ///Call api
                                         userLogin();
@@ -178,27 +167,16 @@ class _LoginState extends State<Login> {
                       InkWell(
                         onTap: isLogging?null:(){
                           if(user_id_controller.text.isEmpty){
-                            Fluttertoast.showToast(
-                                msg: "Please enter user id",
-                                toastLength: Toast.LENGTH_SHORT,
-                                gravity: ToastGravity.BOTTOM_RIGHT,
-                                timeInSecForIosWeb: 1,
-                                backgroundColor: Colors.red,
-                                textColor: Colors.white,
-                                webBgColor: "linear-gradient(to right, #C62828, #C62828)",
-                                fontSize: 16.0
-                            );
+                            MotionToast.error(
+                              title:  Text("Message"),
+                              description:  Text("Please enter user id"),
+                            ).show(context);
                           }else  if(password_controller.text.isEmpty){
-                            Fluttertoast.showToast(
-                                msg: "Please enter password",
-                                toastLength: Toast.LENGTH_SHORT,
-                                gravity: ToastGravity.BOTTOM_RIGHT,
-                                timeInSecForIosWeb: 1,
-                                backgroundColor: Colors.red,
-                                textColor: Colors.white,
-                                webBgColor: "linear-gradient(to right, #C62828, #C62828)",
-                                fontSize: 16.0
-                            );
+                            MotionToast.error(
+                              title:  Text("Message"),
+                              description:  Text("Please enter password"),
+                            ).show(context);
+
                           }else{
                             ///Call api
                             userLogin();
@@ -243,16 +221,11 @@ class _LoginState extends State<Login> {
       String myData = response.body;
       var jsonData=jsonDecode(myData);
       if(jsonData['status']=="success"){
-        Fluttertoast.showToast(
-            msg: "Successfully logged in",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM_RIGHT,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.red,
-            textColor: Colors.white,
-            webBgColor: "linear-gradient(to right, #1da241, #1da241)",
-            fontSize: 16.0
-        );
+        MotionToast.success(
+          title:  Text("Message"),
+          description:  Text("Successfully logged in"),
+        ).show(context);
+
         writeSharedPreferences(ISLOGIN, "1");
         writeSharedPreferences(USER_ID, jsonData['id']);
         writeSharedPreferences(USER_EMAIL, jsonData['email']);
@@ -261,31 +234,21 @@ class _LoginState extends State<Login> {
         final authService = getX.Get.find<AuthService>();
         authService.isLogin = "1";
 
-        getX.Get.toNamed("/dashboard");
+        getX.Get.offAndToNamed("/dashboard");
 
       }else{
-        Fluttertoast.showToast(
-            msg: "Wrong user id or password",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM_RIGHT,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.red,
-            textColor: Colors.white,
-            webBgColor: "linear-gradient(to right, #C62828, #C62828)",
-            fontSize: 16.0
-        );
+
+        MotionToast.error(
+          title:  Text("Message"),
+          description:  Text("Wrong user id or password"),
+        ).show(context);
       }
     }else{
-      Fluttertoast.showToast(
-          msg: "Some error has occurred",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM_RIGHT,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          webBgColor: "linear-gradient(to right, #C62828, #C62828)",
-          fontSize: 16.0
-      );
+
+      MotionToast.error(
+        title:  Text("Message"),
+        description:  Text("Some error has occurred"),
+      ).show(context);
     }
     setState(() {
       isLogging=false;

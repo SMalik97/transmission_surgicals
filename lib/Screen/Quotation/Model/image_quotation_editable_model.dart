@@ -15,12 +15,14 @@ class ImageQuotationEditableModel {
   TextEditingController? product_name_controller;
   TextEditingController? quantity_controller;
   TextEditingController? rate_controller;
+  TextEditingController? gst_percentage_controller;
   TextEditingController? gst_controller;
+  TextEditingController? amount_controller;
 
 
   ImageQuotationEditableModel({required this.product_name, required this.quantity,
     required this.rate,required this.gst,required this.gst_percentage, required this.amount, required this.isSelectImage, required this.ImageId, required this.ImageData, required this.product_name_controller,
-    required this.quantity_controller, required this.rate_controller, required this.gst_controller});
+    required this.quantity_controller, required this.rate_controller, required this.gst_percentage_controller, required this.gst_controller, required this.amount_controller});
 
   ImageQuotationEditableModel.fromJson(Map<String, dynamic> json) {
     product_name = json['product_name'];
@@ -35,7 +37,9 @@ class ImageQuotationEditableModel {
     product_name_controller = TextEditingController();
     quantity_controller = TextEditingController();
     rate_controller = TextEditingController();
+    gst_percentage_controller = TextEditingController();
     gst_controller = TextEditingController();
+    amount_controller = TextEditingController();
   }
 
   Map<String, dynamic> toJson() {
@@ -52,7 +56,9 @@ class ImageQuotationEditableModel {
     product_name_controller = this.product_name_controller;
     quantity_controller = this.quantity_controller;
     rate_controller = this.rate_controller;
+    gst_percentage_controller = this.gst_percentage_controller;
     gst_controller = this.gst_controller;
+    amount_controller = this.amount_controller;
     return data;
   }
 }

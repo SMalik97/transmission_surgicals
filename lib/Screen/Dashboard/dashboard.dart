@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart';
+import 'package:motion_toast/motion_toast.dart';
+import 'package:motion_toast/resources/arrays.dart';
 import 'package:transmission_surgicals/Screen/Quotation/View/create_quotation.dart';
 import 'package:transmission_surgicals/Utils/shared_preferences.dart';
 import 'package:get/get.dart' as getX;
@@ -259,7 +261,6 @@ class _DashboardState extends State<Dashboard> {
         placeHolder=dashboard();
       });
     });
-
     fetchInvoiceInfo();
     fetchChallanInfo();
     super.initState();
@@ -753,16 +754,10 @@ class _DashboardState extends State<Dashboard> {
       });
 
     }else{
-      Fluttertoast.showToast(
-          msg: "Some error has occurred!",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM_RIGHT,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          webBgColor: "linear-gradient(to right, #C62828, #C62828)",
-          fontSize: 16.0
-      );
+      MotionToast.error(
+        title:  Text("Message"),
+        description:  Text("Some error has occurred!"),
+      ).show(context);
     }
   }
 
@@ -778,16 +773,10 @@ class _DashboardState extends State<Dashboard> {
       });
 
     }else{
-      Fluttertoast.showToast(
-          msg: "Some error has occurred!",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM_RIGHT,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          webBgColor: "linear-gradient(to right, #C62828, #C62828)",
-          fontSize: 16.0
-      );
+      MotionToast.error(
+        title:  Text("Message"),
+        description:  Text("Some error has occurred!"),
+      ).show(context);
     }
   }
 

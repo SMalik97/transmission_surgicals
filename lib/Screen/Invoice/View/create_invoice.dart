@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
+import 'package:motion_toast/motion_toast.dart';
 import 'package:number_to_words/number_to_words.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -71,27 +71,16 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                           InkWell(
                             onTap: (){
                               if(billing_address_controller.text.isEmpty){
-                                Fluttertoast.showToast(
-                                    msg: "Please enter billing address",
-                                    toastLength: Toast.LENGTH_SHORT,
-                                    gravity: ToastGravity.BOTTOM_RIGHT,
-                                    timeInSecForIosWeb: 1,
-                                    backgroundColor: Colors.red,
-                                    textColor: Colors.white,
-                                    webBgColor: "linear-gradient(to right, #C62828, #C62828)",
-                                    fontSize: 16.0
-                                );
+                                MotionToast.error(
+                                  title:  Text("Message", style: TextStyle(fontWeight: FontWeight.bold),),
+                                  description:  Text("Please enter billing address"),
+                                ).show(context);
+
                               }if(shipping_address_controller.text.isEmpty){
-                                Fluttertoast.showToast(
-                                    msg: "Please enter shipping address",
-                                    toastLength: Toast.LENGTH_SHORT,
-                                    gravity: ToastGravity.BOTTOM_RIGHT,
-                                    timeInSecForIosWeb: 1,
-                                    backgroundColor: Colors.red,
-                                    textColor: Colors.white,
-                                    webBgColor: "linear-gradient(to right, #C62828, #C62828)",
-                                    fontSize: 16.0
-                                );
+                                MotionToast.error(
+                                  title:  Text("Message"),
+                                  description:  Text("Please enter shipping address"),
+                                ).show(context);
                               }else{
                                 bool isError=false;
                                 for(int i = 0 ; i<invoice_data.length; i++){
@@ -100,16 +89,11 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                   }
                                 }
                                 if(isError==true){
-                                  Fluttertoast.showToast(
-                                      msg: "Please enter all field correctly",
-                                      toastLength: Toast.LENGTH_SHORT,
-                                      gravity: ToastGravity.BOTTOM_RIGHT,
-                                      timeInSecForIosWeb: 1,
-                                      backgroundColor: Colors.red,
-                                      textColor: Colors.white,
-                                      webBgColor: "linear-gradient(to right, #C62828, #C62828)",
-                                      fontSize: 16.0
-                                  );
+                                  MotionToast.error(
+                                    title:  Text("Message", style: TextStyle(fontWeight: FontWeight.bold),),
+                                    description:  Text("Please enter all field correctly"),
+                                  ).show(context);
+
                                 }else{
                                   ///call api
                                   updateInvoice();
@@ -132,27 +116,16 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                           InkWell(
                           onTap: isGenerating==true? null : (){
                             if(billing_address_controller.text.isEmpty){
-                              Fluttertoast.showToast(
-                                  msg: "Please enter billing address",
-                                  toastLength: Toast.LENGTH_SHORT,
-                                  gravity: ToastGravity.BOTTOM_RIGHT,
-                                  timeInSecForIosWeb: 1,
-                                  backgroundColor: Colors.red,
-                                  textColor: Colors.white,
-                                  webBgColor: "linear-gradient(to right, #C62828, #C62828)",
-                                  fontSize: 16.0
-                              );
+                              MotionToast.error(
+                                title:  Text("Message", style: TextStyle(fontWeight: FontWeight.bold),),
+                                description:  Text("Please enter billing address"),
+                              ).show(context);
+
                             }if(shipping_address_controller.text.isEmpty){
-                              Fluttertoast.showToast(
-                                  msg: "Please enter shipping address",
-                                  toastLength: Toast.LENGTH_SHORT,
-                                  gravity: ToastGravity.BOTTOM_RIGHT,
-                                  timeInSecForIosWeb: 1,
-                                  backgroundColor: Colors.red,
-                                  textColor: Colors.white,
-                                  webBgColor: "linear-gradient(to right, #C62828, #C62828)",
-                                  fontSize: 16.0
-                              );
+                              MotionToast.error(
+                                title:  Text("Message", style: TextStyle(fontWeight: FontWeight.bold),),
+                                description:  Text("Please enter shipping address"),
+                              ).show(context);
                             }else{
                               bool isError=false;
                               for(int i = 0 ; i<invoice_data.length; i++){
@@ -161,16 +134,11 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                 }
                               }
                               if(isError==true){
-                                Fluttertoast.showToast(
-                                    msg: "Please enter all field correctly",
-                                    toastLength: Toast.LENGTH_SHORT,
-                                    gravity: ToastGravity.BOTTOM_RIGHT,
-                                    timeInSecForIosWeb: 1,
-                                    backgroundColor: Colors.red,
-                                    textColor: Colors.white,
-                                    webBgColor: "linear-gradient(to right, #C62828, #C62828)",
-                                    fontSize: 16.0
-                                );
+                                MotionToast.error(
+                                  title:  Text("Message", style: TextStyle(fontWeight: FontWeight.bold),),
+                                  description:  Text("Please enter all field correctly"),
+                                ).show(context);
+
                               }else{
                                 ///call api
                                 createNewInvoice();
@@ -206,16 +174,11 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                 anchor.click();
                                 html.document.body?.children.remove(anchor);
                                 html.Url.revokeObjectUrl(url);
-                                Fluttertoast.showToast(
-                                    msg: "Downloading...",
-                                    toastLength: Toast.LENGTH_SHORT,
-                                    gravity: ToastGravity.BOTTOM_RIGHT,
-                                    timeInSecForIosWeb: 1,
-                                    backgroundColor: Colors.red,
-                                    textColor: Colors.white,
-                                    webBgColor: "linear-gradient(to right, #1da241, #1da241)",
-                                    fontSize: 16.0
-                                );
+
+                                MotionToast.success(
+                                  title:  Text("Message", style: TextStyle(fontWeight: FontWeight.bold),),
+                                  description:  Text("Downloading..."),
+                                ).show(context);
                               },
                               child: Container(
                                 height: 30,
@@ -257,16 +220,11 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                             }else{
                               getX.Get.offAndToNamed("/create-invoice?purpose=$purpose&id=$invoice_id",);
                             }
-                            Fluttertoast.showToast(
-                                msg: "Refreshing...",
-                                toastLength: Toast.LENGTH_SHORT,
-                                gravity: ToastGravity.BOTTOM_RIGHT,
-                                timeInSecForIosWeb: 1,
-                                backgroundColor: Colors.red,
-                                textColor: Colors.white,
-                                webBgColor: "linear-gradient(to right, #1da241, #1da241)",
-                                fontSize: 16.0
-                            );
+
+                            MotionToast.error(
+                              title:  Text("Message", style: TextStyle(fontWeight: FontWeight.bold),),
+                              description:  Text("Refreshing..."),
+                            ).show(context);
 
                           },
                           child: Container(
@@ -394,28 +352,18 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
 
         setState(() {});
       }else{
-        Fluttertoast.showToast(
-            msg: "Error while loading",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM_RIGHT,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.red,
-            textColor: Colors.white,
-            webBgColor: "linear-gradient(to right, #C62828, #C62828)",
-            fontSize: 16.0
-        );
+
+        MotionToast.error(
+          title:  Text("Message", style: TextStyle(fontWeight: FontWeight.bold),),
+          description:  Text("Error while loading"),
+        ).show(context);
       }
     }else{
-      Fluttertoast.showToast(
-          msg: "Some error has occurred",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM_RIGHT,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          webBgColor: "linear-gradient(to right, #C62828, #C62828)",
-          fontSize: 16.0
-      );
+      MotionToast.error(
+        title:  Text("Message", style: TextStyle(fontWeight: FontWeight.bold),),
+        description:  Text("Some error has occurred"),
+      ).show(context);
+
     }
     setState(() {
       placeHolder=createInvoiceView();
@@ -1185,28 +1133,18 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
           placeHolder=invoiceView(invoice_no, invoice_date, billing_address_controller.text.trim(), shipping_address_controller.text.trim(), invoice_items, subtotal.toStringAsFixed(2), gst.toStringAsFixed(2), other_charges_controller.text, grand_total.toStringAsFixed(2), paid_amount_controller.text.toString(), due_amount.toStringAsFixed(2),comment_controller.text.trim());
         });
       }else{
-        Fluttertoast.showToast(
-            msg: "Some error has occurred",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM_RIGHT,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.red,
-            textColor: Colors.white,
-            webBgColor: "linear-gradient(to right, #C62828, #C62828)",
-            fontSize: 16.0
-        );
+        MotionToast.error(
+          title:  Text("Message", style: TextStyle(fontWeight: FontWeight.bold),),
+          description:  Text("Some error has occurred"),
+        ).show(context);
+
       }
     }else{
-      Fluttertoast.showToast(
-          msg: "Some error has occurred",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM_RIGHT,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          webBgColor: "linear-gradient(to right, #C62828, #C62828)",
-          fontSize: 16.0
-      );
+      MotionToast.error(
+        title:  Text("Message", style: TextStyle(fontWeight: FontWeight.bold),),
+        description:  Text("Some error has occurred"),
+      ).show(context);
+
     }
 
 
@@ -1237,28 +1175,17 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
 
         });
       }else{
-        Fluttertoast.showToast(
-            msg: "Some error has occurred",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM_RIGHT,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.red,
-            textColor: Colors.white,
-            webBgColor: "linear-gradient(to right, #C62828, #C62828)",
-            fontSize: 16.0
-        );
+        MotionToast.error(
+          title:  Text("Message", style: TextStyle(fontWeight: FontWeight.bold),),
+          description:  Text("Some error has occurred"),
+        ).show(context);
       }
     }else{
-      Fluttertoast.showToast(
-          msg: "Some error has occurred",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM_RIGHT,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          webBgColor: "linear-gradient(to right, #C62828, #C62828)",
-          fontSize: 16.0
-      );
+      MotionToast.error(
+        title:  Text("Message", style: TextStyle(fontWeight: FontWeight.bold),),
+        description:  Text("Some error has occurred"),
+      ).show(context);
+
     }
 
 
@@ -2000,16 +1927,11 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
       isDownloadViewShowing=true;
     });
 
-    Fluttertoast.showToast(
-        msg: "Invoice Generated!",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM_RIGHT,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-        webBgColor: "linear-gradient(to right, #1da241, #1da241)",
-        fontSize: 16.0
-    );
+    MotionToast.success(
+      title:  Text("Message", style: TextStyle(fontWeight: FontWeight.bold),),
+      description:  Text("Invoice Generated!"),
+    ).show(context);
+
   }
 
 

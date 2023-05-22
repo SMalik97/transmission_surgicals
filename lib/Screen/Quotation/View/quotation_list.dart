@@ -2,10 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/services.dart';
+import 'package:motion_toast/motion_toast.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart';
 import 'package:transmission_surgicals/Screen/Quotation/Model/general_quotation_noteditable_model.dart';
 import 'package:transmission_surgicals/Utils/urls.dart';
@@ -153,16 +153,11 @@ class _QuotationListState extends State<QuotationList> {
                               selectedQuotationId="";
                               selectedTab=1;
                             });
-                            Fluttertoast.showToast(
-                                msg: "Refreshing...",
-                                toastLength: Toast.LENGTH_SHORT,
-                                gravity: ToastGravity.BOTTOM_RIGHT,
-                                timeInSecForIosWeb: 1,
-                                backgroundColor: Colors.red,
-                                textColor: Colors.white,
-                                webBgColor: "linear-gradient(to right, #1da241, #1da241)",
-                                fontSize: 16.0
-                            );
+                            MotionToast.success(
+                              title:  Text("Message", style: TextStyle(fontWeight: FontWeight.bold),),
+                              description:  Text("Refreshing..."),
+                            ).show(context);
+
                           },
                           child: Container(
                             width: 30, height: 30,
@@ -513,7 +508,7 @@ class _QuotationListState extends State<QuotationList> {
                               ///Edit Quotation ---------------------
                               InkWell(
                                 onTap: () async {
-                                  await getX.Get.toNamed("/create-quotation?purpose=edit&id=$selectedQuotationId");
+                                  await getX.Get.toNamed("/create-quotation?purpose=edit&id=$selectedQuotationId&type=$selectedTab");
                                   if(selectedTab==1){
                                    fetchGeneralQuotations();
                                   }
@@ -535,7 +530,7 @@ class _QuotationListState extends State<QuotationList> {
                               ///Copy Quotation -------------------------
                               InkWell(
                                 onTap: () async {
-                                  await getX.Get.toNamed("/create-quotation?purpose=copy&id=$selectedQuotationId");
+                                  await getX.Get.toNamed("/create-quotation?purpose=copy&id=$selectedQuotationId&type=$selectedTab");
                                   if(selectedTab==1){
                                     fetchGeneralQuotations();
                                   }
@@ -559,16 +554,11 @@ class _QuotationListState extends State<QuotationList> {
                               ///Download Quotation ---------------------
                               InkWell(
                                 onTap: (){
-                                  Fluttertoast.showToast(
-                                      msg: "Please wait, downloading...",
-                                      toastLength: Toast.LENGTH_SHORT,
-                                      gravity: ToastGravity.BOTTOM_RIGHT,
-                                      timeInSecForIosWeb: 1,
-                                      backgroundColor: Colors.red,
-                                      textColor: Colors.white,
-                                      webBgColor: "linear-gradient(to right, #1da241, #1da241)",
-                                      fontSize: 16.0
-                                  );
+                                  MotionToast.success(
+                                    title:  Text("Message", style: TextStyle(fontWeight: FontWeight.bold),),
+                                    description:  Text("Please wait, downloading..."),
+                                  ).show(context);
+
                                   Timer(Duration(milliseconds: 300),(){
                                     generateGeneralPdf("download",selectedQuotationTitle, selectedQuotationBuyerName, selectedQuotationBuyerAddress, selectedQuotationBuyerContactDetails, selectedQuotationNo, selectedQuotationDate, selectedQuotationBuyerGst, selectedQuotationSellerContactDetails, general_quotation_items_list, selectedQuotationPackagingFee, selectedQuotationSubtotal, selectedQuotationGst, selectedQuotationTotalAmount);
                                   });
@@ -590,16 +580,11 @@ class _QuotationListState extends State<QuotationList> {
                               ///Print Quotation ---------------------
                               InkWell(
                                 onTap: (){
-                                  Fluttertoast.showToast(
-                                      msg: "Initializing printer ...",
-                                      toastLength: Toast.LENGTH_SHORT,
-                                      gravity: ToastGravity.BOTTOM_RIGHT,
-                                      timeInSecForIosWeb: 1,
-                                      backgroundColor: Colors.red,
-                                      textColor: Colors.white,
-                                      webBgColor: "linear-gradient(to right, #1da241, #1da241)",
-                                      fontSize: 16.0
-                                  );
+                                  MotionToast.success(
+                                    title:  Text("Message", style: TextStyle(fontWeight: FontWeight.bold),),
+                                    description:  Text("Initializing printer ..."),
+                                  ).show(context);
+
                                   Timer(Duration(milliseconds: 300),(){
                                     generateGeneralPdf("print",selectedQuotationTitle, selectedQuotationBuyerName, selectedQuotationBuyerAddress, selectedQuotationBuyerContactDetails, selectedQuotationNo, selectedQuotationDate, selectedQuotationBuyerGst, selectedQuotationSellerContactDetails, general_quotation_items_list, selectedQuotationPackagingFee, selectedQuotationSubtotal, selectedQuotationGst, selectedQuotationTotalAmount);
                                   });
@@ -674,16 +659,11 @@ class _QuotationListState extends State<QuotationList> {
         });
       });
     } else {
-      Fluttertoast.showToast(
-          msg: "Some error has occurred!",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM_RIGHT,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          webBgColor: "linear-gradient(to right, #C62828, #C62828)",
-          fontSize: 16.0
-      );
+      MotionToast.error(
+        title:  Text("Message", style: TextStyle(fontWeight: FontWeight.bold),),
+        description:  Text("Some error has occurred!"),
+      ).show(context);
+
     }
     setState(() {
       isListLoading = false;
@@ -2053,28 +2033,16 @@ class _QuotationListState extends State<QuotationList> {
 
         setState(() {});
       }else{
-        Fluttertoast.showToast(
-            msg: "Error while loading",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM_RIGHT,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.red,
-            textColor: Colors.white,
-            webBgColor: "linear-gradient(to right, #C62828, #C62828)",
-            fontSize: 16.0
-        );
+        MotionToast.error(
+          title:  Text("Message", style: TextStyle(fontWeight: FontWeight.bold),),
+          description:  Text("Error while loading"),
+        ).show(context);
       }
     }else{
-      Fluttertoast.showToast(
-          msg: "Some error has occurred",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM_RIGHT,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          webBgColor: "linear-gradient(to right, #C62828, #C62828)",
-          fontSize: 16.0
-      );
+      MotionToast.error(
+        title:  Text("Message", style: TextStyle(fontWeight: FontWeight.bold),),
+        description:  Text("Some error has occurred"),
+      ).show(context);
     }
   }
 

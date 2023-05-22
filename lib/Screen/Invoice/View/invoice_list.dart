@@ -1,14 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart' as getX;
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
+import 'package:motion_toast/motion_toast.dart';
 import 'package:number_to_words/number_to_words.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -81,16 +79,11 @@ class _InvoiceListState extends State<InvoiceList> {
                               selectedIndex=0;
                               selectedInvoiceId="";
                             });
-                            Fluttertoast.showToast(
-                                msg: "Refreshing...",
-                                toastLength: Toast.LENGTH_SHORT,
-                                gravity: ToastGravity.BOTTOM_RIGHT,
-                                timeInSecForIosWeb: 1,
-                                backgroundColor: Colors.red,
-                                textColor: Colors.white,
-                                webBgColor: "linear-gradient(to right, #1da241, #1da241)",
-                                fontSize: 16.0
-                            );
+                            MotionToast.success(
+                              title:  Text("Message", style: TextStyle(fontWeight: FontWeight.bold),),
+                              description:  Text("Refreshing..."),
+                            ).show(context);
+
                           },
                           child: Container(
                             width: 30, height: 30,
@@ -320,16 +313,10 @@ class _InvoiceListState extends State<InvoiceList> {
                               ///Download Invoice ---------------------
                               InkWell(
                                 onTap: (){
-                                  Fluttertoast.showToast(
-                                      msg: "Please wait, downloading...",
-                                      toastLength: Toast.LENGTH_SHORT,
-                                      gravity: ToastGravity.BOTTOM_RIGHT,
-                                      timeInSecForIosWeb: 1,
-                                      backgroundColor: Colors.red,
-                                      textColor: Colors.white,
-                                      webBgColor: "linear-gradient(to right, #1da241, #1da241)",
-                                      fontSize: 16.0
-                                  );
+                                  MotionToast.success(
+                                    title:  Text("Message", style: TextStyle(fontWeight: FontWeight.bold),),
+                                    description:  Text("Please wait, downloading..."),
+                                  ).show(context);
                                   Timer(Duration(milliseconds: 300),(){
                                     generatePdf("download",selectedInvoiceNumber, selectedInvoiceBillingAddress, selectedInvoiceShippingAddress,  invoice_details_list, selectedInvoiceSubtotal, selectedInvoiceGst, selectedInvoiceOther_charges, selectedInvoiceGrand_total, selectedInvoicePaid, selectedInvoiceDue, selectedInvoiceCustom_note);
                                   });
@@ -351,16 +338,10 @@ class _InvoiceListState extends State<InvoiceList> {
                               ///Print Invoice ---------------------
                               InkWell(
                                 onTap: (){
-                                  Fluttertoast.showToast(
-                                      msg: "Initializing printer ...",
-                                      toastLength: Toast.LENGTH_SHORT,
-                                      gravity: ToastGravity.BOTTOM_RIGHT,
-                                      timeInSecForIosWeb: 1,
-                                      backgroundColor: Colors.red,
-                                      textColor: Colors.white,
-                                      webBgColor: "linear-gradient(to right, #1da241, #1da241)",
-                                      fontSize: 16.0
-                                  );
+                                  MotionToast.success(
+                                    title:  Text("Message", style: TextStyle(fontWeight: FontWeight.bold),),
+                                    description:  Text("Initializing printer ..."),
+                                  ).show(context);
                                   Timer(Duration(milliseconds: 300),(){
                                     generatePdf("print",selectedInvoiceNumber, selectedInvoiceBillingAddress, selectedInvoiceShippingAddress,  invoice_details_list, selectedInvoiceSubtotal, selectedInvoiceGst, selectedInvoiceOther_charges, selectedInvoiceGrand_total, selectedInvoicePaid, selectedInvoiceDue, selectedInvoiceCustom_note);
                                   });
@@ -664,16 +645,11 @@ class _InvoiceListState extends State<InvoiceList> {
       }
 
     }else{
-      Fluttertoast.showToast(
-          msg: "Some error has occurred!",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM_RIGHT,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          webBgColor: "linear-gradient(to right, #C62828, #C62828)",
-          fontSize: 16.0
-      );
+      MotionToast.error(
+        title:  Text("Message", style: TextStyle(fontWeight: FontWeight.bold),),
+        description:  Text("Some error has occurred!"),
+      ).show(context);
+
     }
     setState(() {
       isListLoading=false;
@@ -724,28 +700,18 @@ class _InvoiceListState extends State<InvoiceList> {
 
         setState(() {});
       }else{
-        Fluttertoast.showToast(
-            msg: "Error while loading",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM_RIGHT,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.red,
-            textColor: Colors.white,
-            webBgColor: "linear-gradient(to right, #C62828, #C62828)",
-            fontSize: 16.0
-        );
+        MotionToast.error(
+          title:  Text("Message", style: TextStyle(fontWeight: FontWeight.bold),),
+          description:  Text("Error while loading"),
+        ).show(context);
+
       }
     }else{
-      Fluttertoast.showToast(
-          msg: "Some error has occurred",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM_RIGHT,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          webBgColor: "linear-gradient(to right, #C62828, #C62828)",
-          fontSize: 16.0
-      );
+      MotionToast.error(
+        title:  Text("Message", style: TextStyle(fontWeight: FontWeight.bold),),
+        description:  Text("Some error has occurred"),
+      ).show(context);
+
     }
     setState(() {
       isInvoiceLoading=false;
@@ -835,28 +801,17 @@ class _InvoiceListState extends State<InvoiceList> {
 
         setState(() {});
       }else{
-        Fluttertoast.showToast(
-            msg: "Error while deleting",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM_RIGHT,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.red,
-            textColor: Colors.white,
-            webBgColor: "linear-gradient(to right, #C62828, #C62828)",
-            fontSize: 16.0
-        );
+        MotionToast.error(
+          title:  Text("Message", style: TextStyle(fontWeight: FontWeight.bold),),
+          description:  Text("Error while deleting"),
+        ).show(context);
       }
     }else{
-      Fluttertoast.showToast(
-          msg: "Some error has occurred",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM_RIGHT,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          webBgColor: "linear-gradient(to right, #C62828, #C62828)",
-          fontSize: 16.0
-      );
+      MotionToast.error(
+        title:  Text("Message", style: TextStyle(fontWeight: FontWeight.bold),),
+        description:  Text("Some error has occurred"),
+      ).show(context);
+
     }
   }
 

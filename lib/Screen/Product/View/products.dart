@@ -2,10 +2,10 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:get/get.dart' as getX;
+import 'package:motion_toast/motion_toast.dart';
 import '../../../Utils/urls.dart';
 import '../Model/product_model.dart';
 import '../Model/select_image_list.dart';
@@ -72,17 +72,11 @@ class _ProductsState extends State<Products> {
                             });
 
                             fetchAllProduct();
-                            
-                            Fluttertoast.showToast(
-                                msg: "Refreshing...",
-                                toastLength: Toast.LENGTH_SHORT,
-                                gravity: ToastGravity.BOTTOM_RIGHT,
-                                timeInSecForIosWeb: 1,
-                                backgroundColor: Colors.red,
-                                textColor: Colors.white,
-                                webBgColor: "linear-gradient(to right, #1da241, #1da241)",
-                                fontSize: 16.0
-                            );
+                            MotionToast.success(
+                              title:  Text("Message", style: TextStyle(fontWeight: FontWeight.bold),),
+                              description:  Text("Refreshing..."),
+                            ).show(context);
+
                           },
                           child: Container(
                             width: 30, height: 30,
@@ -483,16 +477,11 @@ class _ProductsState extends State<Products> {
                                                   response.stream.bytesToString().asStream().listen((event){
                                                     var jsonData = jsonDecode(event);
                                                     if (jsonData['status'] == "success") {
-                                                      Fluttertoast.showToast(
-                                                          msg: "Product updated!",
-                                                          toastLength: Toast.LENGTH_SHORT,
-                                                          gravity: ToastGravity.BOTTOM_RIGHT,
-                                                          timeInSecForIosWeb: 1,
-                                                          backgroundColor: Colors.red,
-                                                          textColor: Colors.white,
-                                                          webBgColor: "linear-gradient(to right, #1da241, #1da241)",
-                                                          fontSize: 16.0
-                                                      );
+
+                                                      MotionToast.success(
+                                                        title:  Text("Message", style: TextStyle(fontWeight: FontWeight.bold),),
+                                                        description:  Text("Product updated!"),
+                                                      ).show(context);
                                                       product_name_control.clear();
                                                       product_price_control.clear();
                                                       product_description_control.clear();
@@ -502,16 +491,10 @@ class _ProductsState extends State<Products> {
                                                   });
 
                                                 }else{
-                                                  Fluttertoast.showToast(
-                                                      msg: "Some error has occurred",
-                                                      toastLength: Toast.LENGTH_SHORT,
-                                                      gravity: ToastGravity.BOTTOM_RIGHT,
-                                                      timeInSecForIosWeb: 1,
-                                                      backgroundColor: Colors.red,
-                                                      textColor: Colors.white,
-                                                      webBgColor: "linear-gradient(to right, #C62828, #C62828)",
-                                                      fontSize: 16.0
-                                                  );
+                                                  MotionToast.error(
+                                                    title:  Text("Message", style: TextStyle(fontWeight: FontWeight.bold),),
+                                                    description:  Text("Some error has occurred"),
+                                                  ).show(context);
                                                 }
 
                                                 setState((){
@@ -648,28 +631,18 @@ class _ProductsState extends State<Products> {
       if(jsonData['status']=="success"){
         setState(() {});
       }else{
-        Fluttertoast.showToast(
-            msg: "Error while loading",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM_RIGHT,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.red,
-            textColor: Colors.white,
-            webBgColor: "linear-gradient(to right, #C62828, #C62828)",
-            fontSize: 16.0
-        );
+        MotionToast.error(
+          title:  Text("Message", style: TextStyle(fontWeight: FontWeight.bold),),
+          description:  Text("Error while loading"),
+        ).show(context);
+
       }
     }else{
-      Fluttertoast.showToast(
-          msg: "Some error has occurred",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM_RIGHT,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          webBgColor: "linear-gradient(to right, #C62828, #C62828)",
-          fontSize: 16.0
-      );
+      MotionToast.error(
+        title:  Text("Message", style: TextStyle(fontWeight: FontWeight.bold),),
+        description:  Text("Some error has occurred"),
+      ).show(context);
+
     }
   }
 
