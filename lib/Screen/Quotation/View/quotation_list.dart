@@ -8,11 +8,15 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:transmission_surgicals/Screen/Quotation/Model/general_quotation_noteditable_model.dart';
+import 'package:transmission_surgicals/Screen/Quotation/Model/image_quotation_noteditable_model.dart';
 import 'package:transmission_surgicals/Utils/urls.dart';
 import 'package:get/get.dart' as getX;
 import '../../../Utils/global_variable.dart';
 import '../Model/general_quotation_list_model.dart';
 import 'dart:html' as html;
+
+import '../Model/image_quotation_model.dart';
+import '../Model/image_quotation_noteditable_url_model.dart';
 
 class QuotationList extends StatefulWidget {
   const QuotationList({Key? key}) : super(key: key);
@@ -27,7 +31,9 @@ class _QuotationListState extends State<QuotationList> {
   late Uint8List pdf_bytes;
   int selectedTab = 1;
   List<GeneralQuotationModel> general_quotation_list = [];
+  List<ImageQuotationModel> image_quotation_list = [];
   List<GeneralQuotationNotEditableModel> general_quotation_items_list = [];
+  List<ImageQuotationNotEditableUrlModel> image_quotation_items_url_list = [];
   bool isListLoading = true;
   bool isQuotationLoading = false;
   String selectedQuotationId = "", selectedQuotationBuyerName="", selectedQuotationBuyerAddress="", selectedQuotationBuyerContactDetails="", selectedQuotationBuyerGst="";
@@ -64,7 +70,9 @@ class _QuotationListState extends State<QuotationList> {
                     onTap: () {
                       setState(() {
                         selectedTab = 1;
+                        isListLoading=true;
                       });
+                      fetchGeneralQuotations();
                     },
                     child: Container(
                       padding: EdgeInsets.symmetric(
@@ -94,7 +102,9 @@ class _QuotationListState extends State<QuotationList> {
                     onTap: () {
                       setState(() {
                         selectedTab = 2;
+                        isListLoading=true;
                       });
+                      fetchImageQuotations();
                     },
                     child: Container(
                       padding: EdgeInsets.symmetric(
@@ -329,85 +339,105 @@ class _QuotationListState extends State<QuotationList> {
                             ) : ListView.builder(
                                 shrinkWrap: true,
                                 padding: EdgeInsets.zero,
-                                itemCount: general_quotation_list.length,
+                                itemCount: image_quotation_list.length,
                                 itemBuilder: (context, index) {
-                                  return Container(
-                                    margin: EdgeInsets.all(5),
-                                    padding: EdgeInsets.all(8),
-                                    height: 120,
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(2),
-                                        color: Color(0xffac7339)
-                                    ),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment
-                                          .start,
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment
-                                              .spaceBetween,
-                                          children: [
-                                            Text("Quotation No. #" +
-                                                general_quotation_list[index]
-                                                    .quotationNo.toString(),
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.w500,
-                                                  color: Colors.white,
-                                                  fontSize: 14),),
-                                            Text(
-                                              general_quotation_list[index].date
-                                                  .toString(), style: TextStyle(
-                                                fontWeight: FontWeight.w500,
-                                                color: Colors.white,
-                                                fontSize: 11),),
-                                          ],
-                                        ),
-                                        SizedBox(height: 15,),
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment
-                                              .spaceBetween,
-                                          children: [
-                                            Column(
-                                              crossAxisAlignment: CrossAxisAlignment
-                                                  .start,
-                                              children: [
-                                                Text(
-                                                  general_quotation_list[index]
-                                                      .buyerName.toString(),
-                                                  style: TextStyle(
-                                                      fontWeight: FontWeight
-                                                          .w500,
-                                                      color: Colors.white
-                                                          .withOpacity(0.90),
-                                                      fontSize: 13),),
-                                                SizedBox(height: 3,),
-                                                Text(
-                                                  general_quotation_list[index]
-                                                      .buyerAddress.toString(),
-                                                  style: TextStyle(
-                                                      fontWeight: FontWeight
-                                                          .w500,
-                                                      color: Colors.white
-                                                          .withOpacity(0.90),
-                                                      fontSize: 12),),
-                                              ],
-                                            ),
-                                            Column(
-                                              mainAxisAlignment: MainAxisAlignment
-                                                  .center,
-                                              children: [
-                                                Text("₹" +
-                                                    general_quotation_list[index]
-                                                        .totalAmount.toString(),
-                                                  style: TextStyle(fontSize: 16,
-                                                      color: Colors.white,
-                                                      fontWeight: FontWeight
-                                                          .bold),)
-                                              ],
-                                            )
-                                          ],
-                                        )
-                                      ],
+                                  return InkWell(
+                                    onTap: () {
+                                      selectedIndex = index;
+                                      selectedQuotationId = image_quotation_list[index].id.toString();
+                                      fetchGeneralQuotationDetails();
+                                    },
+                                    child: Container(
+                                      margin: EdgeInsets.all(5),
+                                      padding: EdgeInsets.all(8),
+                                      height: 120,
+                                      decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(
+                                              2),
+                                          color: Color(0xffac7339)
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment
+                                            .start,
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment
+                                                .spaceBetween,
+                                            children: [
+                                              Text("Quotation No. #" +
+                                                  image_quotation_list[index]
+                                                      .imageQuotationId.toString(),
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.white,
+                                                    fontSize: 14),),
+                                              Text(image_quotation_list[index]
+                                                  .date.toString(),
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.white,
+                                                    fontSize: 11),),
+                                            ],
+                                          ),
+                                          SizedBox(height: 8,),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment
+                                                .spaceBetween,
+                                            children: [
+                                              Column(
+                                                crossAxisAlignment: CrossAxisAlignment
+                                                    .start,
+                                                children: [
+                                                  Text(
+                                                    image_quotation_list[index]
+                                                        .quotationTitle.toString(),
+                                                    style: TextStyle(
+                                                        fontWeight: FontWeight
+                                                            .w500,
+                                                        color: Colors.white,
+                                                        fontSize: 13),),
+                                                  SizedBox(height: 7,),
+                                                  Text(
+                                                    image_quotation_list[index]
+                                                        .buyerName.toString(),
+                                                    style: TextStyle(
+                                                        fontWeight: FontWeight
+                                                            .w500,
+                                                        color: Colors.white
+                                                            .withOpacity(0.90),
+                                                        fontSize: 13),),
+                                                  SizedBox(height: 3,),
+                                                  Text(
+                                                    image_quotation_list[index]
+                                                        .buyerAddress
+                                                        .toString(),
+                                                    style: TextStyle(
+                                                        fontWeight: FontWeight
+                                                            .w500,
+                                                        color: Colors.white
+                                                            .withOpacity(0.90),
+                                                        fontSize: 12),),
+                                                ],
+                                              ),
+                                              Column(
+                                                mainAxisAlignment: MainAxisAlignment
+                                                    .center,
+                                                children: [
+                                                  Text("₹" +
+                                                      image_quotation_list[index]
+                                                          .totalAmount
+                                                          .toString(),
+                                                    style: TextStyle(
+                                                        fontSize: 16,
+                                                        color: Colors.white,
+                                                        fontWeight: FontWeight
+                                                            .bold),)
+                                                ],
+                                              )
+                                            ],
+                                          )
+                                        ],
+                                      ),
                                     ),
                                   );
                                 }
@@ -658,6 +688,10 @@ class _QuotationListState extends State<QuotationList> {
           general_quotation_list.add(obj);
         });
       });
+      if(selectedQuotationId.isNotEmpty){
+        refreshIndex();
+        fetchGeneralQuotationDetails();
+      }
     } else {
       MotionToast.error(
         title:  Text("Message", style: TextStyle(fontWeight: FontWeight.bold),),
@@ -707,10 +741,7 @@ class _QuotationListState extends State<QuotationList> {
 
     detailsPlaceHolder = notEditableGeneralQuotation(selectedQuotationTitle, selectedQuotationBuyerName, selectedQuotationNo, selectedQuotationBuyerAddress, selectedQuotationDate, selectedQuotationBuyerGst, selectedQuotationBuyerContactDetails, selectedQuotationSellerContactDetails, general_quotation_items_list, selectedQuotationPackagingFee, selectedQuotationSubtotal, selectedQuotationGst, selectedQuotationTotalAmount);
 
-    if(selectedQuotationId.isNotEmpty){
-      refreshIndex();
-      fetchGeneralQuotationDetails();
-    }
+
 
 
     setState(() {
@@ -2054,6 +2085,793 @@ class _QuotationListState extends State<QuotationList> {
       }
     }
   }
+
+
+  fetchImageQuotations() async {
+    var url = Uri.parse(fetch_image_quotation);
+    Response response = await post(url);
+    if (response.statusCode == 200) {
+      String myData = response.body;
+      var jsonData = jsonDecode(myData);
+      image_quotation_list.clear();
+      jsonData.forEach((jsonResponse) {
+        ImageQuotationModel obj = new ImageQuotationModel.fromJson(jsonResponse);
+        setState(() {
+          image_quotation_list.add(obj);
+        });
+      });
+
+
+      if(selectedQuotationId.isNotEmpty){
+        refreshIndex();
+        fetchImageQuotationDetails();
+      }
+
+    } else {
+      MotionToast.error(
+        title:  Text("Message", style: TextStyle(fontWeight: FontWeight.bold),),
+        description:  Text("Some error has occurred!"),
+      ).show(context);
+
+    }
+    setState(() {
+      isListLoading = false;
+    });
+  }
+
+
+  fetchImageQuotationDetails() async {
+    setState(() {
+      isQuotationLoading = true;
+    });
+
+    var url = Uri.parse(image_quotation_details);
+    Map<String, String> body = {"id": selectedQuotationId};
+    Response response = await post(url, body: body);
+    if (response.statusCode == 200) {
+      String myData = response.body;
+      var jsonData = jsonDecode(myData);
+      selectedQuotationId = jsonData['id'].toString();
+      selectedQuotationBuyerName = jsonData['buyer_name'].toString();
+      selectedQuotationBuyerAddress = jsonData['buyer_address'].toString();
+      selectedQuotationBuyerContactDetails = jsonData['buyer_contact_details'].toString();
+      selectedQuotationBuyerGst = jsonData['buyer_gst'].toString();
+      selectedQuotationDate = jsonData['date'].toString();
+      selectedQuotationSellerContactDetails = jsonData['seller_contact_details'].toString();
+      selectedQuotationPackagingFee = jsonData['packaging_fee'].toString();
+      selectedQuotationSubtotal = jsonData['subtotal'].toString();
+      selectedQuotationGst = jsonData['gst'].toString();
+      selectedQuotationTotalAmount = jsonData['total_amount'].toString();
+      selectedQuotationNo = jsonData['quotation_no'].toString();
+      selectedQuotationTitle = jsonData['quotation_title'].toString();
+
+      image_quotation_items_url_list.clear();
+
+      jsonData['quotations_details'].forEach((jsonResponse) {
+        ImageQuotationNotEditableUrlModel obj = new ImageQuotationNotEditableUrlModel.fromJson(jsonResponse);
+        image_quotation_items_url_list.add(obj);
+      });
+    }
+
+    detailsPlaceHolder = notEditableImageQuotation(selectedQuotationTitle, selectedQuotationBuyerName, selectedQuotationNo, selectedQuotationBuyerAddress, selectedQuotationDate, selectedQuotationBuyerGst, selectedQuotationBuyerContactDetails, selectedQuotationSellerContactDetails, image_quotation_items_url_list, selectedQuotationPackagingFee, selectedQuotationSubtotal, selectedQuotationGst, selectedQuotationTotalAmount);
+
+
+
+    setState(() {
+      isQuotationLoading = false;
+    });
+  }
+
+
+  ///not editable image quotation view
+  Widget notEditableImageQuotation(String quotation_title, String buyer_name, String quotation_no, String buyer_address, String quotation_date, String buyer_gst_no, String buyer_contact_details, String seller_contact_details, List<ImageQuotationNotEditableUrlModel> quotation_item_list, String packaging_fee, String subtotal, String gst, String total_amount){
+    return Expanded(
+      child: Container(
+        width: 780,
+        child: ListView(
+          shrinkWrap: true,
+          children: [
+            SizedBox(height: 10,),
+            Container(
+              color: Colors.white,
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset("assets/logo/logo.png", width: 150, height: 150,),
+                      SizedBox(width: 10,),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Transmission Surgicals", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22, color: Colors.blue),),
+                          Text("333 J.C. Bose Road, PallyShree\nSodepur, Kolkata - 700110 \nPhone : +91 0333335980722 / 7278360630 / 9836947573\nEmail : surgicaltrans@gmail.com",style: TextStyle(fontWeight: FontWeight.w500,fontSize: 12,color: Colors.redAccent),),
+                        ],
+                      )
+                    ],
+                  ),
+
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 40),
+                    child: Divider(color: Colors.grey, thickness: 1,  height: 10),
+                  ),
+
+                  SizedBox(height: 5,),
+
+                  ///Quotation title ---------------
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 40),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: Text(quotation_title,style: TextStyle(color: Colors.black,fontWeight: FontWeight.w600,fontSize: 14),textAlign: TextAlign.center,),
+                        )
+                      ],
+                    ),
+                  ),
+
+                  SizedBox(height: 20,),
+
+                  ///Buyer's name and quotation number ---------------
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 40),
+                    child: Row(
+                      children: [
+                        Expanded(
+                            child: Container(
+                              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: Colors.black, width: 0.3
+                                ),
+                              ),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text("BUYER'S NAME : ", style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w600),),
+                                  Expanded(
+                                    child: Text(buyer_name, style: TextStyle(color: Colors.black,fontSize: 14, fontWeight: FontWeight.w600)
+                                    ),
+                                  )
+                                ],
+                              ),
+                            )
+                        ),
+
+                        SizedBox(width: 2,),
+
+                        Expanded(
+                            child: Container(
+                              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: Colors.black, width: 0.3
+                                ),
+                              ),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text("QUOTATION NO : ", style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w600),),
+                                  Expanded(
+                                    child: Text(quotation_no,style: TextStyle(color: Colors.black,fontSize: 14, fontWeight: FontWeight.w600)
+                                    ),
+                                  )
+                                ],
+                              ),
+                            )
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  SizedBox(height: 2,),
+
+                  ///Buyer's address, gst no, date ---------------
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 40),
+                    child: Row(
+                      children: [
+                        Expanded(
+                            child: Container(
+                              height: 65,
+                              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: Colors.black, width: 0.3
+                                ),
+                              ),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.only(top: 5),
+                                    child: Text("BUYER'S ADDRESS : ", style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w600),),
+                                  ),
+                                  Expanded(
+                                    child: Text(buyer_address,style: TextStyle(color: Colors.black,fontSize: 14, fontWeight: FontWeight.w600)
+                                    ),
+                                  )
+                                ],
+                              ),
+                            )
+                        ),
+
+                        SizedBox(width: 2,),
+
+                        Expanded(
+                            child: Container(
+                              height: 65,
+                              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: Colors.black, width: 0.3
+                                ),
+                              ),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Text("QUOTATION DATE : ", style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w600),),
+                                      Expanded(
+                                        child: Text(quotation_date,style: TextStyle(color: Colors.black,fontSize: 14, fontWeight: FontWeight.w600)
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Text("BUYER'S GST NO : ", style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w600),),
+                                      Expanded(
+                                        child: Text(buyer_gst_no,style: TextStyle(color: Colors.black,fontSize: 14, fontWeight: FontWeight.w600)
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            )
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  SizedBox(height: 2,),
+
+                  ///buyer and seller contact
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 40),
+                    child: Row(
+                      children: [
+                        Expanded(
+                            child: Container(
+                              height: 70,
+                              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: Colors.black, width: 0.3
+                                ),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.only(top: 5),
+                                    child: Text("BUYER'S CONTACT DETAILS: ", style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w600),),
+                                  ),
+                                  Expanded(
+                                    child: Text(buyer_contact_details,style: TextStyle(color: Colors.black,fontSize: 14, fontWeight: FontWeight.w600)
+                                    ),
+                                  )
+                                ],
+                              ),
+                            )
+                        ),
+
+                        SizedBox(width: 2,),
+
+                        Expanded(
+                            child: Container(
+                              height: 70,
+                              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: Colors.black, width: 0.3
+                                ),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.only(top: 5),
+                                    child: Text("SELLER'S CONTACT DETAILS : ", style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w600),),
+                                  ),
+                                  Expanded(
+                                    child: Text(seller_contact_details,style: TextStyle(color: Colors.black,fontSize: 14, fontWeight: FontWeight.w600)
+                                    ),
+                                  )
+                                ],
+                              ),
+                            )
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  SizedBox(height: 20,),
+
+                  ///Table header ..............
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 40),
+                    child: Table(
+                      border: TableBorder.symmetric(
+                        inside: BorderSide(color: Colors.blue),
+                        outside: BorderSide(color: Colors.blue),
+                      ),
+                      columnWidths: {
+                        0: FlexColumnWidth(0.9),
+                        1: FlexColumnWidth(5.2),
+                        2: FlexColumnWidth(5.5),
+                        3: FlexColumnWidth(2),
+                        4: FlexColumnWidth(2),
+                        5: FlexColumnWidth(2),
+                        6: FlexColumnWidth(2)
+                      },
+                      children: [
+                        TableRow(
+                            decoration: BoxDecoration(
+                                color: Colors.blue.shade50
+                            ),
+                            children: [
+                              TableCell(
+                                verticalAlignment: TableCellVerticalAlignment.middle,
+                                child: SizedBox(
+                                  height: 30,
+                                  child: Center(
+                                    child: Text(
+                                      "Sl. No.",
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(fontWeight: FontWeight.w600, fontSize: 10, color: Colors.blue.shade700),
+                                    ),
+                                  ),
+                                ),
+                              ),
+
+                              TableCell(
+                                verticalAlignment: TableCellVerticalAlignment.middle,
+                                child: SizedBox(
+                                  height: 30,
+                                  child: Center(
+                                    child: Text(
+                                      "Product Name",
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14,color: Colors.blue.shade700),
+                                    ),
+                                  ),
+                                ),
+                              ),
+
+                              TableCell(
+                                verticalAlignment: TableCellVerticalAlignment.middle,
+                                child: SizedBox(
+                                  height: 30,
+                                  child: Center(
+                                    child: Text(
+                                      "HSN Code",
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14,color: Colors.blue.shade700),
+                                    ),
+                                  ),
+                                ),
+                              ),
+
+                              TableCell(
+                                verticalAlignment: TableCellVerticalAlignment.middle,
+                                child: SizedBox(
+                                  height: 30,
+                                  child: Center(
+                                    child: Text(
+                                      "Qty",
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14,color: Colors.blue.shade700),
+                                    ),
+                                  ),
+                                ),
+                              ),
+
+                              TableCell(
+                                verticalAlignment: TableCellVerticalAlignment.middle,
+                                child: SizedBox(
+                                  height: 30,
+                                  child: Center(
+                                    child: Text(
+                                      "Rate",
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14,color: Colors.blue.shade700),
+                                    ),
+                                  ),
+                                ),
+                              ),
+
+                              TableCell(
+                                verticalAlignment: TableCellVerticalAlignment.middle,
+                                child: SizedBox(
+                                  height: 30,
+                                  child: Center(
+                                    child: Text(
+                                      "GST",
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14,color: Colors.blue.shade700),
+                                    ),
+                                  ),
+                                ),
+                              ),
+
+                              TableCell(
+                                verticalAlignment: TableCellVerticalAlignment.middle,
+                                child: SizedBox(
+                                  height: 30,
+                                  child: Center(
+                                    child: Text(
+                                      "Amount",
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14,color: Colors.blue.shade700),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ]
+                        )
+                      ],
+                    ),
+                  ),
+
+                  ///Table cells .................
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 40),
+                    child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: quotation_item_list.length,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemBuilder: (context, index){
+                          return Table(
+                            border: TableBorder(
+                              left: BorderSide(color: Colors.blue),
+                              right: BorderSide(color: Colors.blue),
+                              bottom: BorderSide(color: Colors.blue),
+                              verticalInside: BorderSide(color: Colors.blue),
+                            ),
+                            columnWidths: {
+                              0: FlexColumnWidth(0.9),
+                              1: FlexColumnWidth(5.2),
+                              2: FlexColumnWidth(5.5),
+                              3: FlexColumnWidth(2),
+                              4: FlexColumnWidth(2),
+                              5: FlexColumnWidth(2),
+                              6: FlexColumnWidth(2),
+                            },
+                            children: [
+                              TableRow(
+                                  children: [
+                                    TableCell(
+                                      verticalAlignment: TableCellVerticalAlignment.middle,
+                                      child: SizedBox(
+                                        height: 40,
+                                        child: Center(
+                                          child: Text(
+                                            (index+1).toString(),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14,),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+
+                                    /// Cell - Product name -------------
+                                    TableCell(
+                                      verticalAlignment: TableCellVerticalAlignment.middle,
+                                      child: SizedBox(
+                                        height: 40,
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+                                          child: Text(quotation_item_list[index].productName.toString(),style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14,),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+
+                                    /// Cell - HSN code -----------------
+                                    TableCell(
+                                      verticalAlignment: TableCellVerticalAlignment.middle,
+                                      child: SizedBox(
+                                        height: 150,
+                                        child: Padding(
+                                            padding: EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+                                            child: Image.network(product_image_base_path + quotation_item_list[index].ImageName.toString(), fit: BoxFit.fill,)
+                                        ),
+                                      ),
+                                    ),
+
+                                    /// Cell - quantity ----------------
+                                    TableCell(
+                                      verticalAlignment: TableCellVerticalAlignment.middle,
+                                      child: SizedBox(
+                                        height: 40,
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+                                          child: Text(quotation_item_list[index].quantity.toString(),style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14,),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+
+                                    /// Cell - Rate --------------
+                                    TableCell(
+                                      verticalAlignment: TableCellVerticalAlignment.middle,
+                                      child: SizedBox(
+                                        height: 40,
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+                                          child: Text(quotation_item_list[index].rate.toString(),style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14,),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+
+                                    /// Cell - GST --------------
+                                    TableCell(
+                                      verticalAlignment: TableCellVerticalAlignment.middle,
+                                      child: SizedBox(
+                                        height: 40,
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+                                          child: Column(
+                                            children: [
+                                              Expanded(child: Text(quotation_item_list[index].gst.toString(),style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14,),)),
+                                              Expanded(
+                                                child: Text(quotation_item_list[index].gst_percentage.toString(),style: TextStyle(fontWeight: FontWeight.w500, fontSize: 11,),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+
+                                    /// Cell - Amount --------------
+                                    TableCell(
+                                      verticalAlignment: TableCellVerticalAlignment.middle,
+                                      child: SizedBox(
+                                        height: 40,
+                                        child: Center(
+                                          child: Text(quotation_item_list[index].amount.toString(), style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14,),),
+                                        ),
+                                      ),
+                                    ),
+                                  ]
+                              )
+                            ],
+                          );
+                        }
+                    ),
+                  ),
+
+
+                  SizedBox(height: 2,),
+
+                  /// Packaging and forwarding .................
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 40),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Container(
+                          width: 350,
+                          padding: EdgeInsets.symmetric(horizontal: 10),
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: Colors.blue,
+                                  width: 0.8
+                              )
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text("Packaging & Forwarding", style: TextStyle(color: Colors.black,fontSize: 14, fontWeight: FontWeight.w600),),
+
+                              SizedBox(width: 8,),
+
+                              Text(":",style: TextStyle(color: Colors.black,fontSize: 14, fontWeight: FontWeight.w600)),
+
+                              SizedBox(width: 8,),
+
+                              Container(
+                                width: 120,
+                                child: Text(packaging_fee,style: TextStyle(color: Colors.black,fontSize: 14, fontWeight: FontWeight.w600),),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  /// Subtotal .................
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 40),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Container(
+                          width: 350,
+                          padding: EdgeInsets.symmetric(horizontal: 10),
+                          decoration: BoxDecoration(
+                              border: Border(
+                                left: BorderSide(color: Colors.blue, width: 0.8),
+                                right: BorderSide(color: Colors.blue, width: 0.8),
+                                bottom: BorderSide(color: Colors.blue, width: 0.8),
+
+                              )
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text("Subtotal", style: TextStyle(color: Colors.black,fontSize: 14, fontWeight: FontWeight.w600),),
+
+                              SizedBox(width: 8,),
+
+                              Text(":",style: TextStyle(color: Colors.black,fontSize: 14, fontWeight: FontWeight.w600)),
+
+                              SizedBox(width: 8,),
+
+                              Container(
+                                width: 120,
+                                child: Text(subtotal, style: TextStyle(color: Colors.black,fontSize: 14, fontWeight: FontWeight.w600),),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  /// Gst .................
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 40),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Container(
+                          width: 350,
+                          padding: EdgeInsets.symmetric(horizontal: 10),
+                          decoration: BoxDecoration(
+                              border: Border(
+                                left: BorderSide(color: Colors.blue, width: 0.8),
+                                right: BorderSide(color: Colors.blue, width: 0.8),
+                                bottom: BorderSide(color: Colors.blue, width: 0.8),
+
+                              )
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text("GST", style: TextStyle(color: Colors.black,fontSize: 14, fontWeight: FontWeight.w600),),
+
+                              SizedBox(width: 8,),
+
+                              Text(":",style: TextStyle(color: Colors.black,fontSize: 14, fontWeight: FontWeight.w600)),
+
+                              SizedBox(width: 8,),
+
+                              Container(
+                                width: 120,
+                                child: Text(gst, style: TextStyle(color: Colors.black,fontSize: 14, fontWeight: FontWeight.w600),),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  /// Total amount .................
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 40),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Container(
+                          width: 350,
+                          padding: EdgeInsets.symmetric(horizontal: 10),
+                          decoration: BoxDecoration(
+                              border: Border(
+                                left: BorderSide(color: Colors.blue, width: 0.8),
+                                right: BorderSide(color: Colors.blue, width: 0.8),
+                                bottom: BorderSide(color: Colors.blue, width: 0.8),
+
+                              )
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text("Total Amount", style: TextStyle(color: Colors.black,fontSize: 14, fontWeight: FontWeight.w600),),
+
+                              SizedBox(width: 8,),
+
+                              Text(":",style: TextStyle(color: Colors.black,fontSize: 14, fontWeight: FontWeight.w600)),
+
+                              SizedBox(width: 8,),
+
+                              Container(
+                                width: 120,
+                                child: Text(total_amount, style: TextStyle(color: Colors.black,fontSize: 14, fontWeight: FontWeight.w600),),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  SizedBox(height: 5,),
+
+                  /// GST no ----------------------
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 40),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text("GST NO. $gst_no", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600, fontSize: 14),)
+                      ],
+                    ),
+                  ),
+
+                  SizedBox(height: 20,),
+
+                  ///Authorized Signatory ......................
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 40),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Column(
+                          children: [
+                            Text("Authorized Signatory", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600,color: Colors.black),),
+                            SizedBox(height: 5,),
+                            Image.asset("assets/image/9712.png",height: 20,width: 100,fit: BoxFit.fill,),
+                            SizedBox(height: 5,),
+                            Text("Transmission Surgicals", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600,color: Colors.black),),
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+
+                  SizedBox(height: 20,),
+
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
 
 
 }
