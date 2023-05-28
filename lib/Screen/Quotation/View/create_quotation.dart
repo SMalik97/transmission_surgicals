@@ -49,6 +49,7 @@ class _CreateQuotationState extends State<CreateQuotation> {
   final subtotal_controller =TextEditingController();
   final gst_controller =TextEditingController();
   final total_amount_controller =TextEditingController();
+  final terms_controller =TextEditingController();
   bool isGenerating=false;
   int selectedTab=1;
   String selectedQuotationId="", purpose="",selectedQuotationBuyerName="", selectedQuotationBuyerAddress="", selectedQuotationBuyerContactDetails="", selectedQuotationBuyerGst="";
@@ -267,6 +268,7 @@ class _CreateQuotationState extends State<CreateQuotation> {
     image_quotation_editable_list[0].gst_percentage_controller!.text ="12%";
 
     packaging_controller.text="00";
+    terms_controller.text="1. Here it's a sample terms conditions\n2.Here it's a sample terms conditions";
 
     if(getX.Get.parameters['id']==null){
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -315,6 +317,10 @@ class _CreateQuotationState extends State<CreateQuotation> {
     if(getX.Get.parameters['id'] == null){
       quotation_no_controller.text="Auto Generated";
       quotation_date_controller.text="Auto Generated";
+      packaging_controller.text="0.00";
+      subtotal_controller.text="0.00";
+      gst_controller.text="0.00";
+      total_amount_controller.text="0.00";
     }else{
       quotation_no_controller.text=selectedQuotationNo;
       quotation_date_controller.text=selectedQuotationDate;
@@ -349,13 +355,21 @@ class _CreateQuotationState extends State<CreateQuotation> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Image.asset("assets/logo/logo.png", width: 150, height: 150,),
+                          SizedBox(width: 10,),
+                          Image.asset("assets/logo/logo3.png",  height: 100,),
                           SizedBox(width: 10,),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("Transmission Surgicals", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22, color: Colors.blue),),
-                              Text("333 J.C. Bose Road, PallyShree\nSodepur, Kolkata - 700110 \nPhone : +91 0333335980722 / 7278360630 / 9836947573\nEmail : surgicaltrans@gmail.com",style: TextStyle(fontWeight: FontWeight.w500,fontSize: 12,color: Colors.redAccent),),
+                              SizedBox(height: 10,),
+                              Text("Transmission Surgicals", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 26, color: Colors.teal),),
+
+                              SizedBox(
+                                width: 280,
+                                  child: Divider(height: 5,thickness: 2,color: Colors.teal,)
+                              ),
+                              SizedBox(height: 2,),
+                              Text("Sells and Service", style: TextStyle(fontWeight: FontWeight.w500, fontSize: 12, color: Colors.teal),)
                             ],
                           )
                         ],
@@ -395,29 +409,36 @@ class _CreateQuotationState extends State<CreateQuotation> {
 
                       SizedBox(height: 20,),
 
-                      ///Buyer's name and quotation number ---------------
+                      ///To ---------------
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 40),
                         child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Expanded(
+                              flex: 2,
                                 child: Container(
+                                  height: 180,
                                   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                                   decoration: BoxDecoration(
                                     border: Border.all(
                                         color: Colors.black, width: 0.3
                                     ),
                                   ),
-                                  child: Row(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
-                                      Text("BUYER'S NAME : ", style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w600),),
+                                      Text("TO : ", style: TextStyle(color: Colors.black,fontSize: 14, fontWeight: FontWeight.w600),),
+                                      SizedBox(height: 4,),
                                       Expanded(
                                         child: TextField(
                                             controller: buyer_controller,
                                             decoration: InputDecoration(
                                                 isDense: true,
-                                                border: InputBorder.none
+                                                border: InputBorder.none,
+                                              hintText: "Type buyer details here...",
+                                              hintStyle: TextStyle(color: Colors.black.withOpacity(0.5),fontSize: 14, fontWeight: FontWeight.w500)
                                             ),
                                             style: TextStyle(color: Colors.black,fontSize: 14, fontWeight: FontWeight.w600)
                                         ),
@@ -427,124 +448,100 @@ class _CreateQuotationState extends State<CreateQuotation> {
                                 )
                             ),
 
-                            SizedBox(width: 2,),
+                            SizedBox(width: 10,),
 
                             Expanded(
+                                flex: 3,
                                 child: Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                        color: Colors.black, width: 0.3
-                                    ),
-                                  ),
-                                  child: Row(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      Text("QUOTATION NO : ", style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w600),),
-                                      Expanded(
-                                        child: TextField(
-                                          readOnly: true,
-                                            controller: quotation_no_controller,
-                                            decoration: InputDecoration(
-                                                isDense: true,
-                                                border: InputBorder.none
-                                            ),
-                                            style: TextStyle(color: Colors.black,fontSize: 14, fontWeight: FontWeight.w600)
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                )
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      SizedBox(height: 2,),
-
-                      ///Buyer's address, gst no, date ---------------
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 40),
-                        child: Row(
-                          children: [
-                            Expanded(
-                                child: Container(
-                                  height: 65,
-                                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                        color: Colors.black, width: 0.3
-                                    ),
-                                  ),
-                                  child: Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Padding(
-                                        padding: EdgeInsets.only(top: 5),
-                                        child: Text("BUYER'S ADDRESS : ", style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w600),),
-                                      ),
-                                      Expanded(
-                                        child: TextField(
-                                            controller: buyer_address_controller,
-                                            decoration: InputDecoration(
-                                                isDense: true,
-                                                border: InputBorder.none
-                                            ),
-
-                                            maxLines: 3,
-                                            style: TextStyle(color: Colors.black,fontSize: 14, fontWeight: FontWeight.w600)
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                )
-                            ),
-
-                            SizedBox(width: 2,),
-
-                            Expanded(
-                                child: Container(
-                                  height: 65,
-                                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                        color: Colors.black, width: 0.3
-                                    ),
-                                  ),
+                                  height: 180,
                                   child: Column(
                                     children: [
-                                      Row(
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        children: [
-                                          Text("QUOTATION DATE : ", style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w600),),
-                                          Expanded(
-                                            child: TextField(
-                                              readOnly: true,
-                                                controller: quotation_date_controller,
-                                                decoration: InputDecoration(
-                                                    isDense: true,
-                                                    border: InputBorder.none
-                                                ),
-                                                style: TextStyle(color: Colors.black,fontSize: 14, fontWeight: FontWeight.w600)
+                                      Container(
+                                        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color: Colors.black, width: 0.3
+                                          ),
+                                        ),
+                                        child: Column(
+                                          children: [
+                                            Row(
+                                              crossAxisAlignment: CrossAxisAlignment.center,
+                                              children: [
+                                                Text("QUOTATION NO : ", style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w600),),
+                                                Expanded(
+                                                  child: TextField(
+                                                    readOnly: true,
+                                                      controller: quotation_no_controller,
+                                                      decoration: InputDecoration(
+                                                          isDense: true,
+                                                          border: InputBorder.none
+                                                      ),
+                                                      style: TextStyle(color: Colors.black,fontSize: 14, fontWeight: FontWeight.w600)
+                                                  ),
+                                                )
+                                              ],
                                             ),
-                                          )
-                                        ],
+                                            Row(
+                                              crossAxisAlignment: CrossAxisAlignment.center,
+                                              children: [
+                                                Text("QUOTATION DATE : ", style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w600),),
+                                                Expanded(
+                                                  child: TextField(
+                                                      readOnly: true,
+                                                      controller: quotation_date_controller,
+                                                      decoration: InputDecoration(
+                                                          isDense: true,
+                                                          border: InputBorder.none
+                                                      ),
+                                                      style: TextStyle(color: Colors.black,fontSize: 14, fontWeight: FontWeight.w600)
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                      Row(
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        children: [
-                                          Text("BUYER'S GST NO : ", style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w600),),
-                                          Expanded(
-                                            child: TextField(
-                                                controller: buyer_gst_no_controller,
-                                                decoration: InputDecoration(
-                                                    isDense: true,
-                                                    border: InputBorder.none
-                                                ),
-                                                style: TextStyle(color: Colors.black,fontSize: 14, fontWeight: FontWeight.w600)
+                                      SizedBox(height: 5,),
+                                      Expanded(
+                                        child: Container(
+                                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                                color: Colors.black, width: 0.3
                                             ),
-                                          )
-                                        ],
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Text("Bank Details : ", style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w600),),
+                                                  Text("A/C Holder Name : $bank_ac_holder_name",
+                                                      style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w500)
+                                                  ),
+                                                  Text("Bank Name : $bank_name",
+                                                      style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w500)
+                                                  ),
+                                                  Text("Account Number : $bank_ac_number",
+                                                      style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w500)
+                                                  ),
+                                                  Text("IFSC Code : $ifsc_code",
+                                                      style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w500)
+                                                  ),
+
+                                                  SizedBox(height: 5,),
+                                                  Text("PAN Number : $pan_no",
+                                                      style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w600)
+                                                  ),
+                                                  Text("GST Number : $gst_no",
+                                                      style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w600)
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -554,83 +551,9 @@ class _CreateQuotationState extends State<CreateQuotation> {
                         ),
                       ),
 
-                      SizedBox(height: 2,),
 
-                      ///buyer and seller contact
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 40),
-                        child: Row(
-                          children: [
-                            Expanded(
-                                child: Container(
-                                  height: 70,
-                                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                        color: Colors.black, width: 0.3
-                                    ),
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Padding(
-                                        padding: EdgeInsets.only(top: 5),
-                                        child: Text("BUYER'S CONTACT DETAILS: ", style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w600),),
-                                      ),
-                                      Expanded(
-                                        child: TextField(
-                                            controller: buyer_contact_details,
-                                            decoration: InputDecoration(
-                                                isDense: true,
-                                                border: InputBorder.none
-                                            ),
 
-                                            maxLines: 3,
-                                            style: TextStyle(color: Colors.black,fontSize: 14, fontWeight: FontWeight.w600)
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                )
-                            ),
 
-                            SizedBox(width: 2,),
-
-                            Expanded(
-                                child: Container(
-                                  height: 70,
-                                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                        color: Colors.black, width: 0.3
-                                    ),
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Padding(
-                                        padding: EdgeInsets.only(top: 5),
-                                        child: Text("SELLER'S CONTACT DETAILS : ", style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w600),),
-                                      ),
-                                      Expanded(
-                                        child: TextField(
-                                            controller: seller_contact_details,
-                                            decoration: InputDecoration(
-                                                isDense: true,
-                                                border: InputBorder.none
-                                            ),
-
-                                            maxLines: 3,
-                                            style: TextStyle(color: Colors.black,fontSize: 14, fontWeight: FontWeight.w600)
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                )
-                            ),
-                          ],
-                        ),
-                      ),
 
                       SizedBox(height: 20,),
 
@@ -872,7 +795,8 @@ class _CreateQuotationState extends State<CreateQuotation> {
                                                 style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14,),
                                                 onChanged: (v){
                                                   general_quotation_editable_list[index].quantity=general_quotation_editable_list[index].quantity_controller!.text;
-                                                },
+                                                  calculateGeneralQuotation();
+                                                  },
                                               ),
                                             ),
                                           ),
@@ -895,7 +819,8 @@ class _CreateQuotationState extends State<CreateQuotation> {
                                                 style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14,),
                                                 onChanged: (v){
                                                   general_quotation_editable_list[index].rate=general_quotation_editable_list[index].rate_controller!.text;
-                                                },
+                                                  calculateGeneralQuotation();
+                                                  },
                                               ),
                                             ),
                                           ),
@@ -935,7 +860,10 @@ class _CreateQuotationState extends State<CreateQuotation> {
                                                       style: TextStyle(fontWeight: FontWeight.w500, fontSize: 11,),
                                                       onChanged: (v){
                                                         general_quotation_editable_list[index].gst_percentage=general_quotation_editable_list[index].gst_percentage_controller!.text;
-                                                      },
+                                                        setState((){
+                                                          calculateGeneralQuotation();
+                                                        });
+                                                        },
                                                     ),
                                                   ),
                                                 ],
@@ -949,20 +877,38 @@ class _CreateQuotationState extends State<CreateQuotation> {
                                           verticalAlignment: TableCellVerticalAlignment.middle,
                                           child: SizedBox(
                                             height: 40,
-                                            child: Padding(
-                                              padding: EdgeInsets.symmetric(horizontal: 5, vertical: 3),
-                                              child: TextField(
-                                                controller: general_quotation_editable_list[index].amount_controller,
-                                                decoration: InputDecoration(
-                                                    isDense: true,
-                                                    border: InputBorder.none
+                                            child: Row(
+                                              children: [
+                                                Expanded(
+                                                  child: Padding(
+                                                    padding: EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+                                                    child: TextField(
+                                                      controller: general_quotation_editable_list[index].amount_controller,
+                                                      decoration: InputDecoration(
+                                                          isDense: true,
+                                                          border: InputBorder.none
+                                                      ),
+                                                      maxLines: 1,
+                                                      style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14,),
+                                                      onChanged: (v){
+                                                        general_quotation_editable_list[index].amount=general_quotation_editable_list[index].amount_controller!.text;
+                                                      },
+                                                    ),
+                                                  ),
                                                 ),
-                                                maxLines: 1,
-                                                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14,),
-                                                onChanged: (v){
-                                                  general_quotation_editable_list[index].amount=general_quotation_editable_list[index].amount_controller!.text;
-                                                },
-                                              ),
+                                                Transform.translate(
+                                                    offset: Offset(10,0),
+                                                    child: InkWell(
+                                                      onTap: (){
+                                                        setState((){
+                                                          general_quotation_editable_list.removeAt(index);
+                                                        });
+                                                        calculateGeneralQuotation();
+                                                      },
+                                                        child: Icon(Icons.close, size: 20, color: Colors.red,)
+                                                    )
+                                                )
+                                              ],
                                             ),
                                           ),
                                         ),
@@ -996,7 +942,7 @@ class _CreateQuotationState extends State<CreateQuotation> {
 
                       SizedBox(height: 2,),
 
-                      /// Packaging and forwarding .................
+                      /// Delivery .................
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 40),
                         child: Row(
@@ -1015,7 +961,7 @@ class _CreateQuotationState extends State<CreateQuotation> {
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  Text("Packaging & Forwarding", style: TextStyle(color: Colors.black,fontSize: 14, fontWeight: FontWeight.w600),),
+                                  Text("Delivery Charge", style: TextStyle(color: Colors.black,fontSize: 14, fontWeight: FontWeight.w600),),
 
                                   SizedBox(width: 8,),
 
@@ -1032,7 +978,11 @@ class _CreateQuotationState extends State<CreateQuotation> {
                                         border: InputBorder.none,
                                       ),
                                       textAlign: TextAlign.end,
-                                      style: TextStyle(color: Colors.black,fontSize: 14, fontWeight: FontWeight.w600),),
+                                      style: TextStyle(color: Colors.black,fontSize: 14, fontWeight: FontWeight.w600),
+                                    onChanged: (v){
+                                      calculateGeneralQuotation();
+                                    },
+                                    ),
                                   ),
                                 ],
                               ),
@@ -1216,7 +1166,39 @@ class _CreateQuotationState extends State<CreateQuotation> {
                         ),
                       ),
 
-                      SizedBox(height: 20,),
+                      SizedBox(height: 50,),
+
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 40),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Text("Terms and Conditions : ", style: TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.bold),)
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 3,),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 40),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                controller:terms_controller,
+                                decoration: InputDecoration(
+                                  isDense: true,
+                                    border: InputBorder.none
+                                ),
+                                style: TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.w500),
+                                maxLines: null,
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+
+                      SizedBox(height: 50,),
 
                     ],
                   ),
@@ -3257,7 +3239,13 @@ class _CreateQuotationState extends State<CreateQuotation> {
                                         border: InputBorder.none,
                                       ),
                                       textAlign: TextAlign.end,
-                                      style: TextStyle(color: Colors.black,fontSize: 14, fontWeight: FontWeight.w600),),
+                                      style: TextStyle(color: Colors.black,fontSize: 14, fontWeight: FontWeight.w600),
+                                     onChanged: (v){
+                                       setState((){
+                                         calculateGeneralQuotation();
+                                       });
+                                     },
+                                    ),
                                   ),
                                 ],
                               ),
@@ -4992,6 +4980,32 @@ class _CreateQuotationState extends State<CreateQuotation> {
     );
   }
 
+
+
+  calculateGeneralQuotation(){
+    double total_amount=0, total_gst=0;
+    for(int i=0; i<general_quotation_editable_list.length; i++){
+      if(general_quotation_editable_list[i].rate!.isNotEmpty && general_quotation_editable_list[i].quantity!.isNotEmpty && general_quotation_editable_list[i].gst_percentage!.isNotEmpty){
+        int qty = int.parse(general_quotation_editable_list[i].quantity!);
+        double rate = double.parse(general_quotation_editable_list[i].rate!);
+        int gst_per = int.parse(general_quotation_editable_list[i].gst_percentage!.replaceAll("%", ""));
+        double amt = qty * rate;
+        double gst = (amt * gst_per)/100;
+        general_quotation_editable_list[i].amount=amt.toStringAsFixed(2);
+        general_quotation_editable_list[i].amount_controller!.text=amt.toStringAsFixed(2);
+        general_quotation_editable_list[i].gst=gst.toStringAsFixed(2);
+        general_quotation_editable_list[i].gst_controller!.text=gst.toStringAsFixed(2);
+
+        total_amount = total_amount + amt + double.parse(packaging_controller.text);
+        total_gst = total_gst + gst;
+      }
+    }
+    setState(() {
+      subtotal_controller.text=total_amount.toStringAsFixed(2);
+      gst_controller.text = total_gst.toStringAsFixed(2);
+      total_amount_controller.text = (total_amount + total_gst).toStringAsFixed(2);
+    });
+  }
 
 
 }
