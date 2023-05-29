@@ -52,9 +52,9 @@ class _CreateQuotationState extends State<CreateQuotation> {
   final terms_controller =TextEditingController();
   bool isGenerating=false;
   int selectedTab=1;
-  String selectedQuotationId="", purpose="",selectedQuotationBuyerName="", selectedQuotationBuyerAddress="", selectedQuotationBuyerContactDetails="", selectedQuotationBuyerGst="";
-  String selectedQuotationDate = "",selectedQuotationSellerContactDetails="", selectedQuotationPackagingFee="", selectedQuotationSubtotal="",selectedQuotationGst="",selectedQuotationTotalAmount="";
-  String selectedQuotationNo = "", selectedQuotationTitle="";
+  String selectedQuotationId="", purpose="",selectedQuotationBuyerName="", selectedQuotationBuyerDetails="", selectedQuotationBuyerContactDetails="", selectedQuotationBuyerGst="";
+  String selectedQuotationDate = "",selectedQuotationSellerContactDetails="", selectedQuotationDeliveryFee="", selectedQuotationSubtotal="",selectedQuotationGst="",selectedQuotationTotalAmount="";
+  String selectedQuotationNo = "", selectedQuotationTitle="", selectedQuotationTerms="";
   bool isQuotationLoading=false;
 
   @override
@@ -326,15 +326,15 @@ class _CreateQuotationState extends State<CreateQuotation> {
       quotation_no_controller.text=selectedQuotationNo;
       quotation_date_controller.text=selectedQuotationDate;
       quotation_title_controller.text=selectedQuotationTitle;
-      buyer_details_controller.text=selectedQuotationBuyerName;
-      buyer_address_controller.text=selectedQuotationBuyerAddress;
+      buyer_details_controller.text=selectedQuotationBuyerDetails;
       buyer_contact_details.text=selectedQuotationBuyerContactDetails;
       customer_gst_no_controller.text=selectedQuotationBuyerGst;
       seller_contact_details.text=selectedQuotationSellerContactDetails;
       subtotal_controller.text=selectedQuotationSubtotal;
-      packaging_controller.text=selectedQuotationPackagingFee;
+      packaging_controller.text=selectedQuotationDeliveryFee;
       gst_controller.text=selectedQuotationGst;
       total_amount_controller.text=selectedQuotationTotalAmount;
+      terms_controller.text=selectedQuotationTerms;
 
 
 
@@ -4225,18 +4225,16 @@ class _CreateQuotationState extends State<CreateQuotation> {
       String myData = response.body;
       var jsonData = jsonDecode(myData);
       selectedQuotationId = jsonData['id'].toString();
-      selectedQuotationBuyerName = jsonData['buyer_name'].toString();
-      selectedQuotationBuyerAddress = jsonData['buyer_address'].toString();
-      selectedQuotationBuyerContactDetails = jsonData['buyer_contact_details'].toString();
+      selectedQuotationBuyerDetails = jsonData['buyer_details'].toString();
       selectedQuotationBuyerGst = jsonData['buyer_gst'].toString();
       selectedQuotationDate = jsonData['date'].toString();
-      selectedQuotationSellerContactDetails = jsonData['seller_contact_details'].toString();
-      selectedQuotationPackagingFee = jsonData['packaging_fee'].toString();
+      selectedQuotationDeliveryFee = jsonData['delivery_fee'].toString();
       selectedQuotationSubtotal = jsonData['subtotal'].toString();
       selectedQuotationGst = jsonData['gst'].toString();
       selectedQuotationTotalAmount = jsonData['total_amount'].toString();
       selectedQuotationNo = jsonData['quotation_no'].toString();
       selectedQuotationTitle = jsonData['quotation_title'].toString();
+      selectedQuotationTerms = jsonData['terms'].toString();
 
       List<GeneralQuotationNotEditableModel> general_quotation_items_list=[];
 

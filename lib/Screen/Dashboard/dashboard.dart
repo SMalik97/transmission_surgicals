@@ -4,8 +4,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:http/http.dart';
-import 'package:motion_toast/motion_toast.dart';
-import 'package:motion_toast/resources/arrays.dart';
 import 'package:transmission_surgicals/Screen/Quotation/View/create_quotation.dart';
 import 'package:transmission_surgicals/Utils/shared_preferences.dart';
 import 'package:get/get.dart' as getX;
@@ -754,10 +752,6 @@ class _DashboardState extends State<Dashboard> {
       });
 
     }else{
-      MotionToast.error(
-        title:  Text("Message"),
-        description:  Text("Some error has occurred!"),
-      ).show(context);
     }
   }
 
@@ -773,10 +767,7 @@ class _DashboardState extends State<Dashboard> {
       });
 
     }else{
-      MotionToast.error(
-        title:  Text("Message"),
-        description:  Text("Some error has occurred!"),
-      ).show(context);
+
     }
   }
 
