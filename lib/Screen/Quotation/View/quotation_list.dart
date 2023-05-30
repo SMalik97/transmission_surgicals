@@ -1395,7 +1395,8 @@ class _QuotationListState extends State<QuotationList> {
                           children: [
                             Text("Authorized Signatory", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600,color: Colors.black),),
                             SizedBox(height: 5,),
-                            Image.asset("assets/image/9712.png",height: 20,width: 100,fit: BoxFit.fill,),
+                            Image.asset("assets/image/sig1.jpg",height: 26,width: 100,fit: BoxFit.fill,),
+                            Image.asset("assets/image/sig2.jpg",height: 26,width: 100,fit: BoxFit.fill,),
                             SizedBox(height: 5,),
                             Text("Transmission Surgicals", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600,color: Colors.black),),
                           ],
@@ -1448,6 +1449,8 @@ class _QuotationListState extends State<QuotationList> {
   generateGeneralPdf(String purpose, String quotation_title, String buyer_details, String quotation_no, String quotation_date, String buyer_gst_no, List<GeneralQuotationNotEditableModel> pdf_data_list, String delivery_fee, String subtotal, String gst, String total_amount, String terms) async {
     pdf = pw.Document();
     final Logo = await getAssetsImage("assets/logo/logo3.png");
+    final sig1 = await getAssetsImage("assets/image/sig1.jpg");
+    final sig2 = await getAssetsImage("assets/image/sig2.jpg");
     List<pw.Widget> pdf_widget = [];
 
 
@@ -1818,11 +1821,22 @@ class _QuotationListState extends State<QuotationList> {
           child: pw.Row(
               mainAxisAlignment: pw.MainAxisAlignment.end,
               children: [
-                pw.Image(pw.MemoryImage(Logo),width: 100,height: 60,fit: pw.BoxFit.fill),
+                pw.Image(pw.MemoryImage(sig1),width: 100,height: 26,fit: pw.BoxFit.fill),
               ]
           ),
         )
+    );
 
+    pdf_widget.add(
+        pw.Padding(
+          padding: pw.EdgeInsets.symmetric(horizontal: 20),
+          child: pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.end,
+              children: [
+                pw.Image(pw.MemoryImage(sig2),width: 100,height: 26,fit: pw.BoxFit.fill),
+              ]
+          ),
+        )
     );
 
     pdf_widget.add(
@@ -2866,7 +2880,8 @@ class _QuotationListState extends State<QuotationList> {
                           children: [
                             Text("Authorized Signatory", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600,color: Colors.black),),
                             SizedBox(height: 5,),
-                            Image.asset("assets/image/9712.png",height: 20,width: 100,fit: BoxFit.fill,),
+                            Image.asset("assets/image/sig1.jpg",height: 26,width: 100,fit: BoxFit.fill,),
+                            Image.asset("assets/image/sig2.jpg",height: 26,width: 100,fit: BoxFit.fill,),
                             SizedBox(height: 5,),
                             Text("Transmission Surgicals", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600,color: Colors.black),),
                           ],
