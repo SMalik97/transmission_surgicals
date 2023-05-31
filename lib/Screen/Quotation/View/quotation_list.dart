@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:motion_toast/motion_toast.dart';
+import 'package:number_to_words/number_to_words.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:flutter/material.dart';
@@ -756,7 +757,7 @@ class _QuotationListState extends State<QuotationList> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       SizedBox(width: 10,),
-                      Image.asset("assets/logo/logo3.png",  height: 100,),
+                      Image.asset("assets/logo/logo3.png",  height: 70,),
                       SizedBox(width: 10,),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -772,7 +773,7 @@ class _QuotationListState extends State<QuotationList> {
                           SizedBox(
                             width: 280,
                             child:
-                            Center(child: Text("Sells and Service", style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14, color: Colors.teal),)),
+                            Center(child: Text("Sales and Service", style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14, color: Colors.teal),)),
                           )
                         ],
                       )
@@ -1382,6 +1383,20 @@ class _QuotationListState extends State<QuotationList> {
                     ),
                   ),
 
+                  SizedBox(height: 20,),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 40),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Container(
+                            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                            color: Colors.grey.shade300,
+                            child: Text("Total: "+amountToWords(int.parse(double.parse(total_amount.toString()).round().toString())), style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.black),)
+                        ),
+                      ],
+                    ),
+                  ),
 
                   SizedBox(height: 20,),
 
@@ -1789,6 +1804,23 @@ class _QuotationListState extends State<QuotationList> {
     );
 
 
+    pdf_widget.add(pw.SizedBox(height: 15,),);
+    pdf_widget.add(
+        pw.Padding(
+          padding: pw.EdgeInsets.symmetric(horizontal: 15),
+          child: pw.Row(
+            mainAxisAlignment: pw.MainAxisAlignment.end,
+            children: [
+              pw.Container(
+                  padding: pw.EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                  color: PdfColors.grey200,
+                  child: pw.Text("Total : "+amountToWords(int.parse(double.parse(total_amount).round().toString())), style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold, color: PdfColors.grey900),)
+              ),
+            ],
+          ),
+        )
+    );
+
     pdf_widget.add(
       pw.SizedBox(height: 15),
     );
@@ -1915,7 +1947,7 @@ class _QuotationListState extends State<QuotationList> {
                         pw.SizedBox(height: 2,),
                         pw.SizedBox(
                           width: 180,
-                          child: pw.Center(child: pw.Text("Sells and Service", style: pw.TextStyle(fontWeight: pw.FontWeight.normal, fontSize: 10, color: PdfColors.teal),)),
+                          child: pw.Center(child: pw.Text("Sales and Service", style: pw.TextStyle(fontWeight: pw.FontWeight.normal, fontSize: 10, color: PdfColors.teal),)),
                         )
                       ],
                     )
@@ -2899,6 +2931,39 @@ class _QuotationListState extends State<QuotationList> {
         ),
       ),
     );
+  }
+
+
+  String amountToWords(int amount) {
+    if(amount==0){
+      return "";
+    }
+
+    String words = capitalizeSentence(NumberToWord().convert('en-in', amount).trim()) + ' rupees only';
+
+    return words;
+  }
+
+  String capitalizeSentence(String sentence) {
+    if(sentence.length == 0){
+      return "";
+    }
+    List<String> words = sentence.split(' ');
+    List<String> capitalizedWords = [];
+
+    String capitalizedWord="";
+    for (String word in words) {
+      if(word.length>=2){
+        capitalizedWord = word.substring(0, 1).toUpperCase() + word.substring(1);
+      }else{
+        capitalizedWord = word.substring(0, 1).toUpperCase();
+      }
+
+      capitalizedWords.add(capitalizedWord);
+    }
+
+    String capitalizedSentence = capitalizedWords.join(' ');
+    return capitalizedSentence;
   }
 
 
