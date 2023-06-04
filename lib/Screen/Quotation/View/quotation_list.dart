@@ -136,9 +136,12 @@ class _QuotationListState extends State<QuotationList> {
                       children: [
                         InkWell(
                           onTap: () async {
-                            await getX.Get.toNamed("/create-quotation");
                             if (selectedTab == 1) {
+                              await getX.Get.toNamed("/create-quotation?purpose=create&type=general");
                               fetchGeneralQuotations();
+                            }else{
+                              await getX.Get.toNamed("/create-quotation?purpose=create&type=image");
+                              fetchImageQuotations();
                             }
                           },
                           child: Container(
@@ -339,7 +342,7 @@ class _QuotationListState extends State<QuotationList> {
                                     onTap: () {
                                       selectedIndex = index;
                                       selectedQuotationId = image_quotation_list[index].id.toString();
-                                      fetchGeneralQuotationDetails();
+                                      fetchImageQuotationDetails();
                                     },
                                     child: Container(
                                       margin: EdgeInsets.all(5),
@@ -490,9 +493,12 @@ class _QuotationListState extends State<QuotationList> {
                               SizedBox(height: 5,),
                               InkWell(
                                 onTap: () async {
-                                  await getX.Get.toNamed("/create-quotation");
                                   if (selectedTab == 1) {
+                                    await getX.Get.toNamed("/create-quotation?purpose=create&type=general");
                                     fetchGeneralQuotations();
+                                  }else{
+                                    await getX.Get.toNamed("/create-quotation?purpose=create&type=image");
+                                    fetchImageQuotations();
                                   }
                                 },
                                 child: Container(
