@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -184,7 +185,7 @@ class _CreateQuotationState extends State<CreateQuotation> {
                               }else{
                                 List<ImageQuotationNotEditableModel> quotation_item_list=[];
                                 for(int i=0; i<image_quotation_editable_list.length; i++){
-                                  ImageQuotationNotEditableModel a= ImageQuotationNotEditableModel(productName: image_quotation_editable_list[i].product_name, amount: image_quotation_editable_list[i].amount, rate: image_quotation_editable_list[i].rate, quantity: image_quotation_editable_list[i].quantity, gst_percentage: image_quotation_editable_list[i].gst_percentage, gst: image_quotation_editable_list[i].gst, imageId: image_quotation_editable_list[i].ImageId.toString(),ImageData: image_quotation_editable_list[i].ImageData);
+                                  ImageQuotationNotEditableModel a= ImageQuotationNotEditableModel(productName: image_quotation_editable_list[i].product_name, amount: image_quotation_editable_list[i].amount, rate: image_quotation_editable_list[i].rate, quantity: image_quotation_editable_list[i].quantity, gst_percentage: image_quotation_editable_list[i].gst_percentage, gst: image_quotation_editable_list[i].gst, imageId: image_quotation_editable_list[i].ImageId.toString(),ImageData: image_quotation_editable_list[i].ImageData, hsnCode: image_quotation_editable_list[i].hsnCode);
                                   quotation_item_list.add(a);
                                 }
                                 createImageQuotation(quotation_title_controller.text, buyer_details_controller.text, customer_gst_no_controller.text, quotation_date_controller.text, packaging_controller.text, subtotal_controller.text, gst_controller.text, total_amount_controller.text, quotation_item_list, terms_controller.text.trim());
@@ -266,7 +267,7 @@ class _CreateQuotationState extends State<CreateQuotation> {
     general_quotation_editable_list[0].gst="0";
     general_quotation_editable_list[0].gst_percentage_controller!.text ="12%";
 
-    ImageQuotationEditableModel b =ImageQuotationEditableModel(product_name: "",quantity: "", rate: "",gst: "0",gst_percentage: "1%", amount: "0", product_name_controller: TextEditingController(), quantity_controller: TextEditingController(), rate_controller: TextEditingController(), gst_percentage_controller: TextEditingController(), isSelectImage: false, ImageId: "",ImageData: null, gst_controller: TextEditingController(), amount_controller: TextEditingController());
+    ImageQuotationEditableModel b =ImageQuotationEditableModel(product_name: "",quantity: "", rate: "",gst: "0",gst_percentage: "1%", amount: "0", product_name_controller: TextEditingController(), quantity_controller: TextEditingController(), rate_controller: TextEditingController(), gst_percentage_controller: TextEditingController(), isSelectImage: false, ImageId: "",ImageData: null, gst_controller: TextEditingController(), amount_controller: TextEditingController(), hsnCode: "", hsn_controller: TextEditingController());
     image_quotation_editable_list.add(b);
     image_quotation_editable_list[0].gst_controller!.text="0";
     image_quotation_editable_list[0].gst_percentage_controller!.text ="12%";
@@ -321,6 +322,7 @@ class _CreateQuotationState extends State<CreateQuotation> {
 
 
     }
+
 
 
     super.initState();
@@ -2841,13 +2843,14 @@ class _CreateQuotationState extends State<CreateQuotation> {
                             outside: BorderSide(color: Colors.blue),
                           ),
                           columnWidths: {
-                            0: FlexColumnWidth(0.9),
+                            0: FlexColumnWidth(1),
                             1: FlexColumnWidth(5.2),
-                            2: FlexColumnWidth(5.5),
-                            3: FlexColumnWidth(2),
+                            2: FlexColumnWidth(3),
+                            3: FlexColumnWidth(5.5),
                             4: FlexColumnWidth(2),
                             5: FlexColumnWidth(2),
                             6: FlexColumnWidth(2),
+                            7: FlexColumnWidth(2),
                           },
                           children: [
                             TableRow(
@@ -2861,7 +2864,7 @@ class _CreateQuotationState extends State<CreateQuotation> {
                                       height: 30,
                                       child: Center(
                                         child: Text(
-                                          "Sl. No.",
+                                          "S. No.",
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                           style: TextStyle(fontWeight: FontWeight.w600, fontSize: 10, color: Colors.blue.shade700),
@@ -2879,7 +2882,22 @@ class _CreateQuotationState extends State<CreateQuotation> {
                                           "Product Details",
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14,color: Colors.blue.shade700),
+                                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12,color: Colors.blue.shade700),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+
+                                  TableCell(
+                                    verticalAlignment: TableCellVerticalAlignment.middle,
+                                    child: SizedBox(
+                                      height: 30,
+                                      child: Center(
+                                        child: Text(
+                                          "HSN Code",
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12,color: Colors.blue.shade700),
                                         ),
                                       ),
                                     ),
@@ -2894,7 +2912,7 @@ class _CreateQuotationState extends State<CreateQuotation> {
                                           "Picture",
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14,color: Colors.blue.shade700),
+                                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12,color: Colors.blue.shade700),
                                         ),
                                       ),
                                     ),
@@ -2909,7 +2927,7 @@ class _CreateQuotationState extends State<CreateQuotation> {
                                           "Qty",
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14,color: Colors.blue.shade700),
+                                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12,color: Colors.blue.shade700),
                                         ),
                                       ),
                                     ),
@@ -2924,7 +2942,7 @@ class _CreateQuotationState extends State<CreateQuotation> {
                                           "Rate",
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14,color: Colors.blue.shade700),
+                                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12,color: Colors.blue.shade700),
                                         ),
                                       ),
                                     ),
@@ -2939,7 +2957,7 @@ class _CreateQuotationState extends State<CreateQuotation> {
                                           "GST",
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14,color: Colors.blue.shade700),
+                                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12,color: Colors.blue.shade700),
                                         ),
                                       ),
                                     ),
@@ -2954,7 +2972,7 @@ class _CreateQuotationState extends State<CreateQuotation> {
                                           "Amount",
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14,color: Colors.blue.shade700),
+                                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12,color: Colors.blue.shade700),
                                         ),
                                       ),
                                     ),
@@ -2981,13 +2999,14 @@ class _CreateQuotationState extends State<CreateQuotation> {
                                   verticalInside: BorderSide(color: Colors.blue),
                                 ),
                                 columnWidths: {
-                                  0: FlexColumnWidth(0.9),
+                                  0: FlexColumnWidth(1),
                                   1: FlexColumnWidth(5.2),
-                                  2: FlexColumnWidth(5.5),
-                                  3: FlexColumnWidth(2),
+                                  2: FlexColumnWidth(3),
+                                  3: FlexColumnWidth(5.5),
                                   4: FlexColumnWidth(2),
                                   5: FlexColumnWidth(2),
-                                  6: FlexColumnWidth(2)
+                                  6: FlexColumnWidth(2),
+                                  7: FlexColumnWidth(2)
                                 },
                                 children: [
                                   TableRow(
@@ -2996,12 +3015,18 @@ class _CreateQuotationState extends State<CreateQuotation> {
                                           verticalAlignment: TableCellVerticalAlignment.middle,
                                           child: SizedBox(
                                             height: 40,
-                                            child: Center(
-                                              child: Text(
-                                                (index+1).toString(),
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14,),
+                                            child: Padding(
+                                              padding: EdgeInsets.symmetric(vertical: 5),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    (index+1).toString(),
+                                                    maxLines: 1,
+                                                    overflow: TextOverflow.ellipsis,
+                                                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14,),
+                                                  ),
+                                                ],
                                               ),
                                             ),
                                           ),
@@ -3024,6 +3049,30 @@ class _CreateQuotationState extends State<CreateQuotation> {
                                                 style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14,),
                                                 onChanged: (v){
                                                   image_quotation_editable_list[index].product_name = image_quotation_editable_list[index].product_name_controller!.text;
+                                                },
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+
+
+                                        /// Cell - Hsn code -------------
+                                        TableCell(
+                                          verticalAlignment: TableCellVerticalAlignment.middle,
+                                          child: SizedBox(
+                                            height: image_quotation_editable_list[index].isSelectImage == true ? 150 : 40,
+                                            child: Padding(
+                                              padding: EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+                                              child: TextField(
+                                                controller: image_quotation_editable_list[index].hsn_controller,
+                                                decoration: InputDecoration(
+                                                  isDense: true,
+                                                  border: InputBorder.none,
+                                                ),
+                                                maxLines: null,
+                                                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14,),
+                                                onChanged: (v){
+                                                  image_quotation_editable_list[index].hsnCode = image_quotation_editable_list[index].hsn_controller!.text;
                                                 },
                                               ),
                                             ),
@@ -3090,8 +3139,8 @@ class _CreateQuotationState extends State<CreateQuotation> {
                                                                                   children: [
                                                                                     Expanded(
                                                                                       child: InkWell(
-                                                                                        onTap: (){
-                                                                                          getX.Get.back(result: [product_image_base_path+product_image[index].imageList![0].imageName.toString(),  product_image[index].productId.toString(),]);
+                                                                                        onTap: (){print(product_image_base_path+product_image[index].imageList![0].imageName.toString());
+                                                                                          getX.Get.back(result: [product_image_base_path+product_image[index].imageList![0].imageName.toString(),  product_image[index].productId.toString(), product_image[index].productName!,]);
                                                                                         },
                                                                                         child: Container(
                                                                                           width: double.infinity,
@@ -3120,11 +3169,14 @@ class _CreateQuotationState extends State<CreateQuotation> {
                                                         );
                                                         showDialog(context: context, builder: (BuildContext context) => image_dialog).then((value) async {
                                                           if(value != null){
+                                                            print(value[0]);
                                                             Response response = await get(Uri.parse(value[0]));
                                                             setState((){
                                                               image_quotation_editable_list[index].isSelectImage = true;
                                                               image_quotation_editable_list[index].ImageId = value[1];
                                                               image_quotation_editable_list[index].ImageData = response.bodyBytes;
+                                                              image_quotation_editable_list[index].product_name_controller!.text = value[2];
+                                                              image_quotation_editable_list[index].product_name = value[2];
                                                             });
                                                           }
                                                         });
@@ -3293,7 +3345,7 @@ class _CreateQuotationState extends State<CreateQuotation> {
                         padding: EdgeInsets.symmetric(horizontal: 40),
                         child: InkWell(
                           onTap: (){
-                            ImageQuotationEditableModel a =ImageQuotationEditableModel(product_name: "",quantity: "", rate: "",gst: "0",gst_percentage: "1%", amount: "0", product_name_controller: TextEditingController(),quantity_controller: TextEditingController(), rate_controller: TextEditingController(), gst_percentage_controller: TextEditingController(),  isSelectImage: false, ImageId: "",ImageData: null, gst_controller: TextEditingController(), amount_controller: TextEditingController());
+                            ImageQuotationEditableModel a =ImageQuotationEditableModel(product_name: "",quantity: "", rate: "",gst: "0",gst_percentage: "1%", amount: "0", product_name_controller: TextEditingController(),quantity_controller: TextEditingController(), rate_controller: TextEditingController(), gst_percentage_controller: TextEditingController(),  isSelectImage: false, ImageId: "",ImageData: null, gst_controller: TextEditingController(), amount_controller: TextEditingController(), hsnCode: "", hsn_controller: TextEditingController());
                             setState(() {
                               image_quotation_editable_list.add(a);
                               image_quotation_editable_list[image_quotation_editable_list.length-1].gst_controller!.text="0";
@@ -3579,17 +3631,25 @@ class _CreateQuotationState extends State<CreateQuotation> {
 
 
   ///Generate image quotation pdf
-  generateImagePdf(String quotation_id,String quotation_title, String buyer_name, String buyer_address, String buyer_contact_details, String quotation_no, String quotation_date, String buyer_gst_no, String seller_contact_details, List<ImageQuotationNotEditableModel> pdf_data_list, String packaging_fee, String subtotal, String gst, String total_amount,) async {
+
+  generateImagePdf(String quotation_title, String buyer_details, String quotation_no, String quotation_date, String buyer_gst_no, List<ImageQuotationNotEditableModel> pdf_data_list, String delivery_fee, String subtotal, String gst, String total_amount, String terms) async {
     pw.Document pdf = pw.Document();
-    final Logo = await getAssetsImage("assets/logo/logo.png");
+    final Logo = await getAssetsImage("assets/logo/logo3.png");
+    final sig1 = await getAssetsImage("assets/image/sig1.jpg");
+    final sig2 = await getAssetsImage("assets/image/sig2.jpg");
     List<pw.Widget> pdf_widget = [];
 
 
+
+
+    pdf_widget.add(pw.SizedBox(height: 3,),);
+
+    ///Quotation title ---------------
     pdf_widget.add(
       pw.Row(
           mainAxisAlignment: pw.MainAxisAlignment.center,
           children: [
-            pw.Text(quotation_title,style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 13,color: PdfColors.black ))
+            pw.Text(quotation_title,style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 11,color: PdfColors.black ))
           ]
       ),
     );
@@ -3597,161 +3657,170 @@ class _CreateQuotationState extends State<CreateQuotation> {
       pw.SizedBox(height: 14),
     );
 
-    pdf_widget.add(
-        pw.Padding(
-          padding: pw.EdgeInsets.symmetric(horizontal: 20),
-          child: pw.Row(
-              children: [
-                pw.Expanded(
-                    child: pw.Column(
+
+
+    pdf_widget.add(pw.Padding(
+      padding: pw.EdgeInsets.symmetric(horizontal: 20),
+      child: pw.Row(
+        children: [
+          pw.Expanded(
+              flex: 3,
+              child: pw.Container(
+                height: 150,
+                child: pw.Column(
+                  children: [
+                    pw.Expanded(
+                      child: pw.Container(
+                        width: double.infinity,
+                        padding: pw.EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        decoration: pw.BoxDecoration(
+                          border: pw.Border.all(
+                              color: PdfColors.black, width: 0.3
+                          ),
+                        ),
+                        child: pw.Column(
+                          crossAxisAlignment: pw.CrossAxisAlignment.start,
+                          mainAxisAlignment: pw.MainAxisAlignment.start,
+                          children: [
+                            pw.Text("TO : ", style: pw.TextStyle(color: PdfColors.black,fontSize: 12, fontWeight: pw.FontWeight.bold),),
+                            pw.SizedBox(height: 2,),
+                            pw.Expanded(
+                              child: pw.Text(
+                                  buyer_details,
+                                  style: pw.TextStyle(color: PdfColors.black,fontSize: 10, fontWeight: pw.FontWeight.normal, )
+                              ),
+                            ),
+
+                          ],
+                        ),
+                      ),
+                    ),
+                    pw.SizedBox(height: 5,),
+                    pw.Container(
+                      padding: pw.EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      decoration: pw.BoxDecoration(
+                        border: pw.Border.all(
+                            color: PdfColors.black, width: 0.3
+                        ),
+                      ),
+                      child: pw.Row(
+                        crossAxisAlignment: pw.CrossAxisAlignment.center,
                         children: [
-
-                          /// 1st container........
-                          pw.Container(
-                              padding: pw.EdgeInsets.all(8),
-                              height: 30,
-                              decoration: pw.BoxDecoration(
-                                border: pw.Border.all(color: PdfColors.black.shade(50)),
-                              ),
-                              child: pw.Row(
-                                  children: [
-                                    pw.Text("BUYER'S NAME:",style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 10,color: PdfColors.black.shade(200))),
-                                    pw.SizedBox(height: 3),
-                                    pw.Text(buyer_name,style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 10,color: PdfColors.black.shade(400)))
-                                  ]
-                              )
-                          ),
-                          pw.SizedBox(height: 2),
-
-                          /// 2ND container........
-                          pw.Container(
-                              padding: pw.EdgeInsets.all(8),
-                              height: 50,
-                              decoration: pw.BoxDecoration(
-                                border: pw.Border.all(color: PdfColors.black.shade(50), width: 0.7),
-                              ),
-
-                              child: pw.Row(
-                                  mainAxisAlignment: pw.MainAxisAlignment.start,
-                                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                                  children: [
-                                    pw.Text("BUYER'S ADDRESS:",style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 10,color: PdfColors.black.shade(200))),
-                                    pw.SizedBox(height: 3),
-                                    pw.Expanded(
-                                        child: pw.Text(buyer_address,style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 10,color: PdfColors.black.shade(200)))
-
-                                    )
-                                  ]
-                              )
-                          ),
-
-                          pw.SizedBox(height: 2),
-
-                          /// 3RD container........
-                          pw.Container(
-                              padding: pw.EdgeInsets.all(8),
-                              height: 60,
-                              width: double.infinity,
-                              decoration: pw.BoxDecoration(
-                                border: pw.Border.all(color: PdfColors.black.shade(50), width: 0.7),
-                              ),
-                              child: pw.Column(
-                                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                                  children: [
-                                    pw.Text("BUYER'S CONTACT DETAILS:",style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 10,color: PdfColors.black.shade(200))),
-                                    pw.SizedBox(height: 3),
-                                    pw.Text(buyer_contact_details,style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 10,color: PdfColors.black.shade(200))),
-                                  ]
-                              )
-                          ),
-
-                        ]
-                    )
+                          pw.Text("Customer GST : ", style: pw.TextStyle(color: PdfColors.black,fontSize: 9, fontWeight: pw.FontWeight.bold),),
+                          pw.Expanded(
+                            child: pw.Text(
+                                buyer_gst_no,
+                                style: pw.TextStyle(color: PdfColors.black,fontSize: 10, fontWeight: pw.FontWeight.normal)
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-                pw.SizedBox(width: 2),
-
-
-                /// 2nd expanded...........
-                pw.Expanded(
-                    child: pw.Column(
-                        children: [
-                          /// 1st container...........
-                          pw.Container(
-                              padding: pw.EdgeInsets.all(8),
-                              height: 30,
-                              decoration: pw.BoxDecoration(
-                                border: pw.Border.all(color: PdfColors.black.shade(50), width: 0.7),
-                              ),
-                              child: pw.Row(
-                                  children: [
-                                    pw.Text("QUOTATION NO:",style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 10,color: PdfColors.black.shade(200))),
-                                    pw.SizedBox(height: 3),
-                                    pw.Text(quotation_no,style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 10,color: PdfColors.black.shade(400)))
-                                  ]
-                              )
-                          ),
-
-                          pw.SizedBox(height: 2),
-
-                          /// 2ND container........
-                          pw.Container(
-                              padding: pw.EdgeInsets.all(8),
-                              height: 50,
-                              decoration: pw.BoxDecoration(
-                                border: pw.Border.all(color: PdfColors.black.shade(50), width: 0.7),
-                              ),
-                              child: pw.Column(
-                                  children: [
-                                    pw.Row(
-                                        children: [
-                                          pw.Text("QUOTATION DATE:",style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 10,color: PdfColors.black.shade(200))),
-                                          pw.SizedBox(height: 3),
-                                          pw.Text(quotation_date,style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 10,color: PdfColors.black.shade(400)))
-                                        ]
-                                    ),
-                                    pw.SizedBox(height: 3),
-                                    pw.Row(
-                                        children: [
-                                          pw.Text("BUYER'S GST NO:",style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 10,color: PdfColors.black.shade(200))),
-                                          pw.SizedBox(height: 3),
-                                          pw.Text(buyer_gst_no,style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 10,color: PdfColors.black.shade(200)))
-                                        ]
-                                    ),
-                                  ]
-                              )
-                          ),
-
-                          pw.SizedBox(height: 2),
-
-                          /// 3RD container........
-                          pw.Container(
-                              padding: pw.EdgeInsets.all(8),
-                              height: 60,
-                              width: double.infinity,
-                              decoration: pw.BoxDecoration(
-                                border: pw.Border.all(color: PdfColors.black.shade(50), width: 0.7),
-                              ),
-                              child: pw.Column(
-                                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                                  children: [
-                                    pw.Text("SELLER'S CONTACT DETAILS:",style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 10,color: PdfColors.black.shade(200))),
-                                    pw.SizedBox(height: 3),
-                                    pw.Text(seller_contact_details,style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 10,color: PdfColors.black.shade(400))),
-
-                                  ]
-                              )
-                          ),
-                        ]
-                    )
-                ),
-              ]
+              )
           ),
-        )
-    );
+
+          pw.SizedBox(width: 10,),
+
+          pw.Expanded(
+              flex: 5,
+              child: pw.Container(
+                height: 150,
+                child: pw.Column(
+                  children: [
+                    pw.Container(
+                      padding: pw.EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                      decoration: pw.BoxDecoration(
+                        border: pw.Border.all(
+                            color: PdfColors.black, width: 0.3
+                        ),
+                      ),
+                      child: pw.Column(
+                        children: [
+                          pw.Row(
+                            crossAxisAlignment: pw.CrossAxisAlignment.center,
+                            children: [
+                              pw.Text("QUOTATION NO : ", style: pw.TextStyle(color: PdfColors.black,fontSize: 9, fontWeight: pw.FontWeight.bold),),
+                              pw.Expanded(
+                                child: pw.Text(
+                                    quotation_no,
+                                    style: pw.TextStyle(color: PdfColors.black,fontSize: 9, fontWeight: pw.FontWeight.normal)
+                                ),
+                              )
+                            ],
+                          ),
+                          pw.Row(
+                            crossAxisAlignment: pw.CrossAxisAlignment.center,
+                            children: [
+                              pw.Text("QUOTATION DATE : ", style: pw.TextStyle(color: PdfColors.black,fontSize: 10, fontWeight:pw.FontWeight.bold),),
+                              pw.Expanded(
+                                child: pw.Text(
+                                    quotation_date,
+                                    style: pw.TextStyle(color: PdfColors.black,fontSize: 10, fontWeight: pw.FontWeight.normal)
+                                ),
+                              )
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    pw.SizedBox(height: 5,),
+                    pw.Expanded(
+                      child: pw.Container(
+                        padding: pw.EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                        decoration: pw.BoxDecoration(
+                          border: pw.Border.all(
+                              color: PdfColors.black, width: 0.3
+                          ),
+                        ),
+                        child: pw.Row(
+                          children: [
+                            pw.Column(
+                              crossAxisAlignment: pw.CrossAxisAlignment.start,
+                              children: [
+                                pw.Text("Bank Details : ", style: pw.TextStyle(color: PdfColors.black,fontSize: 10, fontWeight: pw.FontWeight.bold),),
+                                pw.Text("A/C Holder Name : $bank_ac_holder_name",
+                                    style: pw.TextStyle(color: PdfColors.black,fontSize: 10, fontWeight: pw.FontWeight.normal)
+                                ),
+                                pw.Text("Bank Name : $bank_name",
+                                    style: pw.TextStyle(color: PdfColors.black,fontSize: 10, fontWeight: pw.FontWeight.normal)
+                                ),
+                                pw.Text("Account Number : $bank_ac_number",
+                                    style: pw.TextStyle(color: PdfColors.black,fontSize: 10, fontWeight: pw.FontWeight.normal)
+                                ),
+                                pw.Text("IFSC Code : $ifsc_code",
+                                    style: pw.TextStyle(color: PdfColors.black,fontSize: 10, fontWeight: pw.FontWeight.normal)
+                                ),
+
+                                pw.SizedBox(height: 8,),
+                                pw.Text("PAN Number : $pan_no",
+                                    style: pw.TextStyle(color: PdfColors.black,fontSize: 10, fontWeight: pw.FontWeight.bold)
+                                ),
+
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+          ),
+        ],
+      ),
+    ),);
+
+
 
     pdf_widget.add(
       pw.SizedBox(height: 14),
     );
+
+
+
+
     pdf_widget.add(
         pw.Padding(
             padding: pw.EdgeInsets.symmetric(horizontal: 20),
@@ -3768,7 +3837,7 @@ class _CreateQuotationState extends State<CreateQuotation> {
                                 color: PdfColors.blue100
                             ),
                             child: pw.Center(
-                                child: pw.Text('Sl. No.')
+                                child: pw.Text('S. No.', style: pw.TextStyle(fontSize: 10))
                             )
                         ),
                         pw.Container(
@@ -3778,7 +3847,17 @@ class _CreateQuotationState extends State<CreateQuotation> {
                                 color: PdfColors.blue100
                             ),
                             child: pw.Center(
-                                child: pw.Text('Product Name')
+                                child: pw.Text('Product Details',style: pw.TextStyle(fontSize: 10))
+                            )
+                        ),
+                        pw.Container(
+                            height: 30,width: 40,
+                            decoration: pw.BoxDecoration(
+                                border: pw.Border.all(color: PdfColors.blue, width: 0.7),
+                                color: PdfColors.blue100
+                            ),
+                            child: pw.Center(
+                                child: pw.Text('HSN Code', style: pw.TextStyle(fontSize: 10,), textAlign: pw.TextAlign.center)
                             )
                         ),
                         pw.Container(
@@ -3788,7 +3867,7 @@ class _CreateQuotationState extends State<CreateQuotation> {
                                 color: PdfColors.blue100
                             ),
                             child: pw.Center(
-                                child: pw.Text('Picture')
+                                child: pw.Text('Picture', style: pw.TextStyle(fontSize: 10))
                             )
                         ),
                         pw.Container(
@@ -3798,7 +3877,7 @@ class _CreateQuotationState extends State<CreateQuotation> {
                                 color: PdfColors.blue100
                             ),
                             child: pw.Center(
-                                child: pw.Text('Qty')
+                                child: pw.Text('Qty', style: pw.TextStyle(fontSize: 10))
                             )
                         ),
                         pw.Container(
@@ -3808,7 +3887,7 @@ class _CreateQuotationState extends State<CreateQuotation> {
                                 color: PdfColors.blue100
                             ),
                             child: pw.Center(
-                                child: pw.Text('Rate')
+                                child: pw.Text('Rate', style: pw.TextStyle(fontSize: 10))
                             )
                         ),
                         pw.Container(
@@ -3818,7 +3897,7 @@ class _CreateQuotationState extends State<CreateQuotation> {
                                 color: PdfColors.blue100
                             ),
                             child: pw.Center(
-                                child: pw.Text('GST')
+                                child: pw.Text('GST', style: pw.TextStyle(fontSize: 10))
                             )
                         ),
                         pw.Container(
@@ -3828,7 +3907,7 @@ class _CreateQuotationState extends State<CreateQuotation> {
                                 color: PdfColors.blue100
                             ),
                             child: pw.Center(
-                                child: pw.Text('Amount')
+                                child: pw.Text('Amount', style: pw.TextStyle(fontSize: 10))
                             )
                         ),
                       ]
@@ -3841,8 +3920,9 @@ class _CreateQuotationState extends State<CreateQuotation> {
                             decoration: pw.BoxDecoration(
                                 border: pw.Border.all(color: PdfColors.blue, width: 0.7)
                             ),
-                            child: pw.Center(
-                                child: pw.Text((item.key+1).toString()+".")
+                            child: pw.Padding(
+                              padding: pw.EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                                child: pw.Text((item.key+1).toString()+".", style: pw.TextStyle(fontSize: 9,), textAlign: pw.TextAlign.left)
                             )
                         ),
                         pw.Container(
@@ -3850,8 +3930,19 @@ class _CreateQuotationState extends State<CreateQuotation> {
                             decoration: pw.BoxDecoration(
                                 border: pw.Border.all(color: PdfColors.blue, width: 0.7)
                             ),
-                            child: pw.Center(
-                                child: pw.Text(item.value.productName.toString())
+                            child: pw.Padding(
+                                padding: pw.EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                                child: pw.Text(item.value.productName.toString(), style: pw.TextStyle(fontSize: 9,), textAlign: pw.TextAlign.left)
+                            )
+                        ),
+                        pw.Container(
+                            height: 65,width: 40,
+                            decoration: pw.BoxDecoration(
+                                border: pw.Border.all(color: PdfColors.blue, width: 0.7)
+                            ),
+                            child: pw.Padding(
+                                padding: pw.EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                                child: pw.Text(item.value.hsnCode.toString(), style: pw.TextStyle(fontSize: 9,), textAlign: pw.TextAlign.left)
                             )
                         ),
                         pw.Container(
@@ -3859,8 +3950,9 @@ class _CreateQuotationState extends State<CreateQuotation> {
                             decoration: pw.BoxDecoration(
                                 border: pw.Border.all(color: PdfColors.blue, width: 0.7)
                             ),
-                            child: pw.Center(
-                              child: pw.Image(pw.MemoryImage(item.value.ImageData!),width: 80,height: 60,fit: pw.BoxFit.fill),
+                            child: pw.Padding(
+                              padding: pw.EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                              child: pw.Image(pw.MemoryImage(item.value.ImageData!),width: 70,height: 55,fit: pw.BoxFit.fill),
                             )
                         ),
                         pw.Container(
@@ -3868,8 +3960,9 @@ class _CreateQuotationState extends State<CreateQuotation> {
                             decoration: pw.BoxDecoration(
                                 border: pw.Border.all(color: PdfColors.blue, width: 0.7)
                             ),
-                            child: pw.Center(
-                                child: pw.Text(item.value.quantity.toString())
+                            child: pw.Padding(
+                                padding: pw.EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                                child: pw.Text(item.value.quantity.toString(), style: pw.TextStyle(fontSize: 9,), textAlign: pw.TextAlign.left)
                             )
                         ),
                         pw.Container(
@@ -3877,8 +3970,9 @@ class _CreateQuotationState extends State<CreateQuotation> {
                             decoration: pw.BoxDecoration(
                                 border: pw.Border.all(color: PdfColors.blue, width: 0.7)
                             ),
-                            child: pw.Center(
-                                child: pw.Text(item.value.rate.toString())
+                            child: pw.Padding(
+                                padding: pw.EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                                child: pw.Text(item.value.rate.toString(), style: pw.TextStyle(fontSize: 9,), textAlign: pw.TextAlign.left)
                             )
                         ),
                         pw.Container(
@@ -3886,8 +3980,9 @@ class _CreateQuotationState extends State<CreateQuotation> {
                             decoration: pw.BoxDecoration(
                                 border: pw.Border.all(color: PdfColors.blue, width: 0.7)
                             ),
-                            child: pw.Center(
-                                child: pw.Text(item.value.gst.toString()+"\n"+item.value.gst_percentage.toString())
+                            child: pw.Padding(
+                                padding: pw.EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                                child: pw.Text(item.value.gst.toString()+"\n"+item.value.gst_percentage.toString(), style: pw.TextStyle(fontSize: 9,), textAlign: pw.TextAlign.left)
                             )
                         ),
                         pw.Container(
@@ -3895,8 +3990,9 @@ class _CreateQuotationState extends State<CreateQuotation> {
                             decoration: pw.BoxDecoration(
                                 border: pw.Border.all(color: PdfColors.blue, width: 0.7)
                             ),
-                            child: pw.Center(
-                                child: pw.Text(item.value.amount.toString())
+                            child: pw.Padding(
+                                padding: pw.EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                                child: pw.Text(item.value.amount.toString(), style: pw.TextStyle(fontSize: 9,), textAlign: pw.TextAlign.left)
                             )
                         ),
                       ])).toList(),
@@ -3940,7 +4036,7 @@ class _CreateQuotationState extends State<CreateQuotation> {
                                   child: pw.Row(
                                       mainAxisAlignment: pw.MainAxisAlignment.start,
                                       children: [
-                                        pw.Text(": $packaging_fee",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.bold,color: PdfColors.black))
+                                        pw.Text(": $delivery_fee",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.bold,color: PdfColors.black))
                                       ]
                                   ),
                                 )
@@ -4058,7 +4154,7 @@ class _CreateQuotationState extends State<CreateQuotation> {
           child: pw.Row(
               mainAxisAlignment: pw.MainAxisAlignment.end,
               children: [
-                pw.Text("GST NO. 500",style: pw.TextStyle(fontSize: 11,fontWeight: pw.FontWeight.bold,color: PdfColors.black))
+                pw.Text("GST NO. $gst_no",style: pw.TextStyle(fontSize: 11,fontWeight: pw.FontWeight.bold,color: PdfColors.black))
 
               ]
           ),
@@ -4086,7 +4182,7 @@ class _CreateQuotationState extends State<CreateQuotation> {
     );
 
     pdf_widget.add(
-      pw.SizedBox(height: 8),
+      pw.SizedBox(height: 4),
     );
 
     pdf_widget.add(
@@ -4095,7 +4191,13 @@ class _CreateQuotationState extends State<CreateQuotation> {
           child: pw.Row(
               mainAxisAlignment: pw.MainAxisAlignment.end,
               children: [
-                pw.Image(pw.MemoryImage(Logo),width: 100,height: 60,fit: pw.BoxFit.fill),
+                pw.Column(
+                  children: [
+                    pw.Image(pw.MemoryImage(sig1),width: 100,height: 20,fit: pw.BoxFit.fill),
+                    pw.Image(pw.MemoryImage(sig2),width: 100,height: 20,fit: pw.BoxFit.fill),
+                  ]
+                )
+
               ]
           ),
         )
@@ -4103,7 +4205,7 @@ class _CreateQuotationState extends State<CreateQuotation> {
     );
 
     pdf_widget.add(
-      pw.SizedBox(height: 8),
+      pw.SizedBox(height: 4),
     );
 
     pdf_widget.add(
@@ -4127,21 +4229,29 @@ class _CreateQuotationState extends State<CreateQuotation> {
               children: [
                 pw.SizedBox(height: 8),
                 pw.Row(
-                    mainAxisAlignment: pw.MainAxisAlignment.center,
-                    children: [
-                      pw.Image(pw.MemoryImage(Logo),width: 80,height: 80),
-                      pw.SizedBox(width: 15,),
-                      pw.Column(
-                          crossAxisAlignment: pw.CrossAxisAlignment.start,
-                          children: [
-                            pw.Text("Transmission Surgicals :",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 15,color: PdfColors.blue),),
-                            pw.Text("333 J.C Bose Road Pallyshree Sodepore,Kolkata-700110",style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 10,color: PdfColors.red),),
-                            pw.Text("Phone: +91 8521036687 / 7412586630 / 9852147896",style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 10,color: PdfColors.red),),
-                            pw.Text("Email: surgicalstrans@gmail.com",style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 11,color: PdfColors.red),),
-                          ]
-                      )
-                    ]
+                  mainAxisAlignment: pw.MainAxisAlignment.center,
+                  children: [
+                    pw.SizedBox(width: 10,),
+                    pw.Image(pw.MemoryImage(Logo),height: 50,),
+                    pw.SizedBox(width: 10,),
+                    pw.Column(
+                      crossAxisAlignment: pw.CrossAxisAlignment.center,
+                      children: [
+                        pw.Text("Transmission Surgicals", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 14, color: PdfColors.teal),),
 
+                        pw.SizedBox(
+                            width: 170,
+                            child: pw.Divider(height: 5,thickness: 1,color: PdfColors.teal,)
+                        ),
+                        pw.SizedBox(height: 2,),
+                        pw.SizedBox(
+                          width: 170,
+                          child:
+                          pw.Center(child: pw.Text("Sales and Service", style: pw.TextStyle(fontWeight: pw.FontWeight.normal, fontSize:10, color: PdfColors.teal),)),
+                        )
+                      ],
+                    )
+                  ],
                 ),
                 pw.SizedBox(height: 15),
                 pw.Padding(
@@ -4282,9 +4392,8 @@ class _CreateQuotationState extends State<CreateQuotation> {
     Response response = await post(url, body: body);
     if(response.statusCode==200){
       String myData = response.body;
-      print(myData);
       var jsonData=jsonDecode(myData);
-      jsonData['product_list'].forEach((jsonResponse) {
+      jsonData.forEach((jsonResponse) {
         ProductDetails obj = new ProductDetails.fromJson(jsonResponse);
         setState(() {
           product_image.add(obj);
@@ -4370,12 +4479,7 @@ class _CreateQuotationState extends State<CreateQuotation> {
 
     String item_list=jsonEncode(quotation_item_list);
 
-    placeHolder=notEditableImageQuotation(quotation_title, buyer_details, selectedQuotationNo, DateFormat('dd/MM/yyyy').format(DateTime.now()), buyer_gst, quotation_item_list, delivery_fee, subtotal, gst, total_amount, terms);
-setState(() {
-
-});
-
-    var url = Uri.parse(create_image_quotation+"p");
+    var url = Uri.parse(create_image_quotation);
     Map<String, String> body = {"quotation_title":quotation_title,"buyer_details": buyer_details, "buyer_gst":buyer_gst, "date":date, "quotations_details":item_list, "delivery_fee":delivery_fee, "subtotal":subtotal, "gst":gst, "total_amount":total_amount, "terms":terms};
     Response response = await post(url, body: body);
     if (response.statusCode == 200) {
@@ -4387,7 +4491,8 @@ setState(() {
         setState(() {
           placeHolder=notEditableImageQuotation(quotation_title, buyer_details, selectedQuotationNo, DateFormat('dd/MM/yyyy').format(DateTime.now()), buyer_gst, quotation_item_list, delivery_fee, subtotal, gst, total_amount, terms);
         });
-        //generateImagePdf(selectedQuotationId, quotation_title, buyer_name, buyer_address, buyer_contact_details, selectedQuotationNo, DateFormat('dd/MM/yyyy').format(DateTime.now()), buyer_gst, seller_contact_details, quotation_item_list, packaging_fee, subtotal, gst, total_amount);
+        generateImagePdf(quotation_title, buyer_details, selectedQuotationNo,  DateFormat('dd/MM/yyyy').format(DateTime.now()), buyer_gst, quotation_item_list, delivery_fee, subtotal, gst, total_amount, terms);
+
       } else {
         MotionToast.error(
           title:  Text("Message", style: TextStyle(fontWeight: FontWeight.bold),),
@@ -4634,13 +4739,14 @@ setState(() {
                         outside: BorderSide(color: Colors.blue),
                       ),
                       columnWidths: {
-                        0: FlexColumnWidth(0.9),
+                        0: FlexColumnWidth(1),
                         1: FlexColumnWidth(5.2),
-                        2: FlexColumnWidth(5.5),
-                        3: FlexColumnWidth(2),
+                        2: FlexColumnWidth(3),
+                        3: FlexColumnWidth(5.5),
                         4: FlexColumnWidth(2),
                         5: FlexColumnWidth(2),
-                        6: FlexColumnWidth(2)
+                        6: FlexColumnWidth(2),
+                        7: FlexColumnWidth(2)
                       },
                       children: [
                         TableRow(
@@ -4654,7 +4760,7 @@ setState(() {
                                   height: 30,
                                   child: Center(
                                     child: Text(
-                                      "Sl. No.",
+                                      "S. No.",
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(fontWeight: FontWeight.w600, fontSize: 10, color: Colors.blue.shade700),
@@ -4692,6 +4798,22 @@ setState(() {
                                   ),
                                 ),
                               ),
+
+                              TableCell(
+                                verticalAlignment: TableCellVerticalAlignment.middle,
+                                child: SizedBox(
+                                  height: 30,
+                                  child: Center(
+                                    child: Text(
+                                      "Picture",
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14,color: Colors.blue.shade700),
+                                    ),
+                                  ),
+                                ),
+                              ),
+
 
                               TableCell(
                                 verticalAlignment: TableCellVerticalAlignment.middle,
@@ -4774,13 +4896,14 @@ setState(() {
                               verticalInside: BorderSide(color: Colors.blue),
                             ),
                             columnWidths: {
-                              0: FlexColumnWidth(0.9),
+                              0: FlexColumnWidth(1),
                               1: FlexColumnWidth(5.2),
-                              2: FlexColumnWidth(5.5),
-                              3: FlexColumnWidth(2),
+                              2: FlexColumnWidth(3),
+                              3: FlexColumnWidth(5.5),
                               4: FlexColumnWidth(2),
                               5: FlexColumnWidth(2),
                               6: FlexColumnWidth(2),
+                              7: FlexColumnWidth(2),
                             },
                             children: [
                               TableRow(
@@ -4817,10 +4940,24 @@ setState(() {
                                     TableCell(
                                       verticalAlignment: TableCellVerticalAlignment.middle,
                                       child: SizedBox(
-                                        height: 150,
+                                        height: 40,
                                         child: Padding(
                                           padding: EdgeInsets.symmetric(horizontal: 5, vertical: 3),
-                                          child: Image.memory(quotation_item_list[index].ImageData!, fit: BoxFit.fill,)
+                                          child: Text(quotation_item_list[index].hsnCode.toString(),style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14,)),
+                                        ),
+                                      ),
+                                    ),
+
+
+
+                                    /// Cell - Picture -----------------
+                                    TableCell(
+                                      verticalAlignment: TableCellVerticalAlignment.middle,
+                                      child: SizedBox(
+                                        height: 150,
+                                        child: Padding(
+                                            padding: EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+                                            child: Image.memory(quotation_item_list[index].ImageData!, fit: BoxFit.fill,)
                                         ),
                                       ),
                                     ),
@@ -4900,7 +5037,7 @@ setState(() {
                       children: [
                         Container(
                           width: 350,
-                          padding: EdgeInsets.symmetric(horizontal: 10),
+                          padding: EdgeInsets.symmetric(horizontal: 10,vertical: 2),
                           decoration: BoxDecoration(
                               border: Border.all(
                                   color: Colors.blue,
@@ -4938,7 +5075,7 @@ setState(() {
                       children: [
                         Container(
                           width: 350,
-                          padding: EdgeInsets.symmetric(horizontal: 10),
+                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                           decoration: BoxDecoration(
                               border: Border(
                                 left: BorderSide(color: Colors.blue, width: 0.8),
@@ -4978,7 +5115,7 @@ setState(() {
                       children: [
                         Container(
                           width: 350,
-                          padding: EdgeInsets.symmetric(horizontal: 10),
+                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                           decoration: BoxDecoration(
                               border: Border(
                                 left: BorderSide(color: Colors.blue, width: 0.8),
@@ -5018,7 +5155,7 @@ setState(() {
                       children: [
                         Container(
                           width: 350,
-                          padding: EdgeInsets.symmetric(horizontal: 10),
+                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                           decoration: BoxDecoration(
                               border: Border(
                                 left: BorderSide(color: Colors.blue, width: 0.8),

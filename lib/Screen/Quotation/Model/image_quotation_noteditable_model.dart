@@ -11,9 +11,10 @@ class ImageQuotationNotEditableModel {
   String? amount;
   String? imageId;
   Uint8List? ImageData;
+  String? hsnCode;
 
 
-  ImageQuotationNotEditableModel({required this.productName, required this.imageId, required this.quantity, required this.rate, required this.gst,  required this.gst_percentage, required this.amount, required this.ImageData});
+  ImageQuotationNotEditableModel({required this.productName, required this.imageId, required this.quantity, required this.rate, required this.gst,  required this.gst_percentage, required this.amount, required this.ImageData, required this.hsnCode});
 
   ImageQuotationNotEditableModel.fromJson(Map<String, dynamic> json) {
     productName = json['product_name'];
@@ -24,6 +25,7 @@ class ImageQuotationNotEditableModel {
     amount = json['amount'];
     ImageData = json['ImageData'];
     imageId = json['image_id'];
+    hsnCode = json['hsn_code'];
   }
 
   Map<String, dynamic> toJson() {
@@ -36,6 +38,7 @@ class ImageQuotationNotEditableModel {
     data['amount'] = this.amount;
     data['image_id'] = this.imageId;
     ImageData = this.ImageData;
+    data['hsn_code'] = this.hsnCode;
     return data;
   }
 }
