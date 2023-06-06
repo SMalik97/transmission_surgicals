@@ -338,7 +338,7 @@ class _CreateQuotationState extends State<CreateQuotation> {
       gst_controller.text="0.00";
       total_amount_controller.text="0.00";
     }else{
-      quotation_no_controller.text=selectedQuotationNo;
+      quotation_no_controller.text="TRMS/KOL/TS-"+selectedQuotationNo;
       quotation_date_controller.text=selectedQuotationDate;
       quotation_title_controller.text=selectedQuotationTitle;
       buyer_details_controller.text=selectedQuotationBuyerDetails;
@@ -1378,7 +1378,7 @@ class _CreateQuotationState extends State<CreateQuotation> {
                                       children: [
                                         pw.Text("QUOTATION NO:",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 9,color: PdfColors.black.shade(200))),
                                         pw.SizedBox(height: 3),
-                                        pw.Text(quotation_no,style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 9,color: PdfColors.black.shade(400)))
+                                        pw.Text("TRMS/KOL/TS-"+quotation_no,style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 9,color: PdfColors.black.shade(400)))
                                       ]
                                   ),
                                   pw.SizedBox(height: 5),
@@ -1982,7 +1982,7 @@ class _CreateQuotationState extends State<CreateQuotation> {
                                             Text("QUOTATION NO : ", style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w500),),
                                             Expanded(
                                               child: Text(
-                                                  quotation_no,
+                                                  "TRMS/KOL/TS-"+quotation_no,
                                                   style: TextStyle(color: Colors.black,fontSize: 14, fontWeight: FontWeight.w500)
                                               ),
                                             )
@@ -2567,7 +2567,7 @@ class _CreateQuotationState extends State<CreateQuotation> {
       gst_controller.text="0.00";
       total_amount_controller.text="0.00";
     }else{
-      quotation_no_controller.text=selectedQuotationNo;
+      quotation_no_controller.text="TRMS/KOL/TS-"+selectedQuotationNo;
       quotation_date_controller.text=selectedQuotationDate;
       quotation_title_controller.text=selectedQuotationTitle;
       buyer_details_controller.text=selectedQuotationBuyerDetails;
@@ -3744,7 +3744,7 @@ class _CreateQuotationState extends State<CreateQuotation> {
                               pw.Text("QUOTATION NO : ", style: pw.TextStyle(color: PdfColors.black,fontSize: 9, fontWeight: pw.FontWeight.bold),),
                               pw.Expanded(
                                 child: pw.Text(
-                                    quotation_no,
+                                    "TRMS/KOL/TS-"+quotation_no,
                                     style: pw.TextStyle(color: PdfColors.black,fontSize: 9, fontWeight: pw.FontWeight.normal)
                                 ),
                               )
@@ -4658,7 +4658,7 @@ class _CreateQuotationState extends State<CreateQuotation> {
                                             Text("QUOTATION NO : ", style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w500),),
                                             Expanded(
                                               child: Text(
-                                                  quotation_no,
+                                                  "TRMS/KOL/TS-"+quotation_no,
                                                   style: TextStyle(color: Colors.black,fontSize: 14, fontWeight: FontWeight.w500)
                                               ),
                                             )
