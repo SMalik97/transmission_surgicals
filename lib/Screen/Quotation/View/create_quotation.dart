@@ -571,19 +571,22 @@ class _CreateQuotationState extends State<CreateQuotation> {
                                                 children: [
                                                   Text("Bank Details : ", style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w600),),
                                                   Text("A/C Holder Name : $bank_ac_holder_name",
-                                                      style: TextStyle(color: Colors.black,fontSize: 13, fontWeight: FontWeight.w500)
+                                                      style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w500)
                                                   ),
                                                   Text("Bank Name : $bank_name",
-                                                      style: TextStyle(color: Colors.black,fontSize: 13, fontWeight: FontWeight.w500)
+                                                      style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w500)
                                                   ),
                                                   Text("Account Number : $bank_ac_number",
-                                                      style: TextStyle(color: Colors.black,fontSize: 13, fontWeight: FontWeight.w500)
+                                                      style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w500)
                                                   ),
                                                   Text("IFSC Code : $ifsc_code",
-                                                      style: TextStyle(color: Colors.black,fontSize: 13, fontWeight: FontWeight.w500)
+                                                      style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w500)
                                                   ),
 
-                                                  SizedBox(height: 8,),
+                                                  SizedBox(height: 4,),
+                                                  Text("GST Number : $gst_no",
+                                                      style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w600)
+                                                  ),
                                                   Text("PAN Number : $pan_no",
                                                       style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w600)
                                                   ),
@@ -1423,7 +1426,10 @@ class _CreateQuotationState extends State<CreateQuotation> {
                                           style: pw.TextStyle(color: PdfColors.black,fontSize: 10, fontWeight: pw.FontWeight.normal)
                                       ),
 
-                                      pw.SizedBox(height: 5,),
+                                      pw.SizedBox(height: 3,),
+                                      pw.Text("GST Number : $gst_no",
+                                          style: pw.TextStyle(color: PdfColors.black,fontSize: 10, fontWeight: pw.FontWeight.bold)
+                                      ),
                                       pw.Text("PAN Number : $pan_no",
                                           style: pw.TextStyle(color: PdfColors.black,fontSize: 10, fontWeight: pw.FontWeight.bold)
                                       ),
@@ -2019,19 +2025,22 @@ class _CreateQuotationState extends State<CreateQuotation> {
                                             children: [
                                               Text("Bank Details : ", style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w600),),
                                               Text("A/C Holder Name : $bank_ac_holder_name",
-                                                  style: TextStyle(color: Colors.black,fontSize: 13, fontWeight: FontWeight.w500)
+                                                  style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w500)
                                               ),
                                               Text("Bank Name : $bank_name",
-                                                  style: TextStyle(color: Colors.black,fontSize: 13, fontWeight: FontWeight.w500)
+                                                  style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w500)
                                               ),
                                               Text("Account Number : $bank_ac_number",
-                                                  style: TextStyle(color: Colors.black,fontSize: 13, fontWeight: FontWeight.w500)
+                                                  style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w500)
                                               ),
                                               Text("IFSC Code : $ifsc_code",
-                                                  style: TextStyle(color: Colors.black,fontSize: 13, fontWeight: FontWeight.w500)
+                                                  style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w500)
                                               ),
 
-                                              SizedBox(height: 8,),
+                                              SizedBox(height: 4,),
+                                              Text("GST Number : $gst_no",
+                                                  style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w600)
+                                              ),
                                               Text("PAN Number : $pan_no",
                                                   style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w600)
                                               ),
@@ -2801,19 +2810,22 @@ class _CreateQuotationState extends State<CreateQuotation> {
                                                 children: [
                                                   Text("Bank Details : ", style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w600),),
                                                   Text("A/C Holder Name : $bank_ac_holder_name",
-                                                      style: TextStyle(color: Colors.black,fontSize: 13, fontWeight: FontWeight.w500)
+                                                      style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w500)
                                                   ),
                                                   Text("Bank Name : $bank_name",
-                                                      style: TextStyle(color: Colors.black,fontSize: 13, fontWeight: FontWeight.w500)
+                                                      style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w500)
                                                   ),
                                                   Text("Account Number : $bank_ac_number",
-                                                      style: TextStyle(color: Colors.black,fontSize: 13, fontWeight: FontWeight.w500)
+                                                      style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w500)
                                                   ),
                                                   Text("IFSC Code : $ifsc_code",
-                                                      style: TextStyle(color: Colors.black,fontSize: 13, fontWeight: FontWeight.w500)
+                                                      style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w500)
                                                   ),
 
-                                                  SizedBox(height: 8,),
+                                                  SizedBox(height: 4,),
+                                                  Text("GST Number : $gst_no",
+                                                      style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w600)
+                                                  ),
                                                   Text("PAN Number : $pan_no",
                                                       style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w600)
                                                   ),
@@ -3139,8 +3151,8 @@ class _CreateQuotationState extends State<CreateQuotation> {
                                                                                   children: [
                                                                                     Expanded(
                                                                                       child: InkWell(
-                                                                                        onTap: (){print(product_image_base_path+product_image[index].imageList![0].imageName.toString());
-                                                                                          getX.Get.back(result: [product_image_base_path+product_image[index].imageList![0].imageName.toString(),  product_image[index].productId.toString(), product_image[index].productName!,]);
+                                                                                        onTap: (){
+                                                                                          getX.Get.back(result: [product_image_base_path+product_image[index].imageList![0].imageName.toString(),  product_image[index].productId.toString(), product_image[index].productName!+"\n"+product_image[index].productDescription!,]);
                                                                                         },
                                                                                         child: Container(
                                                                                           width: double.infinity,
@@ -3556,18 +3568,7 @@ class _CreateQuotationState extends State<CreateQuotation> {
                         ),
                       ),
 
-                      SizedBox(height: 3,),
 
-                      /// GST no ----------------------
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 40),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Text("GST NO. $gst_no", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600, fontSize: 14),)
-                          ],
-                        ),
-                      ),
 
                       SizedBox(height: 20,),
                       Padding(
@@ -3753,11 +3754,11 @@ class _CreateQuotationState extends State<CreateQuotation> {
                           pw.Row(
                             crossAxisAlignment: pw.CrossAxisAlignment.center,
                             children: [
-                              pw.Text("QUOTATION DATE : ", style: pw.TextStyle(color: PdfColors.black,fontSize: 10, fontWeight:pw.FontWeight.bold),),
+                              pw.Text("QUOTATION DATE : ", style: pw.TextStyle(color: PdfColors.black,fontSize: 9, fontWeight:pw.FontWeight.bold),),
                               pw.Expanded(
                                 child: pw.Text(
                                     quotation_date,
-                                    style: pw.TextStyle(color: PdfColors.black,fontSize: 10, fontWeight: pw.FontWeight.normal)
+                                    style: pw.TextStyle(color: PdfColors.black,fontSize: 9, fontWeight: pw.FontWeight.normal)
                                 ),
                               )
                             ],
@@ -3794,6 +3795,9 @@ class _CreateQuotationState extends State<CreateQuotation> {
                                 ),
 
                                 pw.SizedBox(height: 8,),
+                                pw.Text("GST Number : $gst_no",
+                                    style: pw.TextStyle(color: PdfColors.black,fontSize: 10, fontWeight: pw.FontWeight.bold)
+                                ),
                                 pw.Text("PAN Number : $pan_no",
                                     style: pw.TextStyle(color: PdfColors.black,fontSize: 10, fontWeight: pw.FontWeight.bold)
                                 ),
@@ -3932,7 +3936,7 @@ class _CreateQuotationState extends State<CreateQuotation> {
                             ),
                             child: pw.Padding(
                                 padding: pw.EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                                child: pw.Text(item.value.productName.toString(), style: pw.TextStyle(fontSize: 9,), textAlign: pw.TextAlign.left)
+                                child: pw.Text(item.value.productName.toString(), style: pw.TextStyle(fontSize: 8,), textAlign: pw.TextAlign.left)
                             )
                         ),
                         pw.Container(
@@ -4147,20 +4151,6 @@ class _CreateQuotationState extends State<CreateQuotation> {
 
     );
 
-    pdf_widget.add(
-
-        pw.Padding(
-          padding: pw.EdgeInsets.symmetric(horizontal: 20),
-          child: pw.Row(
-              mainAxisAlignment: pw.MainAxisAlignment.end,
-              children: [
-                pw.Text("GST NO. $gst_no",style: pw.TextStyle(fontSize: 11,fontWeight: pw.FontWeight.bold,color: PdfColors.black))
-
-              ]
-          ),
-        )
-
-    );
 
     pdf_widget.add(
       pw.SizedBox(height: 15),
@@ -4655,7 +4645,7 @@ class _CreateQuotationState extends State<CreateQuotation> {
                                         Row(
                                           crossAxisAlignment: CrossAxisAlignment.center,
                                           children: [
-                                            Text("QUOTATION NO : ", style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w500),),
+                                            Text("QUOTATION NO : ", style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.bold),),
                                             Expanded(
                                               child: Text(
                                                   "TRMS/KOL/TS-"+quotation_no,
@@ -4695,19 +4685,22 @@ class _CreateQuotationState extends State<CreateQuotation> {
                                             children: [
                                               Text("Bank Details : ", style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w600),),
                                               Text("A/C Holder Name : $bank_ac_holder_name",
-                                                  style: TextStyle(color: Colors.black,fontSize: 13, fontWeight: FontWeight.w500)
+                                                  style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w500)
                                               ),
                                               Text("Bank Name : $bank_name",
-                                                  style: TextStyle(color: Colors.black,fontSize: 13, fontWeight: FontWeight.w500)
+                                                  style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w500)
                                               ),
                                               Text("Account Number : $bank_ac_number",
-                                                  style: TextStyle(color: Colors.black,fontSize: 13, fontWeight: FontWeight.w500)
+                                                  style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w500)
                                               ),
                                               Text("IFSC Code : $ifsc_code",
-                                                  style: TextStyle(color: Colors.black,fontSize: 13, fontWeight: FontWeight.w500)
+                                                  style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w500)
                                               ),
 
-                                              SizedBox(height: 8,),
+                                              SizedBox(height: 4,),
+                                              Text("GST Number : $gst_no",
+                                                  style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w600)
+                                              ),
                                               Text("PAN Number : $pan_no",
                                                   style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w600)
                                               ),
@@ -5048,7 +5041,7 @@ class _CreateQuotationState extends State<CreateQuotation> {
                             mainAxisAlignment: MainAxisAlignment.end,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Text("Packaging & Forwarding", style: TextStyle(color: Colors.black,fontSize: 14, fontWeight: FontWeight.w600),),
+                              Text("Delivery Fee", style: TextStyle(color: Colors.black,fontSize: 14, fontWeight: FontWeight.w600),),
 
                               SizedBox(width: 8,),
 
@@ -5187,18 +5180,7 @@ class _CreateQuotationState extends State<CreateQuotation> {
                     ),
                   ),
 
-                  SizedBox(height: 5,),
 
-                  /// GST no ----------------------
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 40),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text("GST NO. $gst_no", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600, fontSize: 14),)
-                      ],
-                    ),
-                  ),
 
                   SizedBox(height: 20,),
                   Padding(
