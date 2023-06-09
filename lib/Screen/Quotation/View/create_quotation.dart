@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart' as getX;
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
@@ -3825,185 +3826,220 @@ class _CreateQuotationState extends State<CreateQuotation> {
 
 
 
+
+
+
     pdf_widget.add(
         pw.Padding(
             padding: pw.EdgeInsets.symmetric(horizontal: 20),
-            child: pw.Table(
+            child: pw.Column(
 
                 children: [
                   ///Table Header ---------------
-                  pw.TableRow(
-                      children: [
-                        pw.Container(
-                            height: 30,width: 30,
-                            decoration: pw.BoxDecoration(
-                                border: pw.Border.all(color: PdfColors.blue, width: 0.7),
-                                color: PdfColors.blue100
-                            ),
-                            child: pw.Center(
-                                child: pw.Text('S. No.', style: pw.TextStyle(fontSize: 10))
-                            )
-                        ),
-                        pw.Container(
-                            height: 30,width: 70,
-                            decoration: pw.BoxDecoration(
-                                border: pw.Border.all(color: PdfColors.blue, width: 0.7),
-                                color: PdfColors.blue100
-                            ),
-                            child: pw.Center(
-                                child: pw.Text('Product Details',style: pw.TextStyle(fontSize: 10))
-                            )
-                        ),
-                        pw.Container(
-                            height: 30,width: 40,
-                            decoration: pw.BoxDecoration(
-                                border: pw.Border.all(color: PdfColors.blue, width: 0.7),
-                                color: PdfColors.blue100
-                            ),
-                            child: pw.Center(
-                                child: pw.Text('HSN Code', style: pw.TextStyle(fontSize: 10,), textAlign: pw.TextAlign.center)
-                            )
-                        ),
-                        pw.Container(
-                            height: 30,width: 80,
-                            decoration: pw.BoxDecoration(
-                                border: pw.Border.all(color: PdfColors.blue, width: 0.7),
-                                color: PdfColors.blue100
-                            ),
-                            child: pw.Center(
-                                child: pw.Text('Picture', style: pw.TextStyle(fontSize: 10))
-                            )
-                        ),
-                        pw.Container(
-                            height: 30,width: 50,
-                            decoration: pw.BoxDecoration(
-                                border: pw.Border.all(color: PdfColors.blue, width: 0.7),
-                                color: PdfColors.blue100
-                            ),
-                            child: pw.Center(
-                                child: pw.Text('Qty', style: pw.TextStyle(fontSize: 10))
-                            )
-                        ),
-                        pw.Container(
-                            height: 30,width: 50,
-                            decoration: pw.BoxDecoration(
-                                border: pw.Border.all(color: PdfColors.blue, width: 0.7),
-                                color: PdfColors.blue100
-                            ),
-                            child: pw.Center(
-                                child: pw.Text('Rate', style: pw.TextStyle(fontSize: 10))
-                            )
-                        ),
-                        pw.Container(
-                            height: 30,width: 50,
-                            decoration: pw.BoxDecoration(
-                                border: pw.Border.all(color: PdfColors.blue, width: 0.7),
-                                color: PdfColors.blue100
-                            ),
-                            child: pw.Center(
-                                child: pw.Text('GST', style: pw.TextStyle(fontSize: 10))
-                            )
-                        ),
-                        pw.Container(
-                            height: 30,width: 50,
-                            decoration: pw.BoxDecoration(
-                                border: pw.Border.all(color: PdfColors.blue, width: 0.7),
-                                color: PdfColors.blue100
-                            ),
-                            child: pw.Center(
-                                child: pw.Text('Amount', style: pw.TextStyle(fontSize: 10))
-                            )
-                        ),
-                      ]
-                  ),
+                 pw.Table(
+                     border: pw.TableBorder.symmetric(
+                       inside: pw.BorderSide(color: PdfColors.blue),
+                       outside: pw.BorderSide(color: PdfColors.blue),
+                     ),
+                     columnWidths: {
+                       0: pw.FlexColumnWidth(0.7),
+                       1: pw.FlexColumnWidth(4),
+                       2: pw.FlexColumnWidth(1.5),
+                       3: pw.FlexColumnWidth(2),
+                       4: pw.FlexColumnWidth(1),
+                       5: pw.FlexColumnWidth(2),
+                       6: pw.FlexColumnWidth(2),
+                       7: pw.FlexColumnWidth(1.5),
+                     },
+                   children: [
+                     pw.TableRow(
+                         children: [
+                           pw.Container(
+                               padding: pw.EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                               height: 30,
+                               decoration: pw.BoxDecoration(
+                                   color: PdfColors.blue100
+                               ),
+                               child: pw.Center(
+                                   child: pw.Text('S. No.', style: pw.TextStyle(fontSize: 10))
+                               )
+                           ),
+                           pw.Container(
+                               padding: pw.EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                               height: 30,
+                               decoration: pw.BoxDecoration(
+                                   color: PdfColors.blue100
+                               ),
+                               child: pw.Center(
+                                   child: pw.Text('Product Details',style: pw.TextStyle(fontSize: 10))
+                               )
+                           ),
+                           pw.Container(
+                               padding: pw.EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                               height: 30,
+                               decoration: pw.BoxDecoration(
+                                   color: PdfColors.blue100
+                               ),
+                               child: pw.Center(
+                                   child: pw.Text('HSN Code', style: pw.TextStyle(fontSize: 10,), textAlign: pw.TextAlign.center)
+                               )
+                           ),
+                           pw.Container(
+                               padding: pw.EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                               height: 30,
+                               decoration: pw.BoxDecoration(
+                                   color: PdfColors.blue100
+                               ),
+                               child: pw.Center(
+                                   child: pw.Text('Picture', style: pw.TextStyle(fontSize: 10))
+                               )
+                           ),
+                           pw.Container(
+                               padding: pw.EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                               height: 30,
+                               decoration: pw.BoxDecoration(
+                                   color: PdfColors.blue100
+                               ),
+                               child: pw.Center(
+                                   child: pw.Text('Qty', style: pw.TextStyle(fontSize: 10))
+                               )
+                           ),
+                           pw.Container(
+                               padding: pw.EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                               height: 30,
+                               decoration: pw.BoxDecoration(
+                                   color: PdfColors.blue100
+                               ),
+                               child: pw.Center(
+                                   child: pw.Text('Rate', style: pw.TextStyle(fontSize: 10))
+                               )
+                           ),
+                           pw.Container(
+                               padding: pw.EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                               height: 30,
+                               decoration: pw.BoxDecoration(
+                                   color: PdfColors.blue100
+                               ),
+                               child: pw.Center(
+                                   child: pw.Text('GST', style: pw.TextStyle(fontSize: 10))
+                               )
+                           ),
+                           pw.Container(
+                               padding: pw.EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                               height: 30,
+                               decoration: pw.BoxDecoration(
+                                   color: PdfColors.blue100
+                               ),
+                               child: pw.Center(
+                                   child: pw.Text('Amount', style: pw.TextStyle(fontSize: 10))
+                               )
+                           ),
+                         ]
+                     ),
+                   ]
+                 ),
                   ///Table Rows ---------------
-                  ...pdf_data_list.asMap().entries.map((item) => pw.TableRow(
-                      children:[
-                        pw.Container(
-                            height: 65,width: 30,
-                            decoration: pw.BoxDecoration(
-                                border: pw.Border.all(color: PdfColors.blue, width: 0.7)
+                  ...pdf_data_list.asMap().entries.map((item) => pw.Table(
+                      border: pw.TableBorder(
+                        left: pw.BorderSide(color: PdfColors.blue),
+                        right: pw.BorderSide(color: PdfColors.blue),
+                        bottom: pw.BorderSide(color: PdfColors.blue),
+                        top:  pw.BorderSide(color: PdfColors.blue),
+                        verticalInside: pw.BorderSide(color: PdfColors.blue),
+                      ),
+                      columnWidths: {
+                        0: pw.FlexColumnWidth(0.7),
+                        1: pw.FlexColumnWidth(4),
+                        2: pw.FlexColumnWidth(1.5),
+                        3: pw.FlexColumnWidth(2),
+                        4: pw.FlexColumnWidth(1),
+                        5: pw.FlexColumnWidth(2),
+                        6: pw.FlexColumnWidth(2),
+                       7: pw.FlexColumnWidth(1.5),
+                      },
+                    children: [
+                      pw.TableRow(
+                          children:[
+                            pw.Container(
+                                // decoration: pw.BoxDecoration(
+                                //     border: pw.Border.all(color: PdfColors.blue, width: 0.7)
+                                // ),
+                                child: pw.Padding(
+                                    padding: pw.EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                                    child: pw.Text((item.key+1).toString()+".", style: pw.TextStyle(fontSize: 9,), textAlign: pw.TextAlign.left)
+                                )
                             ),
-                            child: pw.Padding(
-                              padding: pw.EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                                child: pw.Text((item.key+1).toString()+".", style: pw.TextStyle(fontSize: 9,), textAlign: pw.TextAlign.left)
-                            )
-                        ),
-                        pw.Container(
-                            height: 65,width: 70,
-                            decoration: pw.BoxDecoration(
-                                border: pw.Border.all(color: PdfColors.blue, width: 0.7)
+                            pw.Container(
+                                // decoration: pw.BoxDecoration(
+                                //     border: pw.Border.all(color: PdfColors.blue, width: 0.7)
+                                // ),
+                                child: pw.Padding(
+                                    padding: pw.EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                                    child: pw.Text(item.value.productName.toString(), style: pw.TextStyle(fontSize: 8,), textAlign: pw.TextAlign.left)
+                                )
                             ),
-                            child: pw.Padding(
-                                padding: pw.EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                                child: pw.Text(item.value.productName.toString(), style: pw.TextStyle(fontSize: 8,), textAlign: pw.TextAlign.left)
-                            )
-                        ),
-                        pw.Container(
-                            height: 65,width: 40,
-                            decoration: pw.BoxDecoration(
-                                border: pw.Border.all(color: PdfColors.blue, width: 0.7)
+                            pw.Container(
+                                // decoration: pw.BoxDecoration(
+                                //     border: pw.Border.all(color: PdfColors.blue, width: 0.7)
+                                // ),
+                                child: pw.Padding(
+                                    padding: pw.EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                                    child: pw.Text(item.value.hsnCode.toString(), style: pw.TextStyle(fontSize: 9,), textAlign: pw.TextAlign.left)
+                                )
                             ),
-                            child: pw.Padding(
-                                padding: pw.EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                                child: pw.Text(item.value.hsnCode.toString(), style: pw.TextStyle(fontSize: 9,), textAlign: pw.TextAlign.left)
-                            )
-                        ),
-                        pw.Container(
-                            height: 65,width: 80,
-                            decoration: pw.BoxDecoration(
-                                border: pw.Border.all(color: PdfColors.blue, width: 0.7)
+                            pw.Container(
+                                // decoration: pw.BoxDecoration(
+                                //     border: pw.Border.all(color: PdfColors.blue, width: 0.7)
+                                // ),
+                                child: pw.Padding(
+                                  padding: pw.EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                                  child: pw.Image(pw.MemoryImage(item.value.ImageData!),height: 55,),
+                                )
                             ),
-                            child: pw.Padding(
-                              padding: pw.EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                              child: pw.Image(pw.MemoryImage(item.value.ImageData!),width: 70,height: 55,fit: pw.BoxFit.fill),
-                            )
-                        ),
-                        pw.Container(
-                            height: 65,width: 50,
-                            decoration: pw.BoxDecoration(
-                                border: pw.Border.all(color: PdfColors.blue, width: 0.7)
+                            pw.Container(
+                                // decoration: pw.BoxDecoration(
+                                //     border: pw.Border.all(color: PdfColors.blue, width: 0.7)
+                                // ),
+                                child: pw.Padding(
+                                    padding: pw.EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                                    child: pw.Text(item.value.quantity.toString(), style: pw.TextStyle(fontSize: 9,), textAlign: pw.TextAlign.left)
+                                )
                             ),
-                            child: pw.Padding(
-                                padding: pw.EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                                child: pw.Text(item.value.quantity.toString(), style: pw.TextStyle(fontSize: 9,), textAlign: pw.TextAlign.left)
-                            )
-                        ),
-                        pw.Container(
-                            height: 65,width: 50,
-                            decoration: pw.BoxDecoration(
-                                border: pw.Border.all(color: PdfColors.blue, width: 0.7)
+                            pw.Container(
+                                // decoration: pw.BoxDecoration(
+                                //     border: pw.Border.all(color: PdfColors.blue, width: 0.7)
+                                // ),
+                                child: pw.Padding(
+                                    padding: pw.EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                                    child: pw.Text(item.value.rate.toString(), style: pw.TextStyle(fontSize: 9,), textAlign: pw.TextAlign.left)
+                                )
                             ),
-                            child: pw.Padding(
-                                padding: pw.EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                                child: pw.Text(item.value.rate.toString(), style: pw.TextStyle(fontSize: 9,), textAlign: pw.TextAlign.left)
-                            )
-                        ),
-                        pw.Container(
-                            height: 65,width: 50,
-                            decoration: pw.BoxDecoration(
-                                border: pw.Border.all(color: PdfColors.blue, width: 0.7)
+                            pw.Container(
+                                // decoration: pw.BoxDecoration(
+                                //     border: pw.Border.all(color: PdfColors.blue, width: 0.7)
+                                // ),
+                                child: pw.Padding(
+                                    padding: pw.EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                                    child: pw.Text(item.value.gst.toString()+"\n"+item.value.gst_percentage.toString(), style: pw.TextStyle(fontSize: 9,), textAlign: pw.TextAlign.left)
+                                )
                             ),
-                            child: pw.Padding(
-                                padding: pw.EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                                child: pw.Text(item.value.gst.toString()+"\n"+item.value.gst_percentage.toString(), style: pw.TextStyle(fontSize: 9,), textAlign: pw.TextAlign.left)
-                            )
-                        ),
-                        pw.Container(
-                            height: 65,width: 50,
-                            decoration: pw.BoxDecoration(
-                                border: pw.Border.all(color: PdfColors.blue, width: 0.7)
+                            pw.Container(
+                                // decoration: pw.BoxDecoration(
+                                //     border: pw.Border.all(color: PdfColors.blue, width: 0.7)
+                                // ),
+                                child: pw.Padding(
+                                    padding: pw.EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                                    child: pw.Text(item.value.amount.toString(), style: pw.TextStyle(fontSize: 9,), textAlign: pw.TextAlign.left)
+                                )
                             ),
-                            child: pw.Padding(
-                                padding: pw.EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                                child: pw.Text(item.value.amount.toString(), style: pw.TextStyle(fontSize: 9,), textAlign: pw.TextAlign.left)
-                            )
-                        ),
-                      ])).toList(),
+                          ])
+                    ]
+                  )).toList(),
                 ]
             )
         )
     );
+
 
     pdf_widget.add(
       pw.SizedBox(height: 3),
@@ -4205,12 +4241,9 @@ class _CreateQuotationState extends State<CreateQuotation> {
               mainAxisAlignment: pw.MainAxisAlignment.end,
               children: [
                 pw.Text("Transmission Surgicals",style: pw.TextStyle(fontSize: 11,fontWeight: pw.FontWeight.bold,color: PdfColors.black))
-
               ]
           ),
         )
-
-
     );
 
     pdf.addPage(

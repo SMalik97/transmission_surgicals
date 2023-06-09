@@ -508,7 +508,7 @@ class _InvoiceListState extends State<InvoiceList> {
                                 DataCell(Text(item.value.hsn.toString())),
                                 DataCell(Text(item.value.quantity.toString())),
                                 DataCell(Text(item.value.price.toString())),
-                                DataCell(Text(item.value.gst.toString()+"\n"+item.value.gst_percentage.toString()+"%")),
+                                DataCell(Text(item.value.sgst.toString()+"\n"+item.value.cgst.toString()+"%")),
                                 DataCell(Text(item.value.totalAmount.toString())),
                               ],
                             );
@@ -917,7 +917,7 @@ class _InvoiceListState extends State<InvoiceList> {
                   item.value.hsn.toString(),
                   item.value.quantity.toString(),
                   item.value.price.toString(),
-                  item.value.gst.toString()+"\n"+item.value.gst_percentage.toString()+"%",
+                  item.value.sgst.toString()+"\n"+item.value.cgst.toString()+"%",
                   item.value.totalAmount.toString(),
                 ]).toList(),
               ],

@@ -4,3 +4,6 @@ const String bank_ac_holder_name="Transmission Surgicals";
 const String bank_ac_number="50200080935462";
 const String ifsc_code="HDFC0009120";
 const String pan_no="AAUFT4410B";
+const String phone_number="+91 3335980722";
+const String email_id="surgicaltrans@gmail.com";
+const String address="1 J.C. Bose Road, PallyShree\nSodepur, Kolkata - 700110";
