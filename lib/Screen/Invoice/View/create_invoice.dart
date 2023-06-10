@@ -35,6 +35,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
   final paid_amount_controller=TextEditingController();
   final comment_controller=TextEditingController();
   final date_controller=TextEditingController();
+  final place_controller=TextEditingController();
   Widget placeHolder=Container();
 
   bool isGenerateViewShowing=true;
@@ -44,7 +45,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
   double subtotal=0.00, gst=0.00, due_amount=0.00;
   int  grand_total=0;
 
-  String invoice_no="",invoice_id="",invoice_date="", purpose="";
+  String invoice_no="",invoice_id="",invoice_date="", purpose="", invoice_place="";
 
 
   List<noteditableInvoiceItem> invoice_details_list=[];
@@ -267,8 +268,10 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
   @override
   void initState() {
     if(getX.Get.parameters['id']==null){
-      editableInvoiceItem eii=editableInvoiceItem(description: "", quantity: 0, price: 0.00, totalAmount: 0.00, sgst: 0.00, cgst: 18, hsn: "", des_controller: TextEditingController(), price_controller: TextEditingController(), quantity_controller: TextEditingController(),hsn_controller: TextEditingController());
+      editableInvoiceItem eii=editableInvoiceItem(description: "", quantity: 0, price: 0.00, totalAmount: 0.00, gst: 0.00,gst_percentage: 12, sgst: 0.00, cgst: 0.00, cgst_percentage: 6, sgst_percentage: 6, hsn: "", des_controller: TextEditingController(), price_controller: TextEditingController(), quantity_controller: TextEditingController(),hsn_controller: TextEditingController(),gst_controller: TextEditingController(),gst_percentage_controller: TextEditingController());
       invoice_data.add(eii);
+      invoice_data[0].gst_controller!.text="0.00";
+      invoice_data[0].gst_percentage_controller!.text="12";
 
       other_charges_controller.text="0.00";
       paid_amount_controller.text="0.00";
@@ -341,7 +344,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
 
 
         for(int i =0; i<invoice_details_list.length; i++){
-          editableInvoiceItem eii=editableInvoiceItem(description: invoice_details_list[i].description.toString(), quantity: int.parse(invoice_details_list[i].quantity.toString()), price: double.parse(invoice_details_list[i].price.toString()), totalAmount: double.parse(invoice_details_list[i].totalAmount.toString()),hsn:invoice_details_list[i].hsn.toString(), sgst: double.parse(invoice_details_list[i].sgst.toString()), cgst: double.parse(invoice_details_list[i].cgst.toString()), hsn_controller: TextEditingController() , des_controller: TextEditingController(), price_controller: TextEditingController(), quantity_controller: TextEditingController());
+          editableInvoiceItem eii=editableInvoiceItem(description: invoice_details_list[i].description.toString(), quantity: int.parse(invoice_details_list[i].quantity.toString()), price: double.parse(invoice_details_list[i].price.toString()), gst: 0.0, gst_percentage: 0, sgst_percentage: 0.00, cgst_percentage: 0.00, totalAmount: double.parse(invoice_details_list[i].totalAmount.toString()),hsn:invoice_details_list[i].hsn.toString(), sgst: double.parse(invoice_details_list[i].sgst.toString()), cgst: double.parse(invoice_details_list[i].cgst.toString()), hsn_controller: TextEditingController() , des_controller: TextEditingController(), price_controller: TextEditingController(), quantity_controller: TextEditingController(), gst_controller: TextEditingController(), gst_percentage_controller: TextEditingController());
           invoice_data.add(eii);
           invoice_data[i].des_controller!.text=invoice_details_list[i].description.toString();
           invoice_data[i].price_controller!.text=invoice_details_list[i].price.toString();
@@ -390,151 +393,249 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                     children: [
                       SizedBox(height: 60,),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
+                          Image.asset("assets/logo/logo3.png",  height: 70,),
+                          SizedBox(width: 10,),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Image.asset("assets/logo/logo3.png",  height: 70,),
-                                  SizedBox(width: 10,),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text("Transmission Surgicals", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22, color: Colors.teal),),
+                              Text("Transmission Surgicals", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22, color: Colors.teal),),
 
-                                      SizedBox(
-                                          width: 230,
-                                          child: Divider(height: 5,thickness: 2,color: Colors.teal,)
-                                      ),
-                                      SizedBox(height: 2,),
-                                      SizedBox(
-                                        width: 230,
-                                        child:
-                                        Center(child: Text("Sales and Service", style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14, color: Colors.teal),)),
-                                      )
-                                    ],
-                                  )
-                                ],
+                              SizedBox(
+                                  width: 230,
+                                  child: Divider(height: 5,thickness: 2,color: Colors.teal,)
                               ),
                               SizedBox(height: 2,),
-                              Text("$address \nPhone :$phone_number\nEmail : $email_id",style: TextStyle(fontWeight: FontWeight.w500,fontSize: 14,color: Colors.black),),
-
-                            ],
-                          ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              SizedBox(height: 50,),
-                              Text("TAX INVOICE",style: GoogleFonts.alata(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.black),),
-                              SizedBox(height: 5,),
-                              purpose=="edit"?
-                              Text("Invoice Number $invoice_no",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),)
-                              : Text("Invoice Number ########",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
-                              purpose=="edit"?
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Text("Invoice Date ",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black)),
-                                  Container(
-                                    width: 70,
-                                    child: TextField(
-                                      controller: date_controller,
-                                      decoration: InputDecoration(
-                                          isDense: true,
-                                          border: InputBorder.none,
-                                          hintText: "DD/MM/YYYY",
-                                          hintStyle: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.grey)
-                                      ),
-                                      style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),
-
-                                    ),
-                                  )
-                                ],
+                              SizedBox(
+                                width: 230,
+                                child:
+                                Center(child: Text("Sales and Service", style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14, color: Colors.teal),)),
                               )
-                              : Text("Invoice Date "+DateFormat('dd/MM/yyyy').format(DateTime.now()),style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
-
                             ],
-                          ),
+                          )
                         ],
                       ),
 
-                      SizedBox(height: 30,),
                       Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Expanded(
+                            child: Container(
+                              height: 120,
+                              padding: EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.black,width: 0.5)
+                              ),
+                              child: Text("$address \nOffice Phone : $office_phone\nMobile : $phone_number\nEmail : $email_id",style: TextStyle(fontWeight: FontWeight.w500,fontSize: 14,color: Colors.black),)
+                          ),
+                          ),
+                          SizedBox(width: 15,),
+                          Expanded(child: Container(
+                            height: 120,
+                            padding: EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+                            decoration: BoxDecoration(
+                                border: Border.all(color: Colors.black,width: 0.5)
+                            ),
                             child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
-                                Text("Billing Address :",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 14,color: Colors.black),),
+                                Text("TAX INVOICE",style: GoogleFonts.alata(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.black),),
                                 SizedBox(height: 5,),
+
+                                purpose=="edit"?
                                 Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Container(
-                                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                      width:300,
-                                      constraints: BoxConstraints(
-                                        minHeight: 100,
-                                      ),
-                                      decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(1),
-                                          border: Border.all(color: Colors.blue.withOpacity(0.5),width: 1)
-                                      ),
+                                        width: 100,
+                                        child: Text("Invoice Number",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),)),
+                                    Text(" : ",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
+                                    Container(
+                                        width: 130,
+                                        child: Text("KOL/TS${DateFormat('yyyy').format(DateTime.now())}-$invoice_no",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),)),
+                                  ],
+                                )
+                                    : Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Container(
+                                        width: 100,
+                                        child: Text("Invoice Number",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),)),
+                                    Text(" : ",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
+                                    Container(
+                                        width: 130,
+                                        child: Text("##########",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),)),
+                                  ],
+                                ),
+                                purpose=="edit"?
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Container(
+                                        width: 100,
+                                        child: Text("Invoice Date",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black))),
+                                    Text(" : ",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
+                                    Container(
+                                      width: 130,
                                       child: TextField(
-                                        controller: billing_address_controller,
+                                        controller: date_controller,
                                         decoration: InputDecoration(
-                                          isDense: true,
-                                          border: InputBorder.none,
-                                          hintText: "Recipient Name\nRecipient Address\nRecipient Phone\nRecipient Email",
-                                          hintStyle: TextStyle(fontSize: 14, color: Colors.grey),
+                                            isDense: true,
+                                            border: InputBorder.none,
+                                            hintText: "DD/MM/YYYY",
+                                            hintStyle: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.grey)
                                         ),
-                                        maxLines: null,
-                                        style: TextStyle(height: 1.2, color: Colors.black, fontSize: 14, fontWeight: FontWeight.w500),
+                                        style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),
+
                                       ),
+                                    )
+                                  ],
+                                ): Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Container(
+                                        width: 100,
+                                        child: Text("Invoice Date",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),)),
+                                    Text(" : ",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
+                                    Container(
+                                      width: 130,
+                                        child: Text(DateFormat('dd/MM/yyyy').format(DateTime.now()),style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),)
                                     ),
                                   ],
                                 ),
+
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Container(
+                                        width: 100,
+                                        child: Text("GST",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),)),
+                                    Text(" : ",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
+                                    Container(
+                                        width: 130,
+                                        child: Text(gst_no,style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),)
+                                    ),
+                                  ],
+                                ),
+
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Container(
+                                      width: 100,
+                                        child: Text("Place",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black))
+                                    ),
+                                    Text(" : ",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
+                                    Container(
+                                      width: 130,
+                                      child: TextField(
+                                        controller: place_controller,
+                                        decoration: InputDecoration(
+                                            isDense: true,
+                                            border: InputBorder.none,
+                                            hintText: "Type Place Name",
+                                            hintStyle: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.grey)
+                                        ),
+                                        style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),
+
+                                      ),
+                                    )
+                                  ],
+                                )
+
+
+
                               ],
                             ),
-                          ),
+                          ),)
+                        ],
+                      ),
+
+                      SizedBox(height: 15,),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
                           Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text("Shipping Address :",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 14,color: Colors.black),),
-                                SizedBox(height: 5,),
-                                Row(
-                                  children: [
-                                    Container(
-                                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                      width:300,
-                                      constraints: BoxConstraints(
-                                        minHeight: 100,
-                                      ),
-                                      decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(1),
-                                          border: Border.all(color: Colors.blue.withOpacity(0.5),width: 1)
-                                      ),
-                                      child: TextField(
-                                        controller: shipping_address_controller,
-                                        decoration: InputDecoration(
-                                          isDense: true,
-                                          border: InputBorder.none,
-                                          hintText: "Recipient Name\nRecipient Address\nRecipient Phone\nRecipient Email",
-                                          hintStyle: TextStyle(fontSize: 14, color: Colors.grey),
+                            child: Container(
+                              padding: EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+                              decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.black,width: 0.5)
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text("Billing Address :",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 14,color: Colors.black),),
+                                  SizedBox(height: 5,),
+                                  Row(
+                                    children: [
+                                      Container(
+                                        width:300,
+                                        constraints: BoxConstraints(
+                                          minHeight: 100,
                                         ),
-                                        maxLines: null,
-                                        style: TextStyle(height: 1.2, color: Colors.black, fontSize: 14, fontWeight: FontWeight.w500),
+                                        child: TextField(
+                                          controller: billing_address_controller,
+                                          decoration: InputDecoration(
+                                            isDense: true,
+                                            border: InputBorder.none,
+                                            hintText: "Recipient Name\nRecipient Address\nRecipient Phone\nRecipient Email",
+                                            hintStyle: TextStyle(fontSize: 14, color: Colors.grey),
+                                          ),
+                                          maxLines: null,
+                                          style: TextStyle(height: 1.2, color: Colors.black, fontSize: 14, fontWeight: FontWeight.w500),
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ],
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 15,),
+                          Expanded(
+                            child: Container(
+                              padding: EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+                              decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.black,width: 0.5)
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text("Shipping Address :",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 14,color: Colors.black),),
+                                  SizedBox(height: 5,),
+                                  Row(
+                                    children: [
+                                      Container(
+                                        width:300,
+                                        constraints: BoxConstraints(
+                                          minHeight: 100,
+                                        ),
+
+                                        child: TextField(
+                                          controller: shipping_address_controller,
+                                          decoration: InputDecoration(
+                                            isDense: true,
+                                            border: InputBorder.none,
+                                            hintText: "Recipient Name\nRecipient Address\nRecipient Phone\nRecipient Email",
+                                            hintStyle: TextStyle(fontSize: 14, color: Colors.grey),
+                                          ),
+                                          maxLines: null,
+                                          style: TextStyle(height: 1.2, color: Colors.black, fontSize: 14, fontWeight: FontWeight.w500),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ],
@@ -574,7 +675,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                     color: Colors.blue.withOpacity(0.3)
                                 ),
                                 child: Center(
-                                    child: Text("Description", style: TextStyle(color: Colors.blue, fontSize: 13, fontWeight: FontWeight.w600),)
+                                    child: Text("Product Name", style: TextStyle(color: Colors.blue, fontSize: 13, fontWeight: FontWeight.w600),)
                                 ),
                               )),
 
@@ -629,6 +730,25 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                 ),
                                 child: Center(
                                     child: Text("Quantity", style: TextStyle(color: Colors.blue, fontSize: 13, fontWeight: FontWeight.w600),)
+                                ),
+                              )),
+
+
+                          Expanded(
+                              flex: 3,
+                              child: Container(
+                                width: 80,
+                                height: 30,
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                      left: BorderSide(color: Colors.blue, width: 1),
+                                      top: BorderSide(color: Colors.blue, width: 1),
+                                      bottom: BorderSide(color: Colors.blue, width: 1),
+                                    ),
+                                    color: Colors.blue.withOpacity(0.3)
+                                ),
+                                child: Center(
+                                    child: Text("GST", style: TextStyle(color: Colors.blue, fontSize: 13, fontWeight: FontWeight.w600),)
                                 ),
                               )),
 
@@ -856,6 +976,66 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                       ),
                                     )),
 
+
+                                /// Gst .................
+                                Expanded(
+                                    flex: 3,
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(horizontal: 3),
+                                      width: 80,
+                                      constraints: BoxConstraints(
+                                          minHeight: 50
+                                      ),
+                                      decoration: BoxDecoration(
+                                        border: Border(
+                                          left: BorderSide(color: Colors.blue, width: 1),
+                                          bottom: BorderSide(color: Colors.blue, width: 1),
+                                        ),
+
+                                      ),
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                        crossAxisAlignment: CrossAxisAlignment.end,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                child: TextField(
+                                                  decoration: InputDecoration(
+                                                    isDense: true,
+                                                    border: InputBorder.none
+                                                  ),
+                                                  controller: invoice_data[index].gst_controller
+                                                 , style: TextStyle(fontSize: 13,fontWeight: FontWeight.w500),textAlign: TextAlign.end),
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(height: 2,),
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                child: TextField(
+                                                  decoration: InputDecoration(
+                                                      isDense: true,
+                                                      border: InputBorder.none
+                                                  ),
+                                                  textAlign: TextAlign.end,
+                                                  controller: invoice_data[index].gst_percentage_controller,
+                                                   style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.black),
+                                                onChanged: (v){
+                                                    setState((){
+                                                      calculateInvoice();
+                                                    });
+                                                },
+                                                ),
+                                              ),
+                                              Text("%", style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.black),)
+                                            ],
+                                          )
+                                        ],
+                                      ),
+                                    )),
+
                                 /// CGst .................
                                 Expanded(
                                     flex: 3,
@@ -881,7 +1061,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                             child:Text(invoice_data[index].cgst!.toStringAsFixed(2), style: TextStyle(fontSize: 13,fontWeight: FontWeight.w500),textAlign: TextAlign.end),
                                           ),
                                           SizedBox(height: 2,),
-                                          Text("6%", style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.black),)
+                                          Text("${invoice_data[index].sgst_percentage!.toStringAsFixed(2)}%", style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.black),)
                                         ],
                                       ),
                                     )),
@@ -908,10 +1088,10 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                         children: [
                                           Container(
                                             width: 40,
-                                            child:Text(invoice_data[index].cgst!.toStringAsFixed(2), style: TextStyle(fontSize: 13,fontWeight: FontWeight.w500),textAlign: TextAlign.end),
+                                            child:Text(invoice_data[index].sgst!.toStringAsFixed(2), style: TextStyle(fontSize: 13,fontWeight: FontWeight.w500),textAlign: TextAlign.end),
                                           ),
                                           SizedBox(height: 2,),
-                                          Text("6%", style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.black),)
+                                          Text("${invoice_data[index].sgst_percentage!.toStringAsFixed(2)}%", style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.black),)
                                         ],
                                       )
                                     )),
@@ -954,9 +1134,11 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                             padding: EdgeInsets.only(top: 5),
                             child: InkWell(
                               onTap: (){
-                                editableInvoiceItem eii=editableInvoiceItem(description: "", quantity: 0, price: 0.00, totalAmount: 0.00,hsn: "", sgst: 0.00, cgst: 18, des_controller: TextEditingController(), price_controller: TextEditingController(), quantity_controller: TextEditingController(), hsn_controller: TextEditingController());
+                                editableInvoiceItem eii=editableInvoiceItem(description: "", quantity: 0, price: 0.00, totalAmount: 0.00,hsn: "",gst: 0.00, gst_percentage: 0, sgst: 0.00, cgst: 0.00, sgst_percentage: 6,cgst_percentage: 6, des_controller: TextEditingController(), price_controller: TextEditingController(), quantity_controller: TextEditingController(), hsn_controller: TextEditingController(), gst_controller: TextEditingController(), gst_percentage_controller: TextEditingController());
                                 setState((){
                                   invoice_data.add(eii);
+                                  invoice_data[invoice_data.length-1].gst_controller!.text="0.00";
+                                  invoice_data[invoice_data.length-1].gst_percentage_controller!.text="12";
                                 });
 
                               },
@@ -1112,10 +1294,31 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                         ],
                       ),
                       SizedBox(height: 10,),
-                      ///Authorized Signatory ......................
+                      ///Bank details & Authorized Signatory ......................
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("Bank Details : ", style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w600),),
+                              Text("A/C Holder Name : $bank_ac_holder_name",
+                                  style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w500)
+                              ),
+                              Text("Bank Name : $bank_name",
+                                  style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w500)
+                              ),
+                              Text("Account Number : $bank_ac_number",
+                                  style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w500)
+                              ),
+                              Text("IFSC Code : $ifsc_code",
+                                  style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w500)
+                              ),
+
+
+                            ],
+                          ),
                           Column(
                             children: [
                               Text("Authorized Signatory", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600,color: Colors.black),),
@@ -1179,12 +1382,18 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
     for(int i=0; i<invoice_data.length; i++){
       subtotal = subtotal + invoice_data[i].totalAmount!;
       try{
-        double g = (invoice_data[i].totalAmount! * 6)/100;
-        invoice_data[i].sgst=g;
-        invoice_data[i].cgst=g;
-        gst = gst + g + g;
+        double g = (invoice_data[i].totalAmount! * double.parse(invoice_data[i].gst_percentage_controller!.text))/100;
+        invoice_data[i].gst=g;
+        invoice_data[i].gst_controller!.text=g.toStringAsFixed(2);
+        invoice_data[i].sgst=double.parse((g/2).toStringAsFixed(2));
+        invoice_data[i].sgst_percentage=(double.parse(invoice_data[i].gst_percentage_controller!.text)/2);
+        invoice_data[i].cgst=double.parse((g/2).toStringAsFixed(2));
+        invoice_data[i].cgst_percentage=(double.parse(invoice_data[i].gst_percentage_controller!.text)/2);
+        gst = gst + g;
       }catch(e){
         invoice_data[i].sgst=0.00;
+        invoice_data[i].cgst=0.00;
+        invoice_data[i].gst=0.00;
       }
     }
 
@@ -1213,9 +1422,10 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
     });
     List<noteditableInvoiceItem> invoice_items=[];
     for(int i =0; i<invoice_data.length; i++){
-      noteditableInvoiceItem a = noteditableInvoiceItem(description: invoice_data[i].description.toString(),quantity: invoice_data[i].quantity.toString(),price: invoice_data[i].price!.toStringAsFixed(2),totalAmount: invoice_data[i].totalAmount!.toStringAsFixed(2),cgst: invoice_data[i].cgst!.toStringAsFixed(2), sgst: invoice_data[i].sgst!.toStringAsFixed(2), hsn: invoice_data[i].hsn!);
+      noteditableInvoiceItem a = noteditableInvoiceItem(description: invoice_data[i].description.toString(),quantity: invoice_data[i].quantity.toString(),price: invoice_data[i].price!.toStringAsFixed(2),totalAmount: invoice_data[i].totalAmount!.toStringAsFixed(2),gst: invoice_data[i].gst!.toStringAsFixed(2),gst_percentage: invoice_data[i].gst_percentage!.toStringAsFixed(2),cgst: invoice_data[i].cgst!.toStringAsFixed(2),cgst_percentage: invoice_data[i].cgst_percentage!.toStringAsFixed(2), sgst: invoice_data[i].sgst!.toStringAsFixed(2),sgst_percentage: invoice_data[i].sgst_percentage!.toStringAsFixed(2), hsn: invoice_data[i].hsn!);
       invoice_items.add(a);
     }
+
     String invoice_item_list=jsonEncode(invoice_items);
     var url = Uri.parse(update_invoice);
     Map<String, String> body = {"invoice_id":invoice_id,"date":formattedDate2(date_controller.text),"billing_address": billing_address_controller.text.trim(), "shipping_address":shipping_address_controller.text.trim(),"subtotal":subtotal.toStringAsFixed(2), "gst":gst.toStringAsFixed(2), "grand_total":grand_total.toStringAsFixed(2),"paid":paid_amount_controller.text.toString(),"due":due_amount.toStringAsFixed(2),"custom_note":comment_controller.text.trim(),"other_charges":other_charges_controller.text,"descriptions":invoice_item_list};
@@ -1225,9 +1435,9 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
 
       var jsonData=jsonDecode(myData);
       if(jsonData['status']=="success"){
-        generatePdf(invoice_no,invoice_date, billing_address_controller.text.trim(), shipping_address_controller.text.trim(), invoice_items, subtotal.toStringAsFixed(2), gst.toStringAsFixed(2), other_charges_controller.text, grand_total.toStringAsFixed(2), paid_amount_controller.text.toString(), due_amount.toStringAsFixed(2),comment_controller.text.trim());
+        generatePdf(invoice_no,invoice_date, place_controller.text.trim(), billing_address_controller.text.trim(), shipping_address_controller.text.trim(), invoice_items, subtotal.toStringAsFixed(2), gst.toStringAsFixed(2), other_charges_controller.text, grand_total.toStringAsFixed(2),comment_controller.text.trim());
         setState(() {
-          placeHolder=invoiceView(invoice_no, invoice_date, billing_address_controller.text.trim(), shipping_address_controller.text.trim(), invoice_items, subtotal.toStringAsFixed(2), gst.toStringAsFixed(2), other_charges_controller.text, grand_total.toStringAsFixed(2), paid_amount_controller.text.toString(), due_amount.toStringAsFixed(2),comment_controller.text.trim());
+          placeHolder=invoiceView(invoice_no, invoice_date, place_controller.text.toString(), billing_address_controller.text.trim(), shipping_address_controller.text.trim(), invoice_items, subtotal.toStringAsFixed(2), gst.toStringAsFixed(2), other_charges_controller.text, grand_total.toStringAsFixed(2), comment_controller.text.trim());
         });
       }else{
         MotionToast.error(
@@ -1254,9 +1464,11 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
     });
     List<noteditableInvoiceItem> invoice_items=[];
     for(int i =0; i<invoice_data.length; i++){
-      noteditableInvoiceItem a = noteditableInvoiceItem(description: invoice_data[i].description.toString(),quantity: invoice_data[i].quantity.toString(),price: invoice_data[i].price!.toStringAsFixed(2),totalAmount: invoice_data[i].totalAmount!.toStringAsFixed(2),cgst: invoice_data[i].cgst!.toStringAsFixed(2), sgst: invoice_data[i].sgst!.toStringAsFixed(2), hsn: invoice_data[i].hsn!);
+      noteditableInvoiceItem a = noteditableInvoiceItem(description: invoice_data[i].description.toString(),quantity: invoice_data[i].quantity.toString(),price: invoice_data[i].price!.toStringAsFixed(2),totalAmount: invoice_data[i].totalAmount!.toStringAsFixed(2), gst:invoice_data[i].gst!.toStringAsFixed(2),gst_percentage:  invoice_data[i].gst_percentage!.round().toString(),cgst: invoice_data[i].cgst!.toStringAsFixed(2),cgst_percentage: invoice_data[i].cgst_percentage!.toStringAsFixed(2), sgst: invoice_data[i].sgst!.toStringAsFixed(2),sgst_percentage: invoice_data[i].sgst_percentage!.toStringAsFixed(2), hsn: invoice_data[i].hsn!);
       invoice_items.add(a);
     }
+    // generatePdf("78202", DateFormat('dd/MM/yyyy').format(DateTime.now()), billing_address_controller.text.trim(), shipping_address_controller.text.trim(), invoice_items, subtotal.toStringAsFixed(2), gst.toStringAsFixed(2), other_charges_controller.text, grand_total.toStringAsFixed(2), comment_controller.text.trim());
+
     String invoice_item_list=jsonEncode(invoice_items);
     var url = Uri.parse(create_invoice);
     Map<String, String> body = {"billing_address": billing_address_controller.text.trim(), "shipping_address":shipping_address_controller.text.trim(),"subtotal":subtotal.toStringAsFixed(2), "gst":gst.toStringAsFixed(2), "grand_total":grand_total.toStringAsFixed(2),"paid":paid_amount_controller.text.toString(),"due":due_amount.toStringAsFixed(2),"custom_note":comment_controller.text.trim(),"other_charges":other_charges_controller.text,"descriptions":invoice_item_list};
@@ -1266,9 +1478,9 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
       var jsonData=jsonDecode(myData);
       if(jsonData['status']=="success"){
         invoice_no=jsonData['invoice_no'];
-        generatePdf(invoice_no, DateFormat('dd/MM/yyyy').format(DateTime.now()), billing_address_controller.text.trim(), shipping_address_controller.text.trim(), invoice_items, subtotal.toStringAsFixed(2), gst.toStringAsFixed(2), other_charges_controller.text, grand_total.toStringAsFixed(2), paid_amount_controller.text.toString(), due_amount.toStringAsFixed(2),comment_controller.text.trim());
+        generatePdf(invoice_no, DateFormat('dd/MM/yyyy').format(DateTime.now()), place_controller.text.trim(), billing_address_controller.text.trim(), shipping_address_controller.text.trim(), invoice_items, subtotal.toStringAsFixed(2), gst.toStringAsFixed(2), other_charges_controller.text, grand_total.toStringAsFixed(2), comment_controller.text.trim());
         setState(() {
-          placeHolder=invoiceView(invoice_no, DateFormat('dd/MM/yyyy').format(DateTime.now()), billing_address_controller.text.trim(), shipping_address_controller.text.trim(), invoice_items, subtotal.toStringAsFixed(2), gst.toStringAsFixed(2), other_charges_controller.text, grand_total.toStringAsFixed(2), paid_amount_controller.text.toString(), due_amount.toStringAsFixed(2),comment_controller.text.trim());
+          placeHolder=invoiceView(invoice_no, DateFormat('dd/MM/yyyy').format(DateTime.now()), place_controller.text.toString(), billing_address_controller.text.trim(), shipping_address_controller.text.trim(), invoice_items, subtotal.toStringAsFixed(2), gst.toStringAsFixed(2), other_charges_controller.text, grand_total.toStringAsFixed(2), comment_controller.text.trim());
 
         });
       }else{
@@ -1290,7 +1502,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
   }
 
 
-  Widget invoiceView(String invoice_number,String invoice_date, String billing_address, String shipping_address, List<noteditableInvoiceItem> invoice_item_details, String subtotal, String gst, String other_charges, String grand_total, String paid, String due, String comments){
+  Widget invoiceView(String invoice_number,String invoice_date, String place_name, String billing_address, String shipping_address, List<noteditableInvoiceItem> invoice_item_details, String subtotal, String gst, String other_charges, String grand_total, String comments){
     return Expanded(
       child: ListView(
         shrinkWrap: true,
@@ -1312,63 +1524,136 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                     children: [
                       SizedBox(height: 60,),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
+                          Image.asset("assets/logo/logo3.png",  height: 70,),
+                          SizedBox(width: 10,),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Image.asset("assets/logo/logo3.png",  height: 70,),
-                                  SizedBox(width: 10,),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text("Transmission Surgicals", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22, color: Colors.teal),),
+                              Text("Transmission Surgicals", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22, color: Colors.teal),),
 
-                                      SizedBox(
-                                          width: 230,
-                                          child: Divider(height: 5,thickness: 2,color: Colors.teal,)
-                                      ),
-                                      SizedBox(height: 2,),
-                                      SizedBox(
-                                        width: 230,
-                                        child:
-                                        Center(child: Text("Sales and Service", style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14, color: Colors.teal),)),
-                                      )
-                                    ],
-                                  )
-                                ],
+                              SizedBox(
+                                  width: 230,
+                                  child: Divider(height: 5,thickness: 2,color: Colors.teal,)
                               ),
                               SizedBox(height: 2,),
-                              Text("$address \nPhone : $phone_number\nEmail : $email_id",style: TextStyle(fontWeight: FontWeight.w500,fontSize: 14,color: Colors.black),),
-
+                              SizedBox(
+                                width: 230,
+                                child:
+                                Center(child: Text("Sales and Service", style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14, color: Colors.teal),)),
+                              )
                             ],
-                          ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              SizedBox(height: 50,),
-                              Text("TAX INVOICE",style: GoogleFonts.alata(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.black),),
-                              SizedBox(height: 5,),
-                              Text("Invoice Number : "+invoice_number,style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
-                              Text("Invoice Date : "+formattedDate(invoice_date),style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
-
-                            ],
-                          ),
+                          )
                         ],
                       ),
 
-                      SizedBox(height: 30,),
+                      SizedBox(height: 15,),
+
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Expanded(
                             child: Container(
+                                height: 100,
+                                padding: EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+                                decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.black,width: 0.5)
+                                ),
+                                child: Text("$address \nOffice Phone : $office_phone\nMobile : $phone_number\nEmail : $email_id",style: TextStyle(fontWeight: FontWeight.w500,fontSize: 14,color: Colors.black),)
+                            ),
+                          ),
+                          SizedBox(width: 15,),
+                          Expanded(child: Container(
+                            height: 100,
+                            padding: EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+                            decoration: BoxDecoration(
+                                border: Border.all(color: Colors.black,width: 0.5)
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text("TAX INVOICE",style: GoogleFonts.alata(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.black),),
+                                SizedBox(height: 5,),
+
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Container(
+                                        width: 100,
+                                        child: Text("Invoice Number",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),)),
+                                    Text(" : ",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
+                                    Container(
+                                        width: 130,
+                                        child: Text(invoice_number,style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),)),
+                                  ],
+                                ),
+
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Container(
+                                        width: 100,
+                                        child: Text("Invoice Date",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),)),
+                                    Text(" : ",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
+                                    Container(
+                                        width: 130,
+                                        child: Text(DateFormat('dd/MM/yyyy').format(DateTime.now()),style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),)
+                                    ),
+                                  ],
+                                ),
+
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Container(
+                                        width: 100,
+                                        child: Text("GST",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),)),
+                                    Text(" : ",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
+                                    Container(
+                                        width: 130,
+                                        child: Text(gst_no,style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),)
+                                    ),
+                                  ],
+                                ),
+
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Container(
+                                        width: 100,
+                                        child: Text("Place",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black))
+                                    ),
+                                    Text(" : ",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
+                                    Container(
+                                      width: 130,
+                                      child: Text(place_name,style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
+                                    )
+                                  ],
+                                )
+
+
+
+                              ],
+                            ),
+                          ),)
+                        ],
+                      ),
+
+                      SizedBox(height: 15,),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Container(
+                              height: 130,
                               padding: EdgeInsets.all(5),
                               decoration: BoxDecoration(
                                  border: Border.all(color: Colors.black87,width: 0.5)
@@ -1378,14 +1663,15 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                 children: [
                                   Text("Billing Address :",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 14,color: Colors.black),),
                                   SizedBox(height: 5,),
-                                  Text(billing_address,style: TextStyle(fontWeight: FontWeight.w500,fontSize: 13,color: Colors.black),),
+                                  Text(billing_address,style: TextStyle(fontWeight: FontWeight.w500,fontSize: 12,color: Colors.black),),
                                 ],
                               ),
                             ),
                           ),
-                          SizedBox(width: 20,),
+                          SizedBox(width: 15,),
                           Expanded(
                             child: Container(
+                              height: 130,
                               padding: EdgeInsets.all(5),
                               decoration: BoxDecoration(
                                   border: Border.all(color: Colors.black87,width: 0.5)
@@ -1395,7 +1681,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                 children: [
                                   Text("Shipping Address :",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 14,color: Colors.black),),
                                   SizedBox(height: 5,),
-                                  Text(shipping_address,style: TextStyle(fontWeight: FontWeight.w500,fontSize: 13,color: Colors.black),),
+                                  Text(shipping_address,style: TextStyle(fontWeight: FontWeight.w500,fontSize: 12,color: Colors.black),),
                                 ],
                               ),
                             ),
@@ -1439,7 +1725,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                     color: Colors.blue.withOpacity(0.3)
                                 ),
                                 child: Center(
-                                    child: Text("Description", style: TextStyle(color: Colors.blue, fontSize: 14, fontWeight: FontWeight.w500),)
+                                    child: Text("Product Name", style: TextStyle(color: Colors.blue, fontSize: 14, fontWeight: FontWeight.w500),)
                                 ),
                               )),
 
@@ -1497,6 +1783,26 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                 ),
                                 child: Center(
                                     child: Text("Quantity", style: TextStyle(color: Colors.blue, fontSize: 14, fontWeight: FontWeight.w500),)
+                                ),
+                              )),
+
+
+                          ///Gst ....................
+                          Expanded(
+                              flex: 3,
+                              child: Container(
+                                width: 80,
+                                height: 30,
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                      left: BorderSide(color: Colors.blue, width: 1),
+                                      top: BorderSide(color: Colors.blue, width: 1),
+                                      bottom: BorderSide(color: Colors.blue, width: 1),
+                                    ),
+                                    color: Colors.blue.withOpacity(0.3)
+                                ),
+                                child: Center(
+                                    child: Text("GST", style: TextStyle(color: Colors.blue, fontSize: 14, fontWeight: FontWeight.w500),)
                                 ),
                               )),
 
@@ -1562,13 +1868,14 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                       ListView.builder(
                           itemCount: invoice_item_details.length,
                           shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
                           itemBuilder: (context, index){
                             return Row(
                               children: [
                                 /// Sl. No. .........................
                                 Container(
                                   width: 60,
-                                  height: 50,
+                                  height: 60,
                                   decoration: BoxDecoration(
                                     border: Border(
                                       left: BorderSide(color: Colors.blue, width: 1),
@@ -1586,7 +1893,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                     child: Container(
                                       padding: EdgeInsets.all(5),
                                       width: 80,
-                                      height: 50,
+                                      height: 60,
                                       decoration: BoxDecoration(
                                         border: Border(
                                           left: BorderSide(color: Colors.blue, width: 1),
@@ -1608,7 +1915,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                     child: Container(
                                       padding: EdgeInsets.all(5),
                                       width: 80,
-                                      height: 50,
+                                      height: 60,
                                       decoration: BoxDecoration(
                                         border: Border(
                                           left: BorderSide(color: Colors.blue, width: 1),
@@ -1629,7 +1936,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                     child: Container(
                                       padding: EdgeInsets.all(5),
                                       width: 80,
-                                      height: 50,
+                                      height: 60,
                                       decoration: BoxDecoration(
                                         border: Border(
                                           left: BorderSide(color: Colors.blue, width: 1),
@@ -1650,7 +1957,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                     child: Container(
                                       padding: EdgeInsets.all(5),
                                       width: 80,
-                                      height: 50,
+                                      height: 60,
                                       decoration: BoxDecoration(
                                         border: Border(
                                           left: BorderSide(color: Colors.blue, width: 1),
@@ -1665,13 +1972,41 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                       ),
                                     )),
 
+
+                                ///Gst ............................
+                                Expanded(
+                                    flex: 3,
+                                    child: Container(
+                                      padding: EdgeInsets.all(5),
+                                      width: 80,
+                                      height: 60,
+                                      decoration: BoxDecoration(
+                                        border: Border(
+                                          left: BorderSide(color: Colors.blue, width: 1),
+                                          bottom: BorderSide(color: Colors.blue, width: 1),
+                                        ),
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.end,
+                                        children: [
+                                          Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              Text(invoice_item_details[index].gst.toString(),style: TextStyle(fontSize: 14, color: Colors.black,fontWeight: FontWeight.w500),),
+                                              SizedBox(height: 2,),
+                                              Text(invoice_item_details[index].gst_percentage.toString()+"%",style: TextStyle(fontSize: 12, color: Colors.black,fontWeight: FontWeight.w500),),
+                                            ],
+                                          )                                        ],
+                                      ),
+                                    )),
+
                                 ///CGst ............................
                                 Expanded(
                                     flex: 3,
                                     child: Container(
                                       padding: EdgeInsets.all(5),
                                       width: 80,
-                                      height: 50,
+                                      height: 60,
                                       decoration: BoxDecoration(
                                         border: Border(
                                           left: BorderSide(color: Colors.blue, width: 1),
@@ -1695,7 +2030,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                     child: Container(
                                       padding: EdgeInsets.all(5),
                                       width: 80,
-                                      height: 50,
+                                      height: 60,
                                       decoration: BoxDecoration(
                                         border: Border(
                                           left: BorderSide(color: Colors.blue, width: 1),
@@ -1719,7 +2054,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                     child: Container(
                                       padding: EdgeInsets.all(5),
                                       width: 80,
-                                      height: 50,
+                                      height: 60,
                                       decoration: BoxDecoration(
                                         border: Border(
                                           left: BorderSide(color: Colors.blue, width: 1),
@@ -1872,9 +2207,31 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
 
                       SizedBox(height: 20,),
                       ///Authorized Signatory ......................
+                      ///Bank details & Authorized Signatory ......................
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("Bank Details : ", style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w600),),
+                              Text("A/C Holder Name : $bank_ac_holder_name",
+                                  style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w500)
+                              ),
+                              Text("Bank Name : $bank_name",
+                                  style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w500)
+                              ),
+                              Text("Account Number : $bank_ac_number",
+                                  style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w500)
+                              ),
+                              Text("IFSC Code : $ifsc_code",
+                                  style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w500)
+                              ),
+
+
+                            ],
+                          ),
                           Column(
                             children: [
                               Text("Authorized Signatory", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600,color: Colors.black),),
@@ -1920,7 +2277,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
 
 
 
-  generatePdf(String invoice_no, String invoice_date, String billing_details, String shipping_details,  List<noteditableInvoiceItem> invoice_items, String subtotal, String gst, String other_charges, String grand_total, String paid, String due, String comments) async {
+  generatePdf(String invoice_no, String invoice_date, String place_name, String billing_details, String shipping_details,  List<noteditableInvoiceItem> invoice_items, String subtotal, String gst, String other_charges, String grand_total, String comments) async {
     pdf = pw.Document();
     final Logo = await getAssetsImage("assets/logo/logo3.png");
     final sig1 = await getAssetsImage("assets/image/sig1.jpg");
@@ -1933,92 +2290,186 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
     widgets.add(
       pw.Padding(
         padding: pw.EdgeInsets.symmetric(horizontal: 15),
-        child: pw.Row(
-          mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+        child: pw.Column(
           crossAxisAlignment: pw.CrossAxisAlignment.start,
+          mainAxisAlignment: pw.MainAxisAlignment.start,
           children: [
-            pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.start,
+
+            pw.Row(
               mainAxisAlignment: pw.MainAxisAlignment.start,
               children: [
-
-                pw.Row(
-                  mainAxisAlignment: pw.MainAxisAlignment.start,
+                pw.Image(pw.MemoryImage(Logo), height: 50),
+                pw.SizedBox(width: 5,),
+                pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
                   children: [
-                    pw.Image(pw.MemoryImage(Logo), height: 50),
-                    pw.SizedBox(width: 7,),
-                    pw.Column(
-                      crossAxisAlignment: pw.CrossAxisAlignment.start,
-                      children: [
-                        pw.Text("Transmission Surgicals", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 16, color: PdfColors.teal),),
+                    pw.Text("Transmission Surgicals", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 15, color: PdfColors.teal),),
 
-                        pw.SizedBox(
-                            width: 190,
-                            child: pw.Divider(height: 5,thickness: 2,color: PdfColors.teal,)
-                        ),
-                        pw.SizedBox(height: 2,),
-                        pw.SizedBox(
-                          width: 190,
-                          child:
-                          pw.Center(child: pw.Text("Sales and Service", style: pw.TextStyle(fontWeight: pw.FontWeight.normal, fontSize: 10, color: PdfColors.teal),)),
-                        )
-                      ],
-                    )
+                    pw.SizedBox(
+                        width: 190,
+                        child: pw.Divider(height: 5,thickness: 2,color: PdfColors.teal,)
+                    ),
+                    pw.SizedBox(height: 2,),
+                    pw.SizedBox(
+                      width: 190,
+                      child:
+                      pw.Center(child: pw.Text("Sales and Service", style: pw.TextStyle(fontWeight: pw.FontWeight.normal, fontSize: 10, color: PdfColors.teal),)),
+                    ),
+                    pw.SizedBox(height: 5,),
                   ],
-                ),
-                pw.SizedBox(height: 2,),
-                pw.Text("$address\nPhone : $phone_number\nEmail : $email_id",style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 10,color: PdfColors.black),),
+                )
+              ],
+            ),
+            pw.SizedBox(height: 5,),
 
-              ],
-            ),
-            pw.Column(
-              mainAxisAlignment: pw.MainAxisAlignment.start,
-              crossAxisAlignment: pw.CrossAxisAlignment.end,
+            pw.Row(
               children: [
-                pw.Text("TAX INVOICE",style: pw.TextStyle(fontSize: 16,fontWeight:pw.FontWeight.bold,color: PdfColors.black),),
-                pw.SizedBox(height: 5,),
-                pw.Text("Invoice Number : $invoice_no",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
-                pw.Text("Invoice Date : "+formattedDate(invoice_date),style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),)
-              ],
+                pw.Expanded(
+                  child: pw.Container(
+                    padding: pw.EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                    height: 90,
+                    decoration: pw.BoxDecoration(
+                      border: pw.Border.all(
+                        width: 0.5,
+                        color: PdfColors.black
+                      )
+                    ),
+                    child: pw.Text("$address\nOffice Phone : $office_phone\nMobile : $phone_number\nEmail : $email_id",style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 10,color: PdfColors.black),),
+                  )
+                ),
+                pw.SizedBox(width: 10),
+                pw.Expanded(
+                    child: pw.Container(
+                        padding: pw.EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                        height: 90,
+                        decoration: pw.BoxDecoration(
+                            border: pw.Border.all(
+                                width: 0.5,
+                                color: PdfColors.black
+                            )
+                        ),
+                      child: pw.Column(
+                        mainAxisAlignment: pw.MainAxisAlignment.start,
+                        crossAxisAlignment: pw.CrossAxisAlignment.end,
+                        children: [
+                          pw.Text("TAX INVOICE",style: pw.TextStyle(fontSize: 16,fontWeight:pw.FontWeight.bold,color: PdfColors.black),),
+                          pw.SizedBox(height: 5,),
+                          pw.Row(
+                            mainAxisAlignment: pw.MainAxisAlignment.start,
+                            mainAxisSize: pw.MainAxisSize.min,
+                            children: [
+                              pw.Container(
+                                  width: 80,
+                                  child: pw.Text("Invoice Number",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),)),
+                                  pw.Text(" : ",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
+                                pw.Container(
+                                  width: 100,
+                                  child: pw.Text("KOL/TS${DateFormat('yyyy').format(DateTime.now())}-$invoice_no",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),)),
+                            ],
+                          ),
+
+                          pw.Row(
+                            mainAxisAlignment: pw.MainAxisAlignment.start,
+                            mainAxisSize: pw.MainAxisSize.min,
+                            children: [
+                              pw.Container(
+                                  width: 80,
+                                  child: pw.Text("Invoice Date",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),)),
+                              pw.Text(" : ",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
+                              pw.Container(
+                                  width: 100,
+                                  child: pw.Text(DateFormat('dd/MM/yyyy').format(DateTime.now()),style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),)
+                              ),
+                            ],
+                          ),
+
+                          pw.Row(
+                            mainAxisAlignment: pw.MainAxisAlignment.start,
+                            mainAxisSize: pw.MainAxisSize.min,
+                            children: [
+                              pw.Container(
+                                  width: 80,
+                                  child: pw.Text("GST",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),)),
+                              pw.Text(" : ",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
+                              pw.Container(
+                                  width: 100,
+                                  child: pw.Text(gst_no,style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),)
+                              ),
+                            ],
+                          ),
+
+                          pw.Row(
+                            mainAxisAlignment: pw.MainAxisAlignment.start,
+                            mainAxisSize: pw.MainAxisSize.min,
+                            children: [
+                              pw.Container(
+                                  width: 80,
+                                  child: pw.Text("Place",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black))
+                              ),
+                              pw.Text(" : ",style: pw.TextStyle(fontSize: 12,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
+                              pw.Container(
+                                width: 100,
+                                child: pw.Text(place_name,style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
+                              )
+                            ],
+                          )
+                        ],
+                      ),
+                    )
+                )
+              ]
             ),
+            pw.SizedBox(height: 10,),
+            pw.Row(
+                children: [
+                  pw.Expanded(
+                      child: pw.Container(
+                        padding: pw.EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                        height: 100,
+                        decoration: pw.BoxDecoration(
+                            border: pw.Border.all(
+                                width: 0.5,
+                                color: PdfColors.black
+                            )
+                        ),
+                        child: pw.Column(
+                            crossAxisAlignment: pw.CrossAxisAlignment.start,
+                            children: [
+                              pw.Text("Billing Address :",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 11,color: PdfColors.black),),
+                              pw.Text(billing_details,style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 9,color: PdfColors.black),),
+                            ]
+                        )
+                      )
+                  ),
+                  pw.SizedBox(width: 10),
+                  pw.Expanded(
+                      child: pw.Container(
+                        padding: pw.EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                        height: 100,
+                        decoration: pw.BoxDecoration(
+                            border: pw.Border.all(
+                                width: 0.5,
+                                color: PdfColors.black
+                            )
+                        ),
+                        child: pw.Column(
+                            crossAxisAlignment: pw.CrossAxisAlignment.start,
+                            children: [
+                              pw.Text("Shipping Address :",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 11,color: PdfColors.black),),
+                              pw.Text(shipping_details,style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 9,color: PdfColors.black),),
+                            ]
+                        ),
+                      )
+                  )
+                ]
+            ),
+
+
           ],
         )
       )
     );
 
-
-    widgets.add( pw.SizedBox(height: 30,),);
-
-    widgets.add(
-      pw.Padding(
-        padding: pw.EdgeInsets.symmetric(horizontal: 15),
-        child: pw.Row(
-          children: [
-            pw.Expanded(
-                child: pw.Column(
-                    crossAxisAlignment: pw.CrossAxisAlignment.start,
-                    children: [
-                      pw.Text("Billing Address :",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 12,color: PdfColors.black),),
-                      pw.Text(billing_details,style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 10,color: PdfColors.black),),
-                    ]
-                )
-            ),
-
-            pw.SizedBox(width: 25),
-
-            pw.Expanded(
-                child: pw.Column(
-                    crossAxisAlignment: pw.CrossAxisAlignment.start,
-                    children: [
-                      pw.Text("Shipping Address :",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 12,color: PdfColors.black),),
-                      pw.Text(shipping_details,style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 10,color: PdfColors.black),),
-                    ]
-                )
-            )
-          ],
-        ),
-      )
-    );
 
     widgets.add(pw.SizedBox(height: 30,),);
 
@@ -2030,20 +2481,22 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
         padding: pw.EdgeInsets.symmetric(horizontal: 15),
         child: pw.Table.fromTextArray(
             data: [
-              ['Sl. No.','Description', 'HSN/SAC', 'Quantity', 'Price', 'GST', 'Total'],
+              ['Sl. No.','Product Name', 'HSN/SAC', 'Quantity', 'Price', 'GST', 'CGST', 'SGST', 'Total'],
               ...invoice_items.asMap().entries.map((item) => [
                 (item.key+1).toString()+".",
                 item.value.description.toString(),
                 item.value.hsn.toString(),
                 item.value.quantity.toString(),
                 item.value.price.toString(),
-                item.value.sgst.toString()+"\n"+item.value.cgst.toString()+"%",
+                item.value.gst.toString()+"\n"+item.value.gst_percentage.toString()+"%",
+                item.value.cgst.toString()+"\n"+item.value.cgst_percentage.toString()+"%",
+                item.value.sgst.toString()+"\n"+item.value.sgst_percentage.toString()+"%",
                 item.value.totalAmount.toString(),
               ]).toList(),
             ],
             cellAlignment: pw.Alignment.centerRight,
-            cellStyle: pw.TextStyle(fontWeight: pw.FontWeight.normal),
-            headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10),
+            cellStyle: pw.TextStyle(fontWeight: pw.FontWeight.normal, fontSize: 8),
+            headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8),
             border: pw.TableBorder.all(width: 1, color: PdfColors.blue),
             headerDecoration: pw.BoxDecoration(
               color: PdfColors.blue100,
@@ -2056,6 +2509,8 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
               4:pw.FlexColumnWidth(2),
               5:pw.FlexColumnWidth(2),
               6:pw.FlexColumnWidth(2),
+              7:pw.FlexColumnWidth(2),
+              8:pw.FlexColumnWidth(2),
             }
         ),
       )
@@ -2064,51 +2519,156 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
 
     widgets.add(pw.SizedBox(height: 5,),);
 
-    widgets.add(
-      pw.Padding(
-        padding: pw.EdgeInsets.symmetric(horizontal: 15),
-        child: pw.Row(
-          mainAxisAlignment: pw.MainAxisAlignment.end,
-          crossAxisAlignment: pw.CrossAxisAlignment.start,
-          children: [
-            pw.Column(
-              crossAxisAlignment:pw. CrossAxisAlignment.start,
-              children: [
-                pw.Text("Subtotal", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-                pw.Text("GST", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-                pw.Text("Other charges", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-                pw.Text("Grand Total", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-                pw.Text("Paid", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-                pw.Text("Due", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-              ],
-            ),
-            pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.start,
-              children: [
-                pw.Text(" : ", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-                pw.Text(" : ", style: pw.TextStyle(fontWeight:pw. FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-                pw.Text(" : ", style:pw. TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-                pw.Text(" : ", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-                pw.Text(" : ", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-                pw.Text(" : ", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-              ],
-            ),
 
-            pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.end,
+    widgets.add(
+        pw.Padding(
+          padding: pw.EdgeInsets.symmetric(horizontal: 20),
+          child: pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.end,
               children: [
-                pw.Text(subtotal, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-                pw.Text(gst, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-                pw.Text(other_charges, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-                pw.Text(grand_total, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-                pw.Text(paid, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-                pw.Text(due, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-              ],
-            ),
-          ],
-        ),
-      )
+                pw.Column(
+                    children: [
+                      ///Subtotal ...........
+                      pw.Container(
+                          padding: pw.EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                          width: 218,
+                          decoration: pw.BoxDecoration(
+                              border: pw.Border.all(color: PdfColors.blue, width: 0.7)
+                          ),
+                          child: pw.Row(
+                              children: [
+                                pw.Expanded(
+                                  flex: 3,
+                                  child: pw.Row(
+                                      mainAxisAlignment: pw.MainAxisAlignment.end,
+                                      children: [
+                                        pw.Text("Subtotal",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.bold,color: PdfColors.black))
+                                      ]
+                                  ),
+                                ),
+                                pw.Text(":",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.bold,color: PdfColors.black)),
+                                pw.Expanded(
+                                  flex: 2,
+                                  child: pw.Row(
+                                      mainAxisAlignment: pw.MainAxisAlignment.end,
+                                      children: [
+                                        pw.Text("$subtotal",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.bold,color: PdfColors.black))
+                                      ]
+                                  ),
+                                )
+
+                              ]
+                          )
+                      ),
+
+                      ///GST ...........
+                      pw.Container(
+                          padding: pw.EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                          width: 218,
+                          decoration: pw.BoxDecoration(
+                              border: pw.Border.all(color: PdfColors.blue, width: 0.7)
+                          ),
+                          child: pw.Row(
+                              children: [
+                                pw.Expanded(
+                                  flex: 3,
+                                  child: pw.Row(
+                                      mainAxisAlignment: pw.MainAxisAlignment.end,
+                                      children: [
+                                        pw.Text("GST",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.bold,color: PdfColors.black))
+                                      ]
+                                  ),
+                                ),
+                                pw.Text(":",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.bold,color: PdfColors.black)),
+                                pw.Expanded(
+                                  flex: 2,
+                                  child: pw.Row(
+                                      mainAxisAlignment: pw.MainAxisAlignment.end,
+                                      children: [
+                                        pw.Text("$gst",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.bold,color: PdfColors.black))
+                                      ]
+                                  ),
+                                )
+
+                              ]
+                          )
+                      ),
+                      ///Other charges ...........
+                      pw.Container(
+                          padding: pw.EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                          width: 218,
+                          decoration: pw.BoxDecoration(
+                              border: pw.Border.all(color: PdfColors.blue, width: 0.7)
+                          ),
+                          child: pw.Row(
+                              children: [
+                                pw.Expanded(
+                                  flex: 3,
+                                  child: pw.Row(
+                                      mainAxisAlignment: pw.MainAxisAlignment.end,
+                                      children: [
+                                        pw.Text("Other charges",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.bold,color: PdfColors.black))
+                                      ]
+                                  ),
+                                ),
+                                pw.Text(":",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.bold,color: PdfColors.black)),
+                                pw.Expanded(
+                                  flex: 2,
+                                  child: pw.Row(
+                                      mainAxisAlignment: pw.MainAxisAlignment.end,
+                                      children: [
+                                        pw.Text("$other_charges",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.bold,color: PdfColors.black))
+                                      ]
+                                  ),
+                                )
+
+                              ]
+                          )
+                      ),
+
+                      /// Total
+                      pw.Container(
+                          padding: pw.EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                          width: 218,
+                          decoration: pw.BoxDecoration(
+                              border: pw.Border.all(color: PdfColors.blue, width: 0.7)
+                          ),
+                          child: pw.Row(
+                              children: [
+                                pw.Expanded(
+                                  flex: 3,
+                                  child: pw.Row(
+                                      mainAxisAlignment: pw.MainAxisAlignment.end,
+                                      children: [
+                                        pw.Text("Total Amount",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.bold,color: PdfColors.black))
+                                      ]
+                                  ),
+                                ),
+
+                                pw.Text(":",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.bold,color: PdfColors.black)),
+
+                                pw.Expanded(
+                                  flex: 2,
+                                  child: pw.Row(
+                                      mainAxisAlignment: pw.MainAxisAlignment.end,
+                                      children: [
+                                        pw.Text("$grand_total",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.bold,color: PdfColors.black))
+                                      ]
+                                  ),
+                                )
+
+                              ]
+                          )
+                      )
+                    ]
+                ),
+
+              ]
+          ),
+        )
+
     );
+
 
     widgets.add(pw.SizedBox(height: 30,),);
     widgets.add(
@@ -2131,58 +2691,86 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
       pw.SizedBox(height: 15),
     );
 
+
     widgets.add(
-        pw.Padding(
-          padding: pw.EdgeInsets.symmetric(horizontal: 20),
-          child: pw.Row(
-              mainAxisAlignment: pw.MainAxisAlignment.end,
-              children: [
-                pw.Text("Authorized Signatory",style: pw.TextStyle(fontSize: 11,fontWeight: pw.FontWeight.bold,color: PdfColors.black))
-              ]
+      pw.Row(
+        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+        children: [
+          pw.Padding(
+            padding: pw.EdgeInsets.symmetric(horizontal: 20),
+            child: pw.Column(
+           crossAxisAlignment: pw.CrossAxisAlignment.start,
+           children: [
+          pw.Text("Bank Details : ", style: pw.TextStyle(color: PdfColors.black,fontSize: 10, fontWeight: pw.FontWeight.bold),),
+          pw.Text("A/C Holder Name : $bank_ac_holder_name",
+              style: pw.TextStyle(color: PdfColors.black,fontSize: 9, fontWeight: pw.FontWeight.normal)
           ),
-        )
+          pw.Text("Bank Name : $bank_name",
+              style: pw.TextStyle(color: PdfColors.black,fontSize: 9, fontWeight: pw.FontWeight.normal)
+          ),
+          pw.Text("Account Number : $bank_ac_number",
+              style: pw.TextStyle(color: PdfColors.black,fontSize: 9, fontWeight: pw.FontWeight.normal)
+          ),
+          pw.Text("IFSC Code : $ifsc_code",
+              style: pw.TextStyle(color: PdfColors.black,fontSize: 9, fontWeight: pw.FontWeight.normal)
+          ),
 
-    );
-    widgets.add(
-      pw.SizedBox(height: 4),
-    );
 
-    widgets.add(
-        pw.Padding(
-          padding: pw.EdgeInsets.symmetric(horizontal: 20),
-          child: pw.Row(
-              mainAxisAlignment: pw.MainAxisAlignment.end,
+        ],
+      ),
+          ),
+
+
+          pw.Column(
               children: [
-                pw.Column(
-                    children: [
-                      pw.Image(pw.MemoryImage(sig1),width: 100,height: 20,fit: pw.BoxFit.fill),
-                      pw.Image(pw.MemoryImage(sig2),width: 100,height: 20,fit: pw.BoxFit.fill),
-                    ]
+                pw.Padding(
+                  padding: pw.EdgeInsets.symmetric(horizontal: 20),
+                  child: pw.Row(
+                      mainAxisAlignment: pw.MainAxisAlignment.end,
+                      children: [
+                        pw.Text("Authorized Signatory",style: pw.TextStyle(fontSize: 11,fontWeight: pw.FontWeight.bold,color: PdfColors.black))
+                      ]
+                  ),
+                ),
+                pw.SizedBox(height: 4),
+                pw.Padding(
+                  padding: pw.EdgeInsets.symmetric(horizontal: 20),
+                  child: pw.Row(
+                      mainAxisAlignment: pw.MainAxisAlignment.end,
+                      children: [
+                        pw.Column(
+                            children: [
+                              pw.Image(pw.MemoryImage(sig1),width: 100,height: 20,fit: pw.BoxFit.fill),
+                              pw.Image(pw.MemoryImage(sig2),width: 100,height: 20,fit: pw.BoxFit.fill),
+                            ]
+                        )
+                      ]
+                  ),
+                ),
+                pw.SizedBox(height: 4),
+                pw.Padding(
+                  padding: pw.EdgeInsets.symmetric(horizontal: 20),
+                  child:  pw.Row(
+                      mainAxisAlignment: pw.MainAxisAlignment.end,
+                      children: [
+                        pw.Text("Transmission Surgicals",style: pw.TextStyle(fontSize: 11,fontWeight: pw.FontWeight.bold,color: PdfColors.black))
+                      ]
+                  ),
                 )
               ]
-          ),
-        )
+          )
+        ]
+      )
     );
 
-    widgets.add(
-      pw.SizedBox(height: 4),
-    );
-    widgets.add(
-        pw.Padding(
-          padding: pw.EdgeInsets.symmetric(horizontal: 20),
-          child:  pw.Row(
-              mainAxisAlignment: pw.MainAxisAlignment.end,
-              children: [
-                pw.Text("Transmission Surgicals",style: pw.TextStyle(fontSize: 11,fontWeight: pw.FontWeight.bold,color: PdfColors.black))
-              ]
-          ),
-        )
-    );
+
+
+
     widgets.add(pw.SizedBox(height: 50,),);
 
     widgets.add(pw.Padding(
       padding: pw.EdgeInsets.symmetric(horizontal: 15),
-      child: pw.Text("COMMENTS OR SPECIAL INSTRUCTIONS:",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 12,color: PdfColors.black),),
+      child: pw.Text("COMMENTS OR SPECIAL INSTRUCTIONS:",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 10,color: PdfColors.black),),
     ));
     widgets.add(pw.SizedBox(height: 3,),);
     widgets.add(

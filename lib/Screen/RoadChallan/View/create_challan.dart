@@ -11,6 +11,7 @@ import 'package:number_to_words/number_to_words.dart';
 import 'package:pdf/pdf.dart';
 import 'package:transmission_surgicals/Screen/RoadChallan/Model/editableChallanModel.dart';
 import 'package:pdf/widgets.dart' as pw;
+import 'package:transmission_surgicals/Utils/global_variable.dart';
 import '../../../Utils/urls.dart';
 import '../Model/noteditableChallanModel.dart';
 
@@ -289,16 +290,31 @@ class _CreateChallanState extends State<CreateChallan> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  Image.asset("assets/logo/logo.png",width: 50,height:50,),
-                                  SizedBox(width: 8,),
-                                  Text("Transmission Surgicals", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20,color: Colors.lightBlue),),
+                                  Image.asset("assets/logo/logo3.png",  height: 70,),
+                                  SizedBox(width: 10,),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text("Transmission Surgicals", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22, color: Colors.teal),),
+
+                                      SizedBox(
+                                          width: 230,
+                                          child: Divider(height: 5,thickness: 2,color: Colors.teal,)
+                                      ),
+                                      SizedBox(height: 2,),
+                                      SizedBox(
+                                        width: 230,
+                                        child:
+                                        Center(child: Text("Sales and Service", style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14, color: Colors.teal),)),
+                                      )
+                                    ],
+                                  )
                                 ],
                               ),
                               SizedBox(height: 2,),
-                              Text("333 J.C. Bose Road, PallyShree\nSodepur, Kolkata - 700110 \nPhone : +91 0333335980722 / 7278360630 / 9836947573\nEmail : surgicaltrans@gmail.com",style: TextStyle(fontWeight: FontWeight.w500,fontSize: 14,color: Colors.black),),
+                              Text("$address\nPhone : $phone_number\nEmail : $email_id",style: TextStyle(fontWeight: FontWeight.w500,fontSize: 14,color: Colors.black),),
 
                             ],
                           ),
@@ -308,7 +324,7 @@ class _CreateChallanState extends State<CreateChallan> {
                             children: [
                               Text("Road Challan",style: GoogleFonts.alata(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.black),),
                               SizedBox(height: 5,),
-                              Text("Challan Number: $challan_no",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
+                              Text("Challan Number: Ref/Kol/TS$challan_no",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
                               Text("Challan Date: "+challan_date,style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
 
                             ],
@@ -838,20 +854,32 @@ class _CreateChallanState extends State<CreateChallan> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Transform.translate(
-                                offset: Offset(-10.0, 0.0),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Image.asset("assets/logo/logo.png",width: 50,height:50,),
-                                    SizedBox(width: 8,),
-                                    Text("Transmission Surgicals", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20,color: Colors.lightBlue),),
-                                  ],
-                                ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Image.asset("assets/logo/logo3.png",  height: 70,),
+                                  SizedBox(width: 10,),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text("Transmission Surgicals", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22, color: Colors.teal),),
+
+                                      SizedBox(
+                                          width: 230,
+                                          child: Divider(height: 5,thickness: 2,color: Colors.teal,)
+                                      ),
+                                      SizedBox(height: 2,),
+                                      SizedBox(
+                                        width: 230,
+                                        child:
+                                        Center(child: Text("Sales and Service", style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14, color: Colors.teal),)),
+                                      )
+                                    ],
+                                  )
+                                ],
                               ),
                               SizedBox(height: 2,),
-                              Text("333 J.C. Bose Road, PallyShree\nSodepur, Kolkata - 700110 \nPhone : +91 0333335980722 / 7278360630 / 9836947573\nEmail : surgicaltrans@gmail.com",style: TextStyle(fontWeight: FontWeight.w500,fontSize: 14,color: Colors.black),),
+                              Text("$address\nPhone : $phone_number\nEmail : $email_id",style: TextStyle(fontWeight: FontWeight.w500,fontSize: 14,color: Colors.black),),
 
                             ],
                           ),
@@ -861,7 +889,7 @@ class _CreateChallanState extends State<CreateChallan> {
                             children: [
                               Text("Delivery Challan",style: GoogleFonts.alata(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.black),),
                               SizedBox(height: 5,),
-                              Text("Challan Number : "+challan_no,style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
+                              Text("Challan Number : Ref/Kol/TS"+challan_no,style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
                               Text("Challan Date : "+formattedDate(challan_date),style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
 
                             ],
@@ -1020,7 +1048,7 @@ class _CreateChallanState extends State<CreateChallan> {
       var jsonData = jsonDecode(myData);
       if (jsonData['status'] == "success") {
         selectedChallanNumber = jsonData['challan_no'];
-        generatePdf(selectedChallanId, DateFormat('dd/MM/yyyy').format(DateTime.now()), recipient_controller.text, gst_no_controller.text, vehicle_no_controller.text, supply_place_controller.text, challan_items, total_quantity.toString(),received_by_controller.text, delivery_by_controller.text);
+        generatePdf(selectedChallanNumber, DateFormat('dd/MM/yyyy').format(DateTime.now()), recipient_controller.text, gst_no_controller.text, vehicle_no_controller.text, supply_place_controller.text, challan_items, total_quantity.toString(),received_by_controller.text, delivery_by_controller.text);
         setState(() {
           placeHolder = challanView(
               selectedChallanNumber,
@@ -1061,7 +1089,7 @@ class _CreateChallanState extends State<CreateChallan> {
 
   generatePdf(String challan_no, String challan_date, String recipient_details, String gst_no, String vehicle_no, String supply_place, List<notEditableChallanItem> challan_item_list, String total_qty, String received_by, String delivery_by) async {
     pdf= pw.Document();
-    final invoiceLogo = await getAssetsImage("assets/logo/logo.png");
+    final Logo = await getAssetsImage("assets/logo/logo3.png");
     List<pw.Widget> widgets = [];
     widgets.add(pw.SizedBox(height: 60,),);
 
@@ -1078,16 +1106,31 @@ class _CreateChallanState extends State<CreateChallan> {
                 mainAxisAlignment: pw.MainAxisAlignment.start,
                 children: [
                   pw.Row(
-                    crossAxisAlignment: pw.CrossAxisAlignment.center,
                     mainAxisAlignment: pw.MainAxisAlignment.start,
                     children: [
-                      pw.Image(pw.MemoryImage(invoiceLogo), width: 50,height: 50),
-                      pw.SizedBox(width: 8,),
-                      pw. Text("Transmission Surgicals", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 18,color: PdfColors.lightBlue),),
+                      pw.Image(pw.MemoryImage(Logo), height: 50),
+                      pw.SizedBox(width: 7,),
+                      pw.Column(
+                        crossAxisAlignment: pw.CrossAxisAlignment.start,
+                        children: [
+                          pw.Text("Transmission Surgicals", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 16, color: PdfColors.teal),),
+
+                          pw.SizedBox(
+                              width: 190,
+                              child: pw.Divider(height: 5,thickness: 2,color: PdfColors.teal,)
+                          ),
+                          pw.SizedBox(height: 2,),
+                          pw.SizedBox(
+                            width: 190,
+                            child:
+                            pw.Center(child: pw.Text("Sales and Service", style: pw.TextStyle(fontWeight: pw.FontWeight.normal, fontSize: 10, color: PdfColors.teal),)),
+                          )
+                        ],
+                      )
                     ],
                   ),
                   pw.SizedBox(height: 2,),
-                  pw.Text("333 J.C. Bose Road, PallyShree\nSodepur, Kolkata - 700110 \nPhone : +91 0333335980722 / 7278360630 / 9836947573\nEmail : surgicaltrans@gmail.com",style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 10,color: PdfColors.black),),
+                  pw.Text("$address \nPhone : $phone_number\nEmail : $email_id",style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 10,color: PdfColors.black),),
 
                 ],
               ),
@@ -1097,8 +1140,8 @@ class _CreateChallanState extends State<CreateChallan> {
                 children: [
                   pw.Text("Road Challan",style: pw.TextStyle(fontSize: 16,fontWeight:pw.FontWeight.bold,color: PdfColors.black),),
                   pw.SizedBox(height: 5,),
-                  pw.Text("Challan Number $challan_no",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
-                  pw.Text("Challan Date "+challan_date,style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
+                  pw.Text("Challan Number : Ref/Kol/TS$challan_no",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
+                  pw.Text("Challan Date : "+challan_date,style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
                 ],
               ),
             ],
