@@ -423,17 +423,17 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                         children: [
                           Expanded(
                             child: Container(
-                              height: 120,
+                              height: 140,
                               padding: EdgeInsets.symmetric(horizontal: 5, vertical: 3),
                               decoration: BoxDecoration(
                                 border: Border.all(color: Colors.black,width: 0.5)
                               ),
-                              child: Text("$address \nOffice Phone : $office_phone\nMobile : $phone_number\nEmail : $email_id",style: TextStyle(fontWeight: FontWeight.w500,fontSize: 14,color: Colors.black),)
+                              child: Text("$address \nOffice : $office_phone\nMobile : $phone_number\nEmail : $email_id\nPAN Number : $pan_no\nGST : $gst_no\nWebsite : $website",style: TextStyle(fontWeight: FontWeight.w500,fontSize: 13,color: Colors.black),)
                           ),
                           ),
                           SizedBox(width: 15,),
                           Expanded(child: Container(
-                            height: 120,
+                            height: 140,
                             padding: EdgeInsets.symmetric(horizontal: 5, vertical: 3),
                             decoration: BoxDecoration(
                                 border: Border.all(color: Colors.black,width: 0.5)
@@ -662,9 +662,8 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                             ),
                           ),
                           Expanded(
-                              flex: 5,
+                              flex: 6,
                               child: Container(
-                                width: 80,
                                 height: 30,
                                 decoration: BoxDecoration(
                                     border: Border(
@@ -682,7 +681,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                           Expanded(
                               flex: 3,
                               child: Container(
-                                width: 80,
+                                width: 70,
                                 height: 30,
                                 decoration: BoxDecoration(
                                     border: Border(
@@ -718,7 +717,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                           Expanded(
                               flex: 3,
                               child: Container(
-                                width: 80,
+                                width: 70,
                                 height: 30,
                                 decoration: BoxDecoration(
                                     border: Border(
@@ -826,14 +825,26 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                       bottom: BorderSide(color: Colors.blue, width: 1),
                                     ),
                                   ),
-                                  child: Center(
-                                      child: Text((index+1).toString()+".", style: TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.w500),)
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                      children: [
+                                        Text((index+1).toString()+".", style: TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.w500),),
+                                        InkWell(
+                                            onTap: (){
+                                              setState((){
+                                                invoice_data.removeAt(index);
+                                              });
+                                              calculateInvoice();
+                                            },
+                                            child: Icon(Icons.close, size: 15, color: Colors.red,)
+                                        )
+                                      ]
                                   ),
                                 ),
 
                                 /// Description ..........................
                                 Expanded(
-                                    flex: 5,
+                                    flex: 6,
                                     child: Container(
                                       padding: EdgeInsets.symmetric(horizontal: 7),
                                       width: 80,
@@ -1481,19 +1492,24 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
         generatePdf(invoice_no, DateFormat('dd/MM/yyyy').format(DateTime.now()), place_controller.text.trim(), billing_address_controller.text.trim(), shipping_address_controller.text.trim(), invoice_items, subtotal.toStringAsFixed(2), gst.toStringAsFixed(2), other_charges_controller.text, grand_total.toStringAsFixed(2), comment_controller.text.trim());
         setState(() {
           placeHolder=invoiceView(invoice_no, DateFormat('dd/MM/yyyy').format(DateTime.now()), place_controller.text.toString(), billing_address_controller.text.trim(), shipping_address_controller.text.trim(), invoice_items, subtotal.toStringAsFixed(2), gst.toStringAsFixed(2), other_charges_controller.text, grand_total.toStringAsFixed(2), comment_controller.text.trim());
-
         });
       }else{
         MotionToast.error(
           title:  Text("Message", style: TextStyle(fontWeight: FontWeight.bold),),
           description:  Text("Some error has occurred"),
         ).show(context);
+        setState(() {
+          isGenerating = false;
+        });
       }
     }else{
       MotionToast.error(
         title:  Text("Message", style: TextStyle(fontWeight: FontWeight.bold),),
         description:  Text("Some error has occurred"),
       ).show(context);
+      setState(() {
+        isGenerating = false;
+      });
 
     }
 
@@ -1556,17 +1572,17 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                         children: [
                           Expanded(
                             child: Container(
-                                height: 100,
+                                height: 130,
                                 padding: EdgeInsets.symmetric(horizontal: 5, vertical: 3),
                                 decoration: BoxDecoration(
                                     border: Border.all(color: Colors.black,width: 0.5)
                                 ),
-                                child: Text("$address \nOffice Phone : $office_phone\nMobile : $phone_number\nEmail : $email_id",style: TextStyle(fontWeight: FontWeight.w500,fontSize: 14,color: Colors.black),)
+                                child: Text("$address \nOffice : $office_phone\nMobile : $phone_number\nEmail : $email_id\nPAN Number : $pan_no\nGST : $gst_no\nWebsite : $website",style: TextStyle(fontWeight: FontWeight.w500,fontSize: 13,color: Colors.black),)
                             ),
                           ),
                           SizedBox(width: 15,),
                           Expanded(child: Container(
-                            height: 100,
+                            height: 130,
                             padding: EdgeInsets.symmetric(horizontal: 5, vertical: 3),
                             decoration: BoxDecoration(
                                 border: Border.all(color: Colors.black,width: 0.5)
@@ -1725,7 +1741,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                     color: Colors.blue.withOpacity(0.3)
                                 ),
                                 child: Center(
-                                    child: Text("Product Name", style: TextStyle(color: Colors.blue, fontSize: 14, fontWeight: FontWeight.w500),)
+                                    child: Text("Product Name", style: TextStyle(color: Colors.blue, fontSize: 13, fontWeight: FontWeight.w500),)
                                 ),
                               )),
 
@@ -2327,21 +2343,21 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                 pw.Expanded(
                   child: pw.Container(
                     padding: pw.EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                    height: 90,
+                    height: 110,
                     decoration: pw.BoxDecoration(
                       border: pw.Border.all(
                         width: 0.5,
                         color: PdfColors.black
                       )
                     ),
-                    child: pw.Text("$address\nOffice Phone : $office_phone\nMobile : $phone_number\nEmail : $email_id",style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 10,color: PdfColors.black),),
+                    child: pw.Text("$address\nOffice : $office_phone\nMobile : $phone_number\nEmail : $email_id\nPAN Number : $pan_no\nGST : $gst_no\nWebsite : $website",style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 10,color: PdfColors.black),),
                   )
                 ),
                 pw.SizedBox(width: 10),
                 pw.Expanded(
                     child: pw.Container(
                         padding: pw.EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                        height: 90,
+                        height: 110,
                         decoration: pw.BoxDecoration(
                             border: pw.Border.all(
                                 width: 0.5,
@@ -2503,7 +2519,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
             ),
             columnWidths: {
               0:pw.FlexColumnWidth(1),
-              1:pw.FlexColumnWidth(3),
+              1:pw.FlexColumnWidth(4),
               2:pw.FlexColumnWidth(2),
               3:pw.FlexColumnWidth(2),
               4:pw.FlexColumnWidth(2),
@@ -2522,16 +2538,70 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
 
     widgets.add(
         pw.Padding(
-          padding: pw.EdgeInsets.symmetric(horizontal: 20),
+          padding: pw.EdgeInsets.symmetric(horizontal: 15),
           child: pw.Row(
-              mainAxisAlignment: pw.MainAxisAlignment.end,
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
+                pw.Container(
+                  height: 60,
+                  padding: pw.EdgeInsets.symmetric(horizontal: 5,vertical: 5),
+                  decoration: pw.BoxDecoration(
+                      border: pw.Border.all(color: PdfColors.black, width: 0.5)
+                  ),
+                  child: pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
+                    children: [
+                      pw.Text("Bank Details : ", style: pw.TextStyle(color: PdfColors.black,fontSize: 9, fontWeight: pw.FontWeight.bold),),
+                      pw.SizedBox(height: 3),
+                      pw.Row(
+                        mainAxisSize: pw.MainAxisSize.min,
+                          children: [
+                            pw.Text("Account Number : $bank_ac_number",
+                                style: pw.TextStyle(color: PdfColors.black,fontSize: 8, fontWeight: pw.FontWeight.normal)
+                            ),
+                            pw.SizedBox(width: 20),
+                            pw.Text("IFSC Code : $ifsc_code",
+                                style: pw.TextStyle(color: PdfColors.black,fontSize: 8, fontWeight: pw.FontWeight.normal)
+                            ),
+
+                          ]
+                      ),
+                      pw.SizedBox(height: 3),
+                      pw.Row(
+                          mainAxisSize: pw.MainAxisSize.min,
+                          children: [
+
+                            pw.Text("Bank Name : $bank_name",
+                                style: pw.TextStyle(color: PdfColors.black,fontSize: 8, fontWeight: pw.FontWeight.normal)
+                            ),
+                            pw.SizedBox(width: 20),
+                            pw.Text("Branch Name : $bank_branch",
+                                style: pw.TextStyle(color: PdfColors.black,fontSize: 8, fontWeight: pw.FontWeight.normal)
+                            ),
+
+                          ]
+                      ),
+                      pw.SizedBox(height: 3),
+                      pw.Text("A/C Holder Name : $bank_ac_holder_name",
+                          style: pw.TextStyle(color: PdfColors.black,fontSize: 8, fontWeight: pw.FontWeight.normal)
+                      ),
+
+
+
+
+
+
+                    ],
+                  ),
+                ),
+                pw.SizedBox(width: 10),
                 pw.Column(
                     children: [
                       ///Subtotal ...........
                       pw.Container(
                           padding: pw.EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-                          width: 218,
+                          width: 200,
                           decoration: pw.BoxDecoration(
                               border: pw.Border.all(color: PdfColors.blue, width: 0.7)
                           ),
@@ -2542,17 +2612,17 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                   child: pw.Row(
                                       mainAxisAlignment: pw.MainAxisAlignment.end,
                                       children: [
-                                        pw.Text("Subtotal",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.bold,color: PdfColors.black))
+                                        pw.Text("Subtotal",style: pw.TextStyle(fontSize: 9,fontWeight: pw.FontWeight.bold,color: PdfColors.black))
                                       ]
                                   ),
                                 ),
-                                pw.Text(":",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.bold,color: PdfColors.black)),
+                                pw.Text(":",style: pw.TextStyle(fontSize: 9,fontWeight: pw.FontWeight.bold,color: PdfColors.black)),
                                 pw.Expanded(
                                   flex: 2,
                                   child: pw.Row(
                                       mainAxisAlignment: pw.MainAxisAlignment.end,
                                       children: [
-                                        pw.Text("$subtotal",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.bold,color: PdfColors.black))
+                                        pw.Text("$subtotal",style: pw.TextStyle(fontSize: 9,fontWeight: pw.FontWeight.bold,color: PdfColors.black))
                                       ]
                                   ),
                                 )
@@ -2564,7 +2634,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                       ///GST ...........
                       pw.Container(
                           padding: pw.EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-                          width: 218,
+                          width: 200,
                           decoration: pw.BoxDecoration(
                               border: pw.Border.all(color: PdfColors.blue, width: 0.7)
                           ),
@@ -2575,17 +2645,17 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                   child: pw.Row(
                                       mainAxisAlignment: pw.MainAxisAlignment.end,
                                       children: [
-                                        pw.Text("GST",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.bold,color: PdfColors.black))
+                                        pw.Text("GST",style: pw.TextStyle(fontSize: 9,fontWeight: pw.FontWeight.bold,color: PdfColors.black))
                                       ]
                                   ),
                                 ),
-                                pw.Text(":",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.bold,color: PdfColors.black)),
+                                pw.Text(":",style: pw.TextStyle(fontSize: 9,fontWeight: pw.FontWeight.bold,color: PdfColors.black)),
                                 pw.Expanded(
                                   flex: 2,
                                   child: pw.Row(
                                       mainAxisAlignment: pw.MainAxisAlignment.end,
                                       children: [
-                                        pw.Text("$gst",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.bold,color: PdfColors.black))
+                                        pw.Text("$gst",style: pw.TextStyle(fontSize: 9,fontWeight: pw.FontWeight.bold,color: PdfColors.black))
                                       ]
                                   ),
                                 )
@@ -2596,7 +2666,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                       ///Other charges ...........
                       pw.Container(
                           padding: pw.EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-                          width: 218,
+                          width: 200,
                           decoration: pw.BoxDecoration(
                               border: pw.Border.all(color: PdfColors.blue, width: 0.7)
                           ),
@@ -2607,17 +2677,17 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                   child: pw.Row(
                                       mainAxisAlignment: pw.MainAxisAlignment.end,
                                       children: [
-                                        pw.Text("Other charges",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.bold,color: PdfColors.black))
+                                        pw.Text("Other charges",style: pw.TextStyle(fontSize: 9,fontWeight: pw.FontWeight.bold,color: PdfColors.black))
                                       ]
                                   ),
                                 ),
-                                pw.Text(":",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.bold,color: PdfColors.black)),
+                                pw.Text(":",style: pw.TextStyle(fontSize: 9,fontWeight: pw.FontWeight.bold,color: PdfColors.black)),
                                 pw.Expanded(
                                   flex: 2,
                                   child: pw.Row(
                                       mainAxisAlignment: pw.MainAxisAlignment.end,
                                       children: [
-                                        pw.Text("$other_charges",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.bold,color: PdfColors.black))
+                                        pw.Text("$other_charges",style: pw.TextStyle(fontSize: 9,fontWeight: pw.FontWeight.bold,color: PdfColors.black))
                                       ]
                                   ),
                                 )
@@ -2629,7 +2699,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                       /// Total
                       pw.Container(
                           padding: pw.EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-                          width: 218,
+                          width: 200,
                           decoration: pw.BoxDecoration(
                               border: pw.Border.all(color: PdfColors.blue, width: 0.7)
                           ),
@@ -2640,19 +2710,19 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                   child: pw.Row(
                                       mainAxisAlignment: pw.MainAxisAlignment.end,
                                       children: [
-                                        pw.Text("Total Amount",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.bold,color: PdfColors.black))
+                                        pw.Text("Total Amount",style: pw.TextStyle(fontSize: 9,fontWeight: pw.FontWeight.bold,color: PdfColors.black))
                                       ]
                                   ),
                                 ),
 
-                                pw.Text(":",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.bold,color: PdfColors.black)),
+                                pw.Text(":",style: pw.TextStyle(fontSize: 9,fontWeight: pw.FontWeight.bold,color: PdfColors.black)),
 
                                 pw.Expanded(
                                   flex: 2,
                                   child: pw.Row(
                                       mainAxisAlignment: pw.MainAxisAlignment.end,
                                       children: [
-                                        pw.Text("$grand_total",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.bold,color: PdfColors.black))
+                                        pw.Text("$grand_total",style: pw.TextStyle(fontSize: 9,fontWeight: pw.FontWeight.bold,color: PdfColors.black))
                                       ]
                                   ),
                                 )
@@ -2680,7 +2750,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
             pw.Container(
                 padding: pw.EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                 color: PdfColors.grey200,
-                child: pw.Text("Total : "+amountToWords(int.parse(due_amount.round().toString())), style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold, color: PdfColors.grey900),)
+                child: pw.Text("Total : "+amountToWords(int.parse(due_amount.round().toString())), style: pw.TextStyle(fontSize: 9, fontWeight: pw.FontWeight.bold, color: PdfColors.grey900),)
             ),
           ],
         ),
@@ -2694,31 +2764,8 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
 
     widgets.add(
       pw.Row(
-        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: pw.MainAxisAlignment.end,
         children: [
-          pw.Padding(
-            padding: pw.EdgeInsets.symmetric(horizontal: 20),
-            child: pw.Column(
-           crossAxisAlignment: pw.CrossAxisAlignment.start,
-           children: [
-          pw.Text("Bank Details : ", style: pw.TextStyle(color: PdfColors.black,fontSize: 10, fontWeight: pw.FontWeight.bold),),
-          pw.Text("A/C Holder Name : $bank_ac_holder_name",
-              style: pw.TextStyle(color: PdfColors.black,fontSize: 9, fontWeight: pw.FontWeight.normal)
-          ),
-          pw.Text("Bank Name : $bank_name",
-              style: pw.TextStyle(color: PdfColors.black,fontSize: 9, fontWeight: pw.FontWeight.normal)
-          ),
-          pw.Text("Account Number : $bank_ac_number",
-              style: pw.TextStyle(color: PdfColors.black,fontSize: 9, fontWeight: pw.FontWeight.normal)
-          ),
-          pw.Text("IFSC Code : $ifsc_code",
-              style: pw.TextStyle(color: PdfColors.black,fontSize: 9, fontWeight: pw.FontWeight.normal)
-          ),
-
-
-        ],
-      ),
-          ),
 
 
           pw.Column(
