@@ -10,6 +10,7 @@ import 'package:motion_toast/motion_toast.dart';
 import 'package:number_to_words/number_to_words.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
+import '../../../Utils/global_variable.dart';
 import '../../../Utils/urls.dart';
 import '../Model/invoice_model.dart';
 import '../Model/noteditable_invoice_item.dart';
@@ -30,7 +31,7 @@ class _InvoiceListState extends State<InvoiceList> {
   int selectedIndex=0;
   String selectedInvoiceId="", selectedInvoiceNumber="", selectedInvoiceShippingAddress="", selectedInvoiceBillingAddress="", selectedInvoiceSubtotal="";
   String selectedInvoiceGst="", selectedInvoiceOther_charges="", selectedInvoiceGrand_total="", selectedInvoicePaid="";
-  String selectedInvoiceDue="", selectedInvoiceDate="", selectedInvoiceCustom_note="";
+  String selectedInvoiceDue="", selectedInvoiceDate="", selectedInvoiceCustom_note="", selectedInvoicePlace="";
   late pw.Document pdf;
   late Uint8List pdf_bytes;
 
@@ -172,17 +173,24 @@ class _InvoiceListState extends State<InvoiceList> {
                                           Row(
                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                             children: [
-                                              Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(invoice_list[index].billingAddress.toString(), style: TextStyle(fontWeight: FontWeight.w500, color: Colors.white.withOpacity(0.90), fontSize: 13),),
-                                                ],
+                                              Expanded(
+                                                flex: 7,
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(invoice_list[index].billingAddress.toString(), style: TextStyle(fontWeight: FontWeight.w500, color: Colors.white.withOpacity(0.90), fontSize: 13),maxLines: 5,overflow: TextOverflow.fade),
+                                                  ],
+                                                ),
                                               ),
-                                              Column(
-                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                children: [
-                                                  Text("₹"+invoice_list[index].grandTotal.toString(), style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),)
-                                                ],
+                                              Expanded(
+                                                flex: 3,
+                                                child: Column(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                                  children: [
+                                                    Text("₹"+invoice_list[index].grandTotal.toString(), style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold),)
+                                                  ],
+                                                ),
                                               )
                                             ],
                                           )
@@ -318,7 +326,7 @@ class _InvoiceListState extends State<InvoiceList> {
                                     description:  Text("Please wait, downloading..."),
                                   ).show(context);
                                   Timer(Duration(milliseconds: 300),(){
-                                    generatePdf("download",selectedInvoiceNumber, selectedInvoiceBillingAddress, selectedInvoiceShippingAddress,  invoice_details_list, selectedInvoiceSubtotal, selectedInvoiceGst, selectedInvoiceOther_charges, selectedInvoiceGrand_total, selectedInvoicePaid, selectedInvoiceDue, selectedInvoiceCustom_note);
+                                    generatePdf("download", selectedInvoiceNumber, selectedInvoiceDate, selectedInvoicePlace, selectedInvoiceBillingAddress, selectedInvoiceShippingAddress, invoice_details_list, selectedInvoiceSubtotal, selectedInvoiceGst, selectedInvoiceOther_charges, selectedInvoiceGrand_total, selectedInvoiceCustom_note);
                                   });
                                 },
                                 child: Container(
@@ -343,7 +351,8 @@ class _InvoiceListState extends State<InvoiceList> {
                                     description:  Text("Initializing printer ..."),
                                   ).show(context);
                                   Timer(Duration(milliseconds: 300),(){
-                                    generatePdf("print",selectedInvoiceNumber, selectedInvoiceBillingAddress, selectedInvoiceShippingAddress,  invoice_details_list, selectedInvoiceSubtotal, selectedInvoiceGst, selectedInvoiceOther_charges, selectedInvoiceGrand_total, selectedInvoicePaid, selectedInvoiceDue, selectedInvoiceCustom_note);
+                                    generatePdf("print", selectedInvoiceNumber, selectedInvoiceDate, selectedInvoicePlace, selectedInvoiceBillingAddress, selectedInvoiceShippingAddress, invoice_details_list, selectedInvoiceSubtotal, selectedInvoiceGst, selectedInvoiceOther_charges, selectedInvoiceGrand_total, selectedInvoiceCustom_note);
+
                                   });
 
                                 },
@@ -381,7 +390,7 @@ class _InvoiceListState extends State<InvoiceList> {
                             ],
                           ),
                           SizedBox(height: 15,),
-                          invoiceView()
+                          invoiceView("KOL/TS${DateFormat('yyyy').format(DateTime.now())}-$selectedInvoiceNumber", selectedInvoiceDate, selectedInvoicePlace, selectedInvoiceBillingAddress, selectedInvoiceShippingAddress, invoice_details_list, selectedInvoiceSubtotal, selectedInvoiceGst, selectedInvoiceOther_charges, selectedInvoiceGrand_total, selectedInvoiceCustom_note)
                         ],
                       ),
                     )
@@ -401,7 +410,7 @@ class _InvoiceListState extends State<InvoiceList> {
   }
 
 
-  Widget invoiceView(){
+  Widget invoiceView(String invoice_number,String invoice_date, String place_name, String billing_address, String shipping_address, List<noteditableInvoiceItem> invoice_item_details, String subtotal, String gst, String other_charges, String grand_total, String comments){
     return Expanded(
       child: ListView(
         shrinkWrap: true,
@@ -410,7 +419,7 @@ class _InvoiceListState extends State<InvoiceList> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                width:MediaQuery.of(context).size.width*0.5,
+                width:800,
                 decoration: BoxDecoration(
                   color: Colors.white,
                 ),
@@ -423,64 +432,166 @@ class _InvoiceListState extends State<InvoiceList> {
                     children: [
                       SizedBox(height: 60,),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
+                          Image.asset("assets/logo/logo3.png",  height: 70,),
+                          SizedBox(width: 10,),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Transform.translate(
-                                offset: Offset(-10.0, 0.0),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Image.asset("assets/logo/logo.png",width: 50,height:50,),
-                                    SizedBox(width: 8,),
-                                    Text("Transmission Surgicals", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20,color: Colors.lightBlue),),
-                                  ],
-                                ),
+                              Text("Transmission Surgicals", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22, color: Colors.teal),),
+
+                              SizedBox(
+                                  width: 230,
+                                  child: Divider(height: 5,thickness: 2,color: Colors.teal,)
                               ),
                               SizedBox(height: 2,),
-                              Text("333 J.C. Bose Road, PallyShree\nSodepur, Kolkata - 700110 \nPhone : +91 0333335980722 / 7278360630 / 9836947573\nEmail : surgicaltrans@gmail.com",style: TextStyle(fontWeight: FontWeight.w500,fontSize: 14,color: Colors.black),),
-
+                              SizedBox(
+                                width: 230,
+                                child:
+                                Center(child: Text("Sales and Service", style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14, color: Colors.teal),)),
+                              )
                             ],
-                          ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text("TAX INVOICE",style: GoogleFonts.alata(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.black),),
-                              SizedBox(height: 5,),
-                              Text("Invoice Number : "+selectedInvoiceNumber,style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
-                              Text("Invoice Date : "+formattedDate(selectedInvoiceDate),style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
-
-                            ],
-                          ),
+                          )
                         ],
                       ),
 
-                      SizedBox(height: 30,),
+                      SizedBox(height: 15,),
+
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text("Billing Address :",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16,color: Colors.black),),
-                                Text(selectedInvoiceBillingAddress,style: TextStyle(fontWeight: FontWeight.w500,fontSize: 13,color: Colors.black),),
-                              ],
+                            child: Container(
+                                height: 130,
+                                padding: EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+                                decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.black,width: 0.5)
+                                ),
+                                child: Text("$address \nOffice : $office_phone\nMobile : $phone_number\nEmail : $email_id\nPAN Number : $pan_no\nGST : $gst_no\nWebsite : $website",style: TextStyle(fontWeight: FontWeight.w500,fontSize: 13,color: Colors.black),)
                             ),
                           ),
-                          Expanded(
+                          SizedBox(width: 15,),
+                          Expanded(child: Container(
+                            height: 130,
+                            padding: EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+                            decoration: BoxDecoration(
+                                border: Border.all(color: Colors.black,width: 0.5)
+                            ),
                             child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
-                                Text("Shipping Address :",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16,color: Colors.black),),
-                                Text(selectedInvoiceShippingAddress,style: TextStyle(fontWeight: FontWeight.w500,fontSize: 13,color: Colors.black),),
+                                Text("TAX INVOICE",style: GoogleFonts.alata(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.black),),
+                                SizedBox(height: 5,),
+
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Container(
+                                        width: 100,
+                                        child: Text("Invoice Number",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),)),
+                                    Text(" : ",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
+                                    Container(
+                                        width: 130,
+                                        child: Text(invoice_number,style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),)),
+                                  ],
+                                ),
+
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Container(
+                                        width: 100,
+                                        child: Text("Invoice Date",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),)),
+                                    Text(" : ",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
+                                    Container(
+                                        width: 130,
+                                        child: Text(DateFormat('dd/MM/yyyy').format(DateTime.now()),style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),)
+                                    ),
+                                  ],
+                                ),
+
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Container(
+                                        width: 100,
+                                        child: Text("GST",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),)),
+                                    Text(" : ",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
+                                    Container(
+                                        width: 130,
+                                        child: Text(gst_no,style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),)
+                                    ),
+                                  ],
+                                ),
+
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Container(
+                                        width: 100,
+                                        child: Text("Place",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black))
+                                    ),
+                                    Text(" : ",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
+                                    Container(
+                                      width: 130,
+                                      child: Text(place_name,style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
+                                    )
+                                  ],
+                                )
+
+
+
                               ],
+                            ),
+                          ),)
+                        ],
+                      ),
+
+                      SizedBox(height: 15,),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Container(
+                              height: 130,
+                              padding: EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.black87,width: 0.5)
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text("Billing Address :",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 14,color: Colors.black),),
+                                  SizedBox(height: 5,),
+                                  Text(billing_address,style: TextStyle(fontWeight: FontWeight.w500,fontSize: 12,color: Colors.black),),
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 15,),
+                          Expanded(
+                            child: Container(
+                              height: 130,
+                              padding: EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.black87,width: 0.5)
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text("Shipping Address :",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 14,color: Colors.black),),
+                                  SizedBox(height: 5,),
+                                  Text(shipping_address,style: TextStyle(fontWeight: FontWeight.w500,fontSize: 12,color: Colors.black),),
+                                ],
+                              ),
                             ),
                           )
                         ],
@@ -488,99 +599,508 @@ class _InvoiceListState extends State<InvoiceList> {
 
                       SizedBox(height: 30,),
 
+                      Row(
+                        children: [
+                          ///Sl no................
+                          Container(
+                            width: 60,
+                            height: 30,
+                            decoration: BoxDecoration(
+                                border: Border(
+                                  left: BorderSide(color: Colors.blue, width: 1),
+                                  top: BorderSide(color: Colors.blue, width: 1),
+                                  bottom: BorderSide(color: Colors.blue, width: 1),
+                                ),
+                                color: Colors.blue.withOpacity(0.3)
+                            ),
+                            child: Center(
+                                child: Text("Sl. No.", style: TextStyle(color: Colors.blue, fontSize: 14, fontWeight: FontWeight.w400),)
+                            ),
+                          ),
 
-                      DataTable(
-                        columns: [
-                          DataColumn(label: Text('Sl. No.'),),
-                          DataColumn(label: Text('Description')),
-                          DataColumn(label: Text('HSN/SAC')),
-                          DataColumn(label: Text('Quantity')),
-                          DataColumn(label: Text('Price')),
-                          DataColumn(label: Text('GST')),
-                          DataColumn(label: Text('Total')),
+                          ///Description ........................
+                          Expanded(
+                              flex: 5,
+                              child: Container(
+                                width: 80,
+                                height: 30,
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                      left: BorderSide(color: Colors.blue, width: 1),
+                                      top: BorderSide(color: Colors.blue, width: 1),
+                                      bottom: BorderSide(color: Colors.blue, width: 1),
+                                    ),
+                                    color: Colors.blue.withOpacity(0.3)
+                                ),
+                                child: Center(
+                                    child: Text("Product Name", style: TextStyle(color: Colors.blue, fontSize: 13, fontWeight: FontWeight.w500),)
+                                ),
+                              )),
+
+                          ///HSN/SAC ........................
+                          Expanded(
+                              flex: 3,
+                              child: Container(
+                                width: 80,
+                                height: 30,
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                      left: BorderSide(color: Colors.blue, width: 1),
+                                      top: BorderSide(color: Colors.blue, width: 1),
+                                      bottom: BorderSide(color: Colors.blue, width: 1),
+                                    ),
+                                    color: Colors.blue.withOpacity(0.3)
+                                ),
+                                child: Center(
+                                    child: Text("HSN/SAC", style: TextStyle(color: Colors.blue, fontSize: 14, fontWeight: FontWeight.w500),)
+                                ),
+                              )),
+
+                          ///Price ...........................
+                          Expanded(
+                              flex: 3,
+                              child: Container(
+                                width: 80,
+                                height: 30,
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                      left: BorderSide(color: Colors.blue, width: 1),
+                                      top: BorderSide(color: Colors.blue, width: 1),
+                                      bottom: BorderSide(color: Colors.blue, width: 1),
+                                    ),
+                                    color: Colors.blue.withOpacity(0.3)
+                                ),
+                                child: Center(
+                                    child: Text("Price", style: TextStyle(color: Colors.blue, fontSize: 14, fontWeight: FontWeight.w500),)
+                                ),
+                              )),
+
+                          ///Quantity ....................
+                          Expanded(
+                              flex: 3,
+                              child: Container(
+                                width: 80,
+                                height: 30,
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                      left: BorderSide(color: Colors.blue, width: 1),
+                                      top: BorderSide(color: Colors.blue, width: 1),
+                                      bottom: BorderSide(color: Colors.blue, width: 1),
+                                    ),
+                                    color: Colors.blue.withOpacity(0.3)
+                                ),
+                                child: Center(
+                                    child: Text("Quantity", style: TextStyle(color: Colors.blue, fontSize: 14, fontWeight: FontWeight.w500),)
+                                ),
+                              )),
+
+
+                          ///Gst ....................
+                          Expanded(
+                              flex: 3,
+                              child: Container(
+                                width: 80,
+                                height: 30,
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                      left: BorderSide(color: Colors.blue, width: 1),
+                                      top: BorderSide(color: Colors.blue, width: 1),
+                                      bottom: BorderSide(color: Colors.blue, width: 1),
+                                    ),
+                                    color: Colors.blue.withOpacity(0.3)
+                                ),
+                                child: Center(
+                                    child: Text("GST", style: TextStyle(color: Colors.blue, fontSize: 14, fontWeight: FontWeight.w500),)
+                                ),
+                              )),
+
+                          ///CGst ....................
+                          Expanded(
+                              flex: 3,
+                              child: Container(
+                                width: 80,
+                                height: 30,
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                      left: BorderSide(color: Colors.blue, width: 1),
+                                      top: BorderSide(color: Colors.blue, width: 1),
+                                      bottom: BorderSide(color: Colors.blue, width: 1),
+                                    ),
+                                    color: Colors.blue.withOpacity(0.3)
+                                ),
+                                child: Center(
+                                    child: Text("CGST", style: TextStyle(color: Colors.blue, fontSize: 14, fontWeight: FontWeight.w500),)
+                                ),
+                              )),
+
+                          ///SGst ....................
+                          Expanded(
+                              flex: 3,
+                              child: Container(
+                                width: 80,
+                                height: 30,
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                      left: BorderSide(color: Colors.blue, width: 1),
+                                      top: BorderSide(color: Colors.blue, width: 1),
+                                      bottom: BorderSide(color: Colors.blue, width: 1),
+                                    ),
+                                    color: Colors.blue.withOpacity(0.3)
+                                ),
+                                child: Center(
+                                    child: Text("SGST", style: TextStyle(color: Colors.blue, fontSize: 14, fontWeight: FontWeight.w500),)
+                                ),
+                              )),
+
+                          ///Total ..................
+                          Expanded(
+                              flex: 3,
+                              child: Container(
+                                width: 80,
+                                height: 30,
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                      left: BorderSide(color: Colors.blue, width: 1),
+                                      right: BorderSide(color: Colors.blue, width: 1),
+                                      top: BorderSide(color: Colors.blue, width: 1),
+                                      bottom: BorderSide(color: Colors.blue, width: 1),
+                                    ),
+                                    color: Colors.blue.withOpacity(0.3)
+                                ),
+                                child: Center(
+                                    child: Text("Total", style: TextStyle(color: Colors.blue, fontSize: 14, fontWeight: FontWeight.w500),)
+                                ),
+                              )),
                         ],
-                        rows: [
-                          ...invoice_details_list.asMap().entries.map((item) {
-                            return DataRow(
-                              cells: [
-                                DataCell(Text((item.key + 1).toString() + ".")),
-                                DataCell(Text(item.value.description.toString())),
-                                DataCell(Text(item.value.hsn.toString())),
-                                DataCell(Text(item.value.quantity.toString())),
-                                DataCell(Text(item.value.price.toString())),
-                                DataCell(Text(item.value.sgst.toString()+"\n"+item.value.cgst.toString()+"%")),
-                                DataCell(Text(item.value.totalAmount.toString())),
+                      ),
+                      ListView.builder(
+                          itemCount: invoice_item_details.length,
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemBuilder: (context, index){
+                            return Row(
+                              children: [
+                                /// Sl. No. .........................
+                                Container(
+                                  width: 60,
+                                  height: 80,
+                                  decoration: BoxDecoration(
+                                    border: Border(
+                                      left: BorderSide(color: Colors.blue, width: 1),
+                                      bottom: BorderSide(color: Colors.blue, width: 1),
+                                    ),
+                                  ),
+                                  child: Center(
+                                      child: Text((index+1).toString()+".", style: TextStyle(color: Colors.black, fontSize: 12, fontWeight: FontWeight.w500),)
+                                  ),
+                                ),
+
+                                /// Description .........................
+                                Expanded(
+                                    flex: 5,
+                                    child: Container(
+                                      padding: EdgeInsets.all(5),
+                                      width: 80,
+                                      height: 80,
+                                      decoration: BoxDecoration(
+                                        border: Border(
+                                          left: BorderSide(color: Colors.blue, width: 1),
+                                          bottom: BorderSide(color: Colors.blue, width: 1),
+                                        ),
+
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.end,
+                                        children: [
+                                          Expanded(child: Text(invoice_item_details[index].description.toString(),style: TextStyle(fontSize: 12, color: Colors.black,fontWeight: FontWeight.w500,),softWrap: true, overflow: TextOverflow.fade,)),
+                                        ],
+                                      ),
+                                    )),
+
+                                /// HSN /SAC ............................
+                                Expanded(
+                                    flex: 3,
+                                    child: Container(
+                                      padding: EdgeInsets.all(5),
+                                      width: 80,
+                                      height: 80,
+                                      decoration: BoxDecoration(
+                                        border: Border(
+                                          left: BorderSide(color: Colors.blue, width: 1),
+                                          bottom: BorderSide(color: Colors.blue, width: 1),
+                                        ),
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.end,
+                                        children: [
+                                          Expanded(child: Text(invoice_item_details[index].hsn.toString(),style: TextStyle(fontSize: 12, color: Colors.black,fontWeight: FontWeight.w500),)),
+                                        ],
+                                      ),
+                                    )),
+
+                                ///Price ..............................
+                                Expanded(
+                                    flex: 3,
+                                    child: Container(
+                                      padding: EdgeInsets.all(5),
+                                      width: 80,
+                                      height: 80,
+                                      decoration: BoxDecoration(
+                                        border: Border(
+                                          left: BorderSide(color: Colors.blue, width: 1),
+                                          bottom: BorderSide(color: Colors.blue, width: 1),
+                                        ),
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.end,
+                                        children: [
+                                          Text(invoice_item_details[index].price.toString(),style: TextStyle(fontSize: 12, color: Colors.black,fontWeight: FontWeight.w500),),
+                                        ],
+                                      ),
+                                    )),
+
+                                ///Quantity ............................
+                                Expanded(
+                                    flex: 3,
+                                    child: Container(
+                                      padding: EdgeInsets.all(5),
+                                      width: 80,
+                                      height: 80,
+                                      decoration: BoxDecoration(
+                                        border: Border(
+                                          left: BorderSide(color: Colors.blue, width: 1),
+                                          bottom: BorderSide(color: Colors.blue, width: 1),
+                                        ),
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.end,
+                                        children: [
+                                          Text(invoice_item_details[index].quantity.toString(),style: TextStyle(fontSize: 12, color: Colors.black,fontWeight: FontWeight.w500),),
+                                        ],
+                                      ),
+                                    )),
+
+
+                                ///Gst ............................
+                                Expanded(
+                                    flex: 3,
+                                    child: Container(
+                                      padding: EdgeInsets.all(5),
+                                      width: 80,
+                                      height: 80,
+                                      decoration: BoxDecoration(
+                                        border: Border(
+                                          left: BorderSide(color: Colors.blue, width: 1),
+                                          bottom: BorderSide(color: Colors.blue, width: 1),
+                                        ),
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.end,
+                                        children: [
+                                          Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              Text(invoice_item_details[index].gst.toString(),style: TextStyle(fontSize: 12, color: Colors.black,fontWeight: FontWeight.w500),),
+                                              SizedBox(height: 2,),
+                                              Text(invoice_item_details[index].gst_percentage.toString()+"%",style: TextStyle(fontSize: 12, color: Colors.black,fontWeight: FontWeight.w500),),
+                                            ],
+                                          )                                        ],
+                                      ),
+                                    )),
+
+                                ///CGst ............................
+                                Expanded(
+                                    flex: 3,
+                                    child: Container(
+                                      padding: EdgeInsets.all(5),
+                                      width: 80,
+                                      height: 80,
+                                      decoration: BoxDecoration(
+                                        border: Border(
+                                          left: BorderSide(color: Colors.blue, width: 1),
+                                          bottom: BorderSide(color: Colors.blue, width: 1),
+                                        ),
+                                      ),
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.end,
+                                        children: [
+                                          Text(invoice_item_details[index].cgst.toString(),style: TextStyle(fontSize: 12, color: Colors.black,fontWeight: FontWeight.w500),),
+                                          SizedBox(height: 3,),
+                                          Text("6%",style: TextStyle(fontSize: 12, color: Colors.black,fontWeight: FontWeight.w500),),
+                                        ],
+                                      ),
+                                    )),
+
+                                ///SGst ............................
+                                Expanded(
+                                    flex: 3,
+                                    child: Container(
+                                      padding: EdgeInsets.all(5),
+                                      width: 80,
+                                      height: 80,
+                                      decoration: BoxDecoration(
+                                        border: Border(
+                                          left: BorderSide(color: Colors.blue, width: 1),
+                                          bottom: BorderSide(color: Colors.blue, width: 1),
+                                        ),
+                                      ),
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.end,
+                                        children: [
+                                          Text(invoice_item_details[index].sgst.toString(),style: TextStyle(fontSize: 12, color: Colors.black,fontWeight: FontWeight.w500),),
+                                          SizedBox(height: 3,),
+                                          Text("6%",style: TextStyle(fontSize: 12, color: Colors.black,fontWeight: FontWeight.w500),),
+                                        ],
+                                      ),
+                                    )),
+
+                                ///Total ............................
+                                Expanded(
+                                    flex: 3,
+                                    child: Container(
+                                      padding: EdgeInsets.all(5),
+                                      width: 80,
+                                      height: 80,
+                                      decoration: BoxDecoration(
+                                        border: Border(
+                                          left: BorderSide(color: Colors.blue, width: 1),
+                                          right: BorderSide(color: Colors.blue, width: 1),
+                                          bottom: BorderSide(color: Colors.blue, width: 1),
+                                        ),
+                                      ),
+                                      child: Row(
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        mainAxisAlignment: MainAxisAlignment.end,
+                                        children: [
+                                          Text(invoice_item_details[index].totalAmount.toString(),style: TextStyle(fontSize: 12, color: Colors.black,fontWeight: FontWeight.w500),),
+                                        ],
+                                      ),
+                                    )),
                               ],
                             );
-                          }).toList(),
-                        ],
-
-                        columnSpacing: 10,
-                        headingRowColor: MaterialStateProperty.resolveWith<Color?>((states) => Colors.blue.withOpacity(0.3)),
-                        border: TableBorder.all(color: Colors.blue,width: 1),
-                        headingRowHeight: 30,
-                        headingTextStyle: TextStyle(fontWeight: FontWeight.bold),
-
-
+                          }
                       ),
-
                       SizedBox(height: 5,),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("Subtotal", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                              SizedBox(height: 2,),
-                              Text("GST", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                              SizedBox(height: 2,),
-                              Text("Other charges", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                              SizedBox(height: 2,),
-                              Text("Grand Total", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                              SizedBox(height: 2,),
-                              Text("Paid Amount", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                              SizedBox(height: 2,),
-                              Text("Due Amount", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                            ],
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(" : ", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                              SizedBox(height: 2,),
-                              Text(" : ", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                              SizedBox(height: 2,),
-                              Text(" : ", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                              SizedBox(height: 2,),
-                              Text(" : ", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                              SizedBox(height: 2,),
-                              Text(" : ", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                              SizedBox(height: 2,),
-                              Text(" : ", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                            ],
-                          ),
+                              /// Subtotal
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Container(
+                                    width: 250,
+                                    padding: EdgeInsets.symmetric(vertical: 3, horizontal: 5),
+                                    decoration: BoxDecoration(
+                                        border: Border.all(color: Colors.black,width: 0.5)
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Expanded(child: Text("Subtotal", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: Colors.black),)),
+                                        Text(" : ", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: Colors.black),),
+                                        Expanded(child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.end,
+                                          children: [
+                                            Text(subtotal, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: Colors.black),),
+                                          ],
+                                        )),
 
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text(selectedInvoiceSubtotal, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                              SizedBox(height: 2,),
-                              Text(selectedInvoiceGst, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                              SizedBox(height: 2,),
-                              Text(selectedInvoiceOther_charges, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                              SizedBox(height: 2,),
-                              Text(selectedInvoiceGrand_total, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                              SizedBox(height: 2,),
-                              Text(selectedInvoicePaid, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
-                              SizedBox(height: 2,),
-                              Text(selectedInvoiceDue, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                              /// gst
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Container(
+                                    width: 250,
+                                    padding: EdgeInsets.symmetric(vertical: 3, horizontal: 5),
+                                    decoration: BoxDecoration(
+                                        border: Border.all(color: Colors.black.withOpacity(0.7),width: 0.5)
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Expanded(child: Text("GST", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: Colors.black),)),
+                                        Text(" : ", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: Colors.black),),
+                                        Expanded(child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.end,
+                                          children: [
+                                            Text(gst, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: Colors.black),),
+                                          ],
+                                        )),
+
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                              /// Other charges
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Container(
+                                    width: 250,
+                                    padding: EdgeInsets.symmetric(vertical: 3, horizontal: 5),
+                                    decoration: BoxDecoration(
+                                        border: Border.all(color: Colors.black.withOpacity(0.7),width: 0.5)
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Expanded(child: Text("Other Charges", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: Colors.black),)),
+                                        Text(" : ", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: Colors.black),),
+                                        Expanded(child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.end,
+                                          children: [
+                                            Text(other_charges, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: Colors.black),),
+                                          ],
+                                        )),
+
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                              /// Total
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Container(
+                                    width: 250,
+                                    padding: EdgeInsets.symmetric(vertical: 3, horizontal: 5),
+                                    decoration: BoxDecoration(
+                                        border: Border.all(color: Colors.black.withOpacity(0.7),width: 0.5)
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Expanded(child: Text("Total", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: Colors.black),)),
+                                        Text(" : ", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: Colors.black),),
+                                        Expanded(child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.end,
+                                          children: [
+                                            Text(grand_total, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),),
+                                          ],
+                                        ),
+                                        ),
+
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ],
-                          ),
+                          )
                         ],
                       ),
-
                       SizedBox(height: 30,),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
@@ -588,16 +1108,55 @@ class _InvoiceListState extends State<InvoiceList> {
                           Container(
                               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                               color: Colors.grey.shade300,
-                              child: Text("Total : "+amountToWords(int.parse(double.parse(selectedInvoiceDue).round().toString())), style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.black),)
+                              child: Text("Total: "+amountToWords(double.parse(grand_total).round()), style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.black),)
                           ),
                         ],
                       ),
 
+                      SizedBox(height: 20,),
+                      ///Authorized Signatory ......................
+                      ///Bank details & Authorized Signatory ......................
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("Bank Details : ", style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w600),),
+                              Text("A/C Holder Name : $bank_ac_holder_name",
+                                  style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w500)
+                              ),
+                              Text("Bank Name : $bank_name",
+                                  style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w500)
+                              ),
+                              Text("Account Number : $bank_ac_number",
+                                  style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w500)
+                              ),
+                              Text("IFSC Code : $ifsc_code",
+                                  style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w500)
+                              ),
+
+
+                            ],
+                          ),
+                          Column(
+                            children: [
+                              Text("Authorized Signatory", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600,color: Colors.black),),
+                              SizedBox(height: 5,),
+                              Image.asset("assets/image/sig1.jpg",height: 26,width: 100,fit: BoxFit.fill,),
+                              Image.asset("assets/image/sig2.jpg",height: 26,width: 100,fit: BoxFit.fill,),
+                              SizedBox(height: 5,),
+                              Text("Transmission Surgicals", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600,color: Colors.black),),
+                            ],
+                          )
+                        ],
+                      ),
                       SizedBox(height: 50,),
 
                       Text("COMMENTS OR SPECIAL INSTRUCTIONS:",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 14,color: Colors.black),),
                       SizedBox(height: 3,),
-                      Text(selectedInvoiceCustom_note,style: TextStyle(fontWeight: FontWeight.bold,fontSize: 13,color: Colors.black),),
+                      Text(comments,style: TextStyle(fontWeight: FontWeight.normal,fontSize: 13,color: Colors.black),),
 
                       SizedBox(height: 30,),
 
@@ -607,6 +1166,15 @@ class _InvoiceListState extends State<InvoiceList> {
                         children: [
                           Text("THANK YOU FOR YOUR BUSINESS!",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16,color: Colors.black),),
 
+                        ],
+                      ),
+                      SizedBox(height: 15,),
+
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(child: Text("This is a computer-generated invoice, no need any seals or stamps. The invoice is considered valid and official without any physical seals or stamps.",style: TextStyle(fontWeight: FontWeight.w500,fontSize: 10,color: Colors.black),)),
                         ],
                       ),
 
@@ -680,6 +1248,7 @@ class _InvoiceListState extends State<InvoiceList> {
       if(jsonData['status']=="Success"){
         selectedInvoiceId=jsonData['invoice_id'];
         selectedInvoiceNumber=jsonData['invoice_no'];
+        selectedInvoicePlace=jsonData['place'];
         selectedInvoiceBillingAddress=jsonData['billing_address'];
         selectedInvoiceShippingAddress=jsonData['shipping_address'];
         selectedInvoiceSubtotal=jsonData['subtotal'];
@@ -797,7 +1366,8 @@ class _InvoiceListState extends State<InvoiceList> {
     if(response.statusCode==200){
       String myData = response.body;
       var jsonData=jsonDecode(myData);
-      if(jsonData['status']=="Success"){
+      print(jsonData);
+      if(jsonData['status']=="success"){
 
         setState(() {});
       }else{
@@ -815,91 +1385,200 @@ class _InvoiceListState extends State<InvoiceList> {
     }
   }
 
-  generatePdf(String purpose, String invoice_no, String billing_address,String shipping_address,  List<noteditableInvoiceItem> invoice_items, String subtotal, String gst, String other_charges, String grand_total, String paid, String due, String comments) async {
+  generatePdf(String purpose, String invoice_no, String invoice_date, String place_name, String billing_details, String shipping_details,  List<noteditableInvoiceItem> invoice_items, String subtotal, String gst, String other_charges, String grand_total, String comments) async {
     pdf = pw.Document();
-    final invoiceLogo = await getAssetsImage("assets/logo/logo.png");
+    final Logo = await getAssetsImage("assets/logo/logo3.png");
+    final sig1 = await getAssetsImage("assets/image/sig1.jpg");
+    final sig2 = await getAssetsImage("assets/image/sig2.jpg");
     List<pw.Widget> widgets = [];
 
 
-    widgets.add(
-      pw.Padding(
-        padding: pw.EdgeInsets.symmetric(horizontal: 15),
-        child: pw.SizedBox(height: 20,),
-      )
-    );
-
-    widgets.add(
-      pw.Padding(
-        padding: pw.EdgeInsets.symmetric(horizontal: 10),
-        child: pw.Row(
-          mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: pw.CrossAxisAlignment.start,
-          children: [
-            pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.start,
-              mainAxisAlignment: pw.MainAxisAlignment.start,
-              children: [
-                pw.Row(
-                  crossAxisAlignment: pw.CrossAxisAlignment.center,
-                  mainAxisAlignment: pw.MainAxisAlignment.start,
-                  children: [
-                    pw.Image(pw.MemoryImage(invoiceLogo), width: 50,height: 50),
-                    pw.SizedBox(width: 8,),
-                    pw. Text("Transmission Surgicals", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 18,color: PdfColors.lightBlue),),
-                  ],
-                ),
-                pw.SizedBox(height: 2,),
-                pw.Text("333 J.C. Bose Road, PallyShree\nSodepur, Kolkata - 700110 \nPhone : +91 0333335980722 / 7278360630 / 9836947573\nEmail : surgicaltrans@gmail.com",style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 10,color: PdfColors.black),),
-
-              ],
-            ),
-            pw.Column(
-              mainAxisAlignment: pw.MainAxisAlignment.start,
-              crossAxisAlignment: pw.CrossAxisAlignment.end,
-              children: [
-                pw.Text("TAX INVOICE",style: pw.TextStyle(fontSize: 16,fontWeight:pw.FontWeight.bold,color: PdfColors.black),),
-                pw.SizedBox(height: 5,),
-                pw.Text("Invoice Number $invoice_no",style: pw.TextStyle(fontSize: 12,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
-                pw.Text("Invoice Date "+DateFormat('dd/MM/yyyy').format(DateTime.now()),style: pw.TextStyle(fontSize: 12,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
-              ],
-            ),
-          ],
-        )
-      )
-    );
-
-
-    widgets.add( pw.SizedBox(height: 30,),);
+    widgets.add(pw.SizedBox(height: 20,),);
 
     widgets.add(
         pw.Padding(
-          padding: pw.EdgeInsets.symmetric(horizontal: 15),
-          child: pw.Row(
+            padding: pw.EdgeInsets.symmetric(horizontal: 15),
+            child: pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
               mainAxisAlignment: pw.MainAxisAlignment.start,
               children: [
-                pw.Expanded(
-                    child:pw.Column(
-                        crossAxisAlignment: pw.CrossAxisAlignment.start,
-                        children: [
-                          pw.Text("Billing Address :",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 12,color: PdfColors.black),),
-                          pw.Text(billing_address,style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 11,color: PdfColors.black),),
-                        ]
+
+                pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.start,
+                  children: [
+                    pw.Image(pw.MemoryImage(Logo), height: 50),
+                    pw.SizedBox(width: 5,),
+                    pw.Column(
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        pw.Text("Transmission Surgicals", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 15, color: PdfColors.teal),),
+
+                        pw.SizedBox(
+                            width: 190,
+                            child: pw.Divider(height: 5,thickness: 2,color: PdfColors.teal,)
+                        ),
+                        pw.SizedBox(height: 2,),
+                        pw.SizedBox(
+                          width: 190,
+                          child:
+                          pw.Center(child: pw.Text("Sales and Service", style: pw.TextStyle(fontWeight: pw.FontWeight.normal, fontSize: 10, color: PdfColors.teal),)),
+                        ),
+                        pw.SizedBox(height: 5,),
+                      ],
                     )
+                  ],
                 ),
-                pw.SizedBox(width: 25),
-                pw.Expanded(
-                    child:pw.Column(
-                        crossAxisAlignment: pw.CrossAxisAlignment.start,
-                        children: [
-                          pw.Text("Shipping Address :",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 12,color: PdfColors.black),),
-                          pw.Text(shipping_address,style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 11,color: PdfColors.black),),
-                        ]
-                    )
-                )
-              ]
-          ),
+                pw.SizedBox(height: 5,),
+
+                pw.Row(
+                    children: [
+                      pw.Expanded(
+                          child: pw.Container(
+                            padding: pw.EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                            height: 110,
+                            decoration: pw.BoxDecoration(
+                                border: pw.Border.all(
+                                    width: 0.5,
+                                    color: PdfColors.black
+                                )
+                            ),
+                            child: pw.Text("$address\nOffice : $office_phone\nMobile : $phone_number\nEmail : $email_id\nPAN Number : $pan_no\nGST : $gst_no\nWebsite : $website",style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 10,color: PdfColors.black),),
+                          )
+                      ),
+                      pw.SizedBox(width: 10),
+                      pw.Expanded(
+                          child: pw.Container(
+                            padding: pw.EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                            height: 110,
+                            decoration: pw.BoxDecoration(
+                                border: pw.Border.all(
+                                    width: 0.5,
+                                    color: PdfColors.black
+                                )
+                            ),
+                            child: pw.Column(
+                              mainAxisAlignment: pw.MainAxisAlignment.start,
+                              crossAxisAlignment: pw.CrossAxisAlignment.end,
+                              children: [
+                                pw.Text("TAX INVOICE",style: pw.TextStyle(fontSize: 16,fontWeight:pw.FontWeight.bold,color: PdfColors.black),),
+                                pw.SizedBox(height: 5,),
+                                pw.Row(
+                                  mainAxisAlignment: pw.MainAxisAlignment.start,
+                                  mainAxisSize: pw.MainAxisSize.min,
+                                  children: [
+                                    pw.Container(
+                                        width: 80,
+                                        child: pw.Text("Invoice Number",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),)),
+                                    pw.Text(" : ",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
+                                    pw.Container(
+                                        width: 100,
+                                        child: pw.Text("KOL/TS${DateFormat('yyyy').format(DateTime.now())}-$invoice_no",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),)),
+                                  ],
+                                ),
+
+                                pw.Row(
+                                  mainAxisAlignment: pw.MainAxisAlignment.start,
+                                  mainAxisSize: pw.MainAxisSize.min,
+                                  children: [
+                                    pw.Container(
+                                        width: 80,
+                                        child: pw.Text("Invoice Date",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),)),
+                                    pw.Text(" : ",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
+                                    pw.Container(
+                                        width: 100,
+                                        child: pw.Text(DateFormat('dd/MM/yyyy').format(DateTime.now()),style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),)
+                                    ),
+                                  ],
+                                ),
+
+                                pw.Row(
+                                  mainAxisAlignment: pw.MainAxisAlignment.start,
+                                  mainAxisSize: pw.MainAxisSize.min,
+                                  children: [
+                                    pw.Container(
+                                        width: 80,
+                                        child: pw.Text("GST",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),)),
+                                    pw.Text(" : ",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
+                                    pw.Container(
+                                        width: 100,
+                                        child: pw.Text(gst_no,style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),)
+                                    ),
+                                  ],
+                                ),
+
+                                pw.Row(
+                                  mainAxisAlignment: pw.MainAxisAlignment.start,
+                                  mainAxisSize: pw.MainAxisSize.min,
+                                  children: [
+                                    pw.Container(
+                                        width: 80,
+                                        child: pw.Text("Place",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black))
+                                    ),
+                                    pw.Text(" : ",style: pw.TextStyle(fontSize: 12,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
+                                    pw.Container(
+                                      width: 100,
+                                      child: pw.Text(place_name,style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
+                                    )
+                                  ],
+                                )
+                              ],
+                            ),
+                          )
+                      )
+                    ]
+                ),
+                pw.SizedBox(height: 10,),
+                pw.Row(
+                    children: [
+                      pw.Expanded(
+                          child: pw.Container(
+                              padding: pw.EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                              height: 100,
+                              decoration: pw.BoxDecoration(
+                                  border: pw.Border.all(
+                                      width: 0.5,
+                                      color: PdfColors.black
+                                  )
+                              ),
+                              child: pw.Column(
+                                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                                  children: [
+                                    pw.Text("Billing Address :",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 11,color: PdfColors.black),),
+                                    pw.Text(billing_details,style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 9,color: PdfColors.black),),
+                                  ]
+                              )
+                          )
+                      ),
+                      pw.SizedBox(width: 10),
+                      pw.Expanded(
+                          child: pw.Container(
+                            padding: pw.EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                            height: 100,
+                            decoration: pw.BoxDecoration(
+                                border: pw.Border.all(
+                                    width: 0.5,
+                                    color: PdfColors.black
+                                )
+                            ),
+                            child: pw.Column(
+                                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                                children: [
+                                  pw.Text("Shipping Address :",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 11,color: PdfColors.black),),
+                                  pw.Text(shipping_details,style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 9,color: PdfColors.black),),
+                                ]
+                            ),
+                          )
+                      )
+                    ]
+                ),
+
+
+              ],
+            )
         )
     );
+
+
     widgets.add(pw.SizedBox(height: 30,),);
 
 
@@ -910,30 +1589,36 @@ class _InvoiceListState extends State<InvoiceList> {
           padding: pw.EdgeInsets.symmetric(horizontal: 15),
           child: pw.Table.fromTextArray(
               data: [
-                ['Sl. No.','Description','HSN/SAC', 'Quantity', 'Price', 'GST', 'Total'],
+                ['Sl. No.','Product Name', 'HSN/SAC', 'Quantity', 'Price', 'GST', 'CGST', 'SGST', 'Total'],
                 ...invoice_items.asMap().entries.map((item) => [
                   (item.key+1).toString()+".",
                   item.value.description.toString(),
                   item.value.hsn.toString(),
                   item.value.quantity.toString(),
                   item.value.price.toString(),
-                  item.value.sgst.toString()+"\n"+item.value.cgst.toString()+"%",
+                  item.value.gst.toString()+"\n"+item.value.gst_percentage.toString()+"%",
+                  item.value.cgst.toString()+"\n"+item.value.cgst_percentage.toString()+"%",
+                  item.value.sgst.toString()+"\n"+item.value.sgst_percentage.toString()+"%",
                   item.value.totalAmount.toString(),
                 ]).toList(),
               ],
               cellAlignment: pw.Alignment.centerRight,
-              cellStyle: pw.TextStyle(fontWeight: pw.FontWeight.normal, fontSize: 10),
-              headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10),
+              cellStyle: pw.TextStyle(fontWeight: pw.FontWeight.normal, fontSize: 8),
+              headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8),
               border: pw.TableBorder.all(width: 1, color: PdfColors.blue),
               headerDecoration: pw.BoxDecoration(
                 color: PdfColors.blue100,
               ),
               columnWidths: {
                 0:pw.FlexColumnWidth(1),
-                1:pw.FlexColumnWidth(3),
+                1:pw.FlexColumnWidth(4),
                 2:pw.FlexColumnWidth(2),
                 3:pw.FlexColumnWidth(2),
                 4:pw.FlexColumnWidth(2),
+                5:pw.FlexColumnWidth(2),
+                6:pw.FlexColumnWidth(2),
+                7:pw.FlexColumnWidth(2),
+                8:pw.FlexColumnWidth(2),
               }
           ),
         )
@@ -942,105 +1627,339 @@ class _InvoiceListState extends State<InvoiceList> {
 
     widgets.add(pw.SizedBox(height: 5,),);
 
+
     widgets.add(
-      pw.Padding(
-        padding: pw.EdgeInsets.symmetric(horizontal: 15),
-        child: pw.Row(
-          mainAxisAlignment: pw.MainAxisAlignment.end,
-          crossAxisAlignment: pw.CrossAxisAlignment.start,
-          children: [
-            pw.Column(
-              crossAxisAlignment:pw. CrossAxisAlignment.start,
-              children: [
-                pw.Text("Subtotal", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-                pw.Text("GST", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-                pw.Text("Other charges", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-                pw.Text("Grand Total", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-                pw.Text("Paid", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-                pw.Text("Due", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-              ],
-            ),
-            pw.Column(
+        pw.Padding(
+          padding: pw.EdgeInsets.symmetric(horizontal: 15),
+          child: pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
-                pw.Text(" : ", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-                pw.Text(" : ", style: pw.TextStyle(fontWeight:pw. FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-                pw.Text(" : ", style:pw. TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-                pw.Text(" : ", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-                pw.Text(" : ", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-                pw.Text(" : ", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-              ],
-            ),
+                pw.Container(
+                  height: 60,
+                  padding: pw.EdgeInsets.symmetric(horizontal: 5,vertical: 5),
+                  decoration: pw.BoxDecoration(
+                      border: pw.Border.all(color: PdfColors.black, width: 0.5)
+                  ),
+                  child: pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
+                    children: [
+                      pw.Text("Bank Details : ", style: pw.TextStyle(color: PdfColors.black,fontSize: 9, fontWeight: pw.FontWeight.bold),),
+                      pw.SizedBox(height: 3),
+                      pw.Row(
+                          mainAxisSize: pw.MainAxisSize.min,
+                          children: [
+                            pw.Text("Account Number : $bank_ac_number",
+                                style: pw.TextStyle(color: PdfColors.black,fontSize: 8, fontWeight: pw.FontWeight.normal)
+                            ),
+                            pw.SizedBox(width: 20),
+                            pw.Text("IFSC Code : $ifsc_code",
+                                style: pw.TextStyle(color: PdfColors.black,fontSize: 8, fontWeight: pw.FontWeight.normal)
+                            ),
 
-            pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.end,
-              children: [
-                pw.Text(subtotal, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-                pw.Text(gst, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-                pw.Text(other_charges, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-                pw.Text(grand_total, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-                pw.Text(paid, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-                pw.Text(due, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.black),),
-              ],
-            ),
-          ],
-        ),
-      )
-      );
+                          ]
+                      ),
+                      pw.SizedBox(height: 3),
+                      pw.Row(
+                          mainAxisSize: pw.MainAxisSize.min,
+                          children: [
 
-    widgets.add(pw.SizedBox(height: 30,));
+                            pw.Text("Bank Name : $bank_name",
+                                style: pw.TextStyle(color: PdfColors.black,fontSize: 8, fontWeight: pw.FontWeight.normal)
+                            ),
+                            pw.SizedBox(width: 20),
+                            pw.Text("Branch Name : $bank_branch",
+                                style: pw.TextStyle(color: PdfColors.black,fontSize: 8, fontWeight: pw.FontWeight.normal)
+                            ),
+
+                          ]
+                      ),
+                      pw.SizedBox(height: 3),
+                      pw.Text("A/C Holder Name : $bank_ac_holder_name",
+                          style: pw.TextStyle(color: PdfColors.black,fontSize: 8, fontWeight: pw.FontWeight.normal)
+                      ),
+
+
+
+
+
+
+                    ],
+                  ),
+                ),
+                pw.SizedBox(width: 10),
+                pw.Column(
+                    children: [
+                      ///Subtotal ...........
+                      pw.Container(
+                          padding: pw.EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                          width: 200,
+                          decoration: pw.BoxDecoration(
+                              border: pw.Border.all(color: PdfColors.blue, width: 0.7)
+                          ),
+                          child: pw.Row(
+                              children: [
+                                pw.Expanded(
+                                  flex: 3,
+                                  child: pw.Row(
+                                      mainAxisAlignment: pw.MainAxisAlignment.end,
+                                      children: [
+                                        pw.Text("Subtotal",style: pw.TextStyle(fontSize: 9,fontWeight: pw.FontWeight.bold,color: PdfColors.black))
+                                      ]
+                                  ),
+                                ),
+                                pw.Text(":",style: pw.TextStyle(fontSize: 9,fontWeight: pw.FontWeight.bold,color: PdfColors.black)),
+                                pw.Expanded(
+                                  flex: 2,
+                                  child: pw.Row(
+                                      mainAxisAlignment: pw.MainAxisAlignment.end,
+                                      children: [
+                                        pw.Text("$subtotal",style: pw.TextStyle(fontSize: 9,fontWeight: pw.FontWeight.bold,color: PdfColors.black))
+                                      ]
+                                  ),
+                                )
+
+                              ]
+                          )
+                      ),
+
+                      ///GST ...........
+                      pw.Container(
+                          padding: pw.EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                          width: 200,
+                          decoration: pw.BoxDecoration(
+                              border: pw.Border.all(color: PdfColors.blue, width: 0.7)
+                          ),
+                          child: pw.Row(
+                              children: [
+                                pw.Expanded(
+                                  flex: 3,
+                                  child: pw.Row(
+                                      mainAxisAlignment: pw.MainAxisAlignment.end,
+                                      children: [
+                                        pw.Text("GST",style: pw.TextStyle(fontSize: 9,fontWeight: pw.FontWeight.bold,color: PdfColors.black))
+                                      ]
+                                  ),
+                                ),
+                                pw.Text(":",style: pw.TextStyle(fontSize: 9,fontWeight: pw.FontWeight.bold,color: PdfColors.black)),
+                                pw.Expanded(
+                                  flex: 2,
+                                  child: pw.Row(
+                                      mainAxisAlignment: pw.MainAxisAlignment.end,
+                                      children: [
+                                        pw.Text("$gst",style: pw.TextStyle(fontSize: 9,fontWeight: pw.FontWeight.bold,color: PdfColors.black))
+                                      ]
+                                  ),
+                                )
+
+                              ]
+                          )
+                      ),
+                      ///Other charges ...........
+                      pw.Container(
+                          padding: pw.EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                          width: 200,
+                          decoration: pw.BoxDecoration(
+                              border: pw.Border.all(color: PdfColors.blue, width: 0.7)
+                          ),
+                          child: pw.Row(
+                              children: [
+                                pw.Expanded(
+                                  flex: 3,
+                                  child: pw.Row(
+                                      mainAxisAlignment: pw.MainAxisAlignment.end,
+                                      children: [
+                                        pw.Text("Other charges",style: pw.TextStyle(fontSize: 9,fontWeight: pw.FontWeight.bold,color: PdfColors.black))
+                                      ]
+                                  ),
+                                ),
+                                pw.Text(":",style: pw.TextStyle(fontSize: 9,fontWeight: pw.FontWeight.bold,color: PdfColors.black)),
+                                pw.Expanded(
+                                  flex: 2,
+                                  child: pw.Row(
+                                      mainAxisAlignment: pw.MainAxisAlignment.end,
+                                      children: [
+                                        pw.Text("$other_charges",style: pw.TextStyle(fontSize: 9,fontWeight: pw.FontWeight.bold,color: PdfColors.black))
+                                      ]
+                                  ),
+                                )
+
+                              ]
+                          )
+                      ),
+
+                      /// Total
+                      pw.Container(
+                          padding: pw.EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                          width: 200,
+                          decoration: pw.BoxDecoration(
+                              border: pw.Border.all(color: PdfColors.blue, width: 0.7)
+                          ),
+                          child: pw.Row(
+                              children: [
+                                pw.Expanded(
+                                  flex: 3,
+                                  child: pw.Row(
+                                      mainAxisAlignment: pw.MainAxisAlignment.end,
+                                      children: [
+                                        pw.Text("Total Amount",style: pw.TextStyle(fontSize: 9,fontWeight: pw.FontWeight.bold,color: PdfColors.black))
+                                      ]
+                                  ),
+                                ),
+
+                                pw.Text(":",style: pw.TextStyle(fontSize: 9,fontWeight: pw.FontWeight.bold,color: PdfColors.black)),
+
+                                pw.Expanded(
+                                  flex: 2,
+                                  child: pw.Row(
+                                      mainAxisAlignment: pw.MainAxisAlignment.end,
+                                      children: [
+                                        pw.Text("$grand_total",style: pw.TextStyle(fontSize: 9,fontWeight: pw.FontWeight.bold,color: PdfColors.black))
+                                      ]
+                                  ),
+                                )
+
+                              ]
+                          )
+                      )
+                    ]
+                ),
+
+              ]
+          ),
+        )
+
+    );
+
+
+    widgets.add(pw.SizedBox(height: 30,),);
+    widgets.add(
+        pw.Padding(
+          padding: pw.EdgeInsets.symmetric(horizontal: 15),
+          child: pw.Row(
+            mainAxisAlignment: pw.MainAxisAlignment.end,
+            children: [
+              pw.Container(
+                  padding: pw.EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                  color: PdfColors.grey200,
+                  child: pw.Text("Total : "+amountToWords(double.parse(grand_total).round()), style: pw.TextStyle(fontSize: 9, fontWeight: pw.FontWeight.bold, color: PdfColors.grey900),)
+              ),
+            ],
+          ),
+        )
+    );
 
     widgets.add(
-      pw.Padding(
-        padding: pw.EdgeInsets.symmetric(horizontal: 15),
-        child: pw.Row(
-          mainAxisAlignment: pw.MainAxisAlignment.end,
-          children: [
-            pw.Container(
-                padding: pw.EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                color: PdfColors.grey200,
-                child: pw.Text("Total : "+amountToWords(int.parse(double.parse(selectedInvoiceDue).round().toString())), style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold, color: PdfColors.grey900),)
-            ),
-          ],
-        ),
-      )
+      pw.SizedBox(height: 15),
     );
+
+
+    widgets.add(
+        pw.Row(
+            mainAxisAlignment: pw.MainAxisAlignment.end,
+            children: [
+
+
+              pw.Column(
+                  children: [
+                    pw.Padding(
+                      padding: pw.EdgeInsets.symmetric(horizontal: 20),
+                      child: pw.Row(
+                          mainAxisAlignment: pw.MainAxisAlignment.end,
+                          children: [
+                            pw.Text("Authorized Signatory",style: pw.TextStyle(fontSize: 11,fontWeight: pw.FontWeight.bold,color: PdfColors.black))
+                          ]
+                      ),
+                    ),
+                    pw.SizedBox(height: 4),
+                    pw.Padding(
+                      padding: pw.EdgeInsets.symmetric(horizontal: 20),
+                      child: pw.Row(
+                          mainAxisAlignment: pw.MainAxisAlignment.end,
+                          children: [
+                            pw.Column(
+                                children: [
+                                  pw.Image(pw.MemoryImage(sig1),width: 100,height: 20,fit: pw.BoxFit.fill),
+                                  pw.Image(pw.MemoryImage(sig2),width: 100,height: 20,fit: pw.BoxFit.fill),
+                                ]
+                            )
+                          ]
+                      ),
+                    ),
+                    pw.SizedBox(height: 4),
+                    pw.Padding(
+                      padding: pw.EdgeInsets.symmetric(horizontal: 20),
+                      child:  pw.Row(
+                          mainAxisAlignment: pw.MainAxisAlignment.end,
+                          children: [
+                            pw.Text("Transmission Surgicals",style: pw.TextStyle(fontSize: 11,fontWeight: pw.FontWeight.bold,color: PdfColors.black))
+                          ]
+                      ),
+                    )
+                  ]
+              )
+            ]
+        )
+    );
+
+
+
 
     widgets.add(pw.SizedBox(height: 50,),);
 
     widgets.add(
-      pw.Padding(
-        padding: pw.EdgeInsets.symmetric(horizontal: 15),
-        child: pw.Text("COMMENTS OR SPECIAL INSTRUCTIONS:",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 12,color: PdfColors.black),),
-      )
+        pw.Column(
+            children: [
+              pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.start,
+                  children: [
+                    pw.Padding(
+                      padding: pw.EdgeInsets.symmetric(horizontal: 15),
+                      child: pw.Text("COMMENTS OR SPECIAL INSTRUCTIONS:",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 10,color: PdfColors.black),),
+                    ),
+                  ]
+              ),
+              pw.SizedBox(height: 3,),
+              pw.Padding(
+                padding: pw.EdgeInsets.symmetric(horizontal: 15),
+                child: pw.Text(comments,style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 11,color: PdfColors.black),),
+              ),
+              pw.SizedBox(height: 30,),
+              pw.Padding(
+                padding: pw.EdgeInsets.symmetric(horizontal: 15),
+                child: pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.center,
+                  crossAxisAlignment: pw.CrossAxisAlignment.end,
+                  children: [
+                    pw.Text("THANK YOU FOR YOUR BUSINESS!",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 14,color:PdfColors.black),),
+                  ],
+                ),
+              ),
+              pw.SizedBox(height: 15),
+              pw.Padding(
+                  padding: pw.EdgeInsets.symmetric(horizontal: 15),
+                  child: pw.Row(
+                      mainAxisAlignment: pw.MainAxisAlignment.center,
+                      children: [
+                        pw.Expanded(
+                          child: pw.Text("This is a computer-generated invoice, no need any seals or stamps. The invoice is considered valid and official without any physical seals or stamps.",style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 8,color: PdfColors.black),),
+                        )
+                      ]
+                  )
+              )
+            ]
+        )
     );
-    widgets.add(pw.SizedBox(height: 3,),);
-    widgets.add(
-      pw.Padding(
-        padding: pw.EdgeInsets.symmetric(horizontal: 15),
-        child: pw.Text(comments,style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 11,color: PdfColors.black),),
-      )
-    );
+
+
+
     widgets.add(pw.SizedBox(height: 30,),);
-    widgets.add(
-      pw.Padding(
-        padding: pw.EdgeInsets.symmetric(horizontal: 15),
-        child: pw.Row(
-          mainAxisAlignment: pw.MainAxisAlignment.center,
-          crossAxisAlignment: pw.CrossAxisAlignment.end,
-          children: [
-            pw.Text("THANK YOU FOR YOUR BUSINESS!",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 14,color:PdfColors.black),),
-
-          ],
-        ),
-      )
-    );
-
-    widgets.add(pw.SizedBox(height: 20,),);
 
 
     pdf.addPage(
       pw.MultiPage(
+
+
         pageTheme: pw.PageTheme(
           buildBackground: (context){
             return pw.Container(
@@ -1059,10 +1978,8 @@ class _InvoiceListState extends State<InvoiceList> {
 
           margin: pw.EdgeInsets.all(30),
         ),
-        build: (context) {
-           return widgets;
-        }
 
+        build: (context) => widgets,
       ),
     );
 
@@ -1089,7 +2006,10 @@ class _InvoiceListState extends State<InvoiceList> {
       html.Url.revokeObjectUrl(url);
     }
 
-
+    MotionToast.success(
+      title:  Text("Message", style: TextStyle(fontWeight: FontWeight.bold),),
+      description:  Text("Invoice Generated!"),
+    ).show(context);
 
   }
 

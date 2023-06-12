@@ -123,10 +123,17 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                 description:  Text("Please enter billing address"),
                               ).show(context);
 
-                            }if(shipping_address_controller.text.isEmpty){
+                            }if(shipping_address_controller.text.isEmpty) {
+                              MotionToast.error(
+                                title: Text("Message", style: TextStyle(
+                                    fontWeight: FontWeight.bold),),
+                                description: Text(
+                                    "Please enter shipping address"),
+                              ).show(context);
+                            }else if(place_controller.text.isEmpty){
                               MotionToast.error(
                                 title:  Text("Message", style: TextStyle(fontWeight: FontWeight.bold),),
-                                description:  Text("Please enter shipping address"),
+                                description:  Text("Please enter place name"),
                               ).show(context);
                             }else{
                               bool isError=false;
@@ -325,6 +332,8 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
         invoice_date=jsonData['date'];
         billing_address_controller.text=jsonData['billing_address'];
         shipping_address_controller.text=jsonData['shipping_address'];
+        invoice_place=jsonData['place'];
+        place_controller.text=invoice_place;
         subtotal=double.parse(jsonData['subtotal']);
         gst=double.parse(jsonData['gst']);
         other_charges_controller.text=jsonData['other_charges'];
@@ -895,7 +904,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                         style: TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.w500),
                                         textAlign: TextAlign.end,
                                         onChanged: (v){
-                                          invoice_data[index].hsn=v;
+                                          invoice_data[index].hsn=invoice_data[index].hsn_controller!.text.toString();
                                         },
                                       ),
                                     )),
@@ -1016,9 +1025,11 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                                     isDense: true,
                                                     border: InputBorder.none
                                                   ),
-                                                  controller: invoice_data[index].gst_controller
-                                                 , style: TextStyle(fontSize: 13,fontWeight: FontWeight.w500),textAlign: TextAlign.end),
+                                                  controller: invoice_data[index].gst_controller,
+                                                  style: TextStyle(fontSize: 13,fontWeight: FontWeight.w500),textAlign: TextAlign.end,
                                               ),
+
+                                              )
                                             ],
                                           ),
                                           SizedBox(height: 2,),
@@ -1034,6 +1045,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                                   controller: invoice_data[index].gst_percentage_controller,
                                                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.black),
                                                 onChanged: (v){
+                                                  invoice_data[index].gst_percentage=double.parse(invoice_data[index].gst_percentage_controller!.text.toString());
                                                     setState((){
                                                       calculateInvoice();
                                                     });
@@ -1145,7 +1157,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                             padding: EdgeInsets.only(top: 5),
                             child: InkWell(
                               onTap: (){
-                                editableInvoiceItem eii=editableInvoiceItem(description: "", quantity: 0, price: 0.00, totalAmount: 0.00,hsn: "",gst: 0.00, gst_percentage: 0, sgst: 0.00, cgst: 0.00, sgst_percentage: 6,cgst_percentage: 6, des_controller: TextEditingController(), price_controller: TextEditingController(), quantity_controller: TextEditingController(), hsn_controller: TextEditingController(), gst_controller: TextEditingController(), gst_percentage_controller: TextEditingController());
+                                editableInvoiceItem eii=editableInvoiceItem(description: "", quantity: 0, price: 0.00, totalAmount: 0.00,hsn: "",gst: 0.00, gst_percentage: 12, sgst: 0.00, cgst: 0.00, sgst_percentage: 6,cgst_percentage: 6, des_controller: TextEditingController(), price_controller: TextEditingController(), quantity_controller: TextEditingController(), hsn_controller: TextEditingController(), gst_controller: TextEditingController(), gst_percentage_controller: TextEditingController());
                                 setState((){
                                   invoice_data.add(eii);
                                   invoice_data[invoice_data.length-1].gst_controller!.text="0.00";
@@ -1492,8 +1504,9 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
     // generatePdf("78202", DateFormat('dd/MM/yyyy').format(DateTime.now()), billing_address_controller.text.trim(), shipping_address_controller.text.trim(), invoice_items, subtotal.toStringAsFixed(2), gst.toStringAsFixed(2), other_charges_controller.text, grand_total.toStringAsFixed(2), comment_controller.text.trim());
 
     String invoice_item_list=jsonEncode(invoice_items);
+    print(invoice_item_list);
     var url = Uri.parse(create_invoice);
-    Map<String, String> body = {"billing_address": billing_address_controller.text.trim(), "shipping_address":shipping_address_controller.text.trim(),"subtotal":subtotal.toStringAsFixed(2), "gst":gst.toStringAsFixed(2), "grand_total":grand_total.toStringAsFixed(2),"paid":paid_amount_controller.text.toString(),"due":due_amount.toStringAsFixed(2),"custom_note":comment_controller.text.trim(),"other_charges":other_charges_controller.text,"descriptions":invoice_item_list};
+    Map<String, String> body = {"billing_address": billing_address_controller.text.trim(), "shipping_address":shipping_address_controller.text.trim(),"place":place_controller.text.trim(),"subtotal":subtotal.toStringAsFixed(2), "gst":gst.toStringAsFixed(2), "grand_total":grand_total.toStringAsFixed(2),"paid":paid_amount_controller.text.toString(),"due":due_amount.toStringAsFixed(2),"custom_note":comment_controller.text.trim(),"other_charges":other_charges_controller.text,"descriptions":invoice_item_list};
     Response response = await post(url, body: body);
     if(response.statusCode==200){
       String myData = response.body;
@@ -2835,50 +2848,59 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
 
     widgets.add(pw.SizedBox(height: 50,),);
 
-    widgets.add(pw.Padding(
-      padding: pw.EdgeInsets.symmetric(horizontal: 15),
-      child: pw.Text("COMMENTS OR SPECIAL INSTRUCTIONS:",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 10,color: PdfColors.black),),
-    ));
-    widgets.add(pw.SizedBox(height: 3,),);
     widgets.add(
-      pw.Padding(
-        padding: pw.EdgeInsets.symmetric(horizontal: 15),
-        child: pw.Text(comments,style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 11,color: PdfColors.black),),
-      )
-    );
-    widgets.add(pw.SizedBox(height: 30,),);
-    widgets.add(
-      pw.Padding(
-        padding: pw.EdgeInsets.symmetric(horizontal: 15),
-        child: pw.Row(
-          mainAxisAlignment: pw.MainAxisAlignment.center,
-          crossAxisAlignment: pw.CrossAxisAlignment.end,
-          children: [
-            pw.Text("THANK YOU FOR YOUR BUSINESS!",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 14,color:PdfColors.black),),
-          ],
-        ),
+      pw.Column(
+        children: [
+          pw.Row(
+            mainAxisAlignment: pw.MainAxisAlignment.start,
+            children: [
+              pw.Padding(
+                padding: pw.EdgeInsets.symmetric(horizontal: 15),
+                child: pw.Text("COMMENTS OR SPECIAL INSTRUCTIONS:",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 10,color: PdfColors.black),),
+              ),
+            ]
+          ),
+          pw.SizedBox(height: 3,),
+          pw.Padding(
+            padding: pw.EdgeInsets.symmetric(horizontal: 15),
+            child: pw.Text(comments,style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 11,color: PdfColors.black),),
+          ),
+          pw.SizedBox(height: 30,),
+          pw.Padding(
+            padding: pw.EdgeInsets.symmetric(horizontal: 15),
+            child: pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.center,
+              crossAxisAlignment: pw.CrossAxisAlignment.end,
+              children: [
+                pw.Text("THANK YOU FOR YOUR BUSINESS!",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 14,color:PdfColors.black),),
+              ],
+            ),
+          ),
+          pw.SizedBox(height: 15),
+          pw.Padding(
+            padding: pw.EdgeInsets.symmetric(horizontal: 15),
+            child: pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.center,
+                children: [
+                  pw.Expanded(
+                    child: pw.Text("This is a computer-generated invoice, no need any seals or stamps. The invoice is considered valid and official without any physical seals or stamps.",style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 8,color: PdfColors.black),),
+                  )
+                ]
+            )
+          )
+        ]
       )
     );
 
-    widgets.add(pw.SizedBox(height: 15,),);
 
-    widgets.add(
-      pw.Padding(
-        padding: pw.EdgeInsets.symmetric(horizontal: 15),
-        child : pw.Row(
-          mainAxisAlignment: pw.MainAxisAlignment.center,
-          children: [
-            pw.Expanded(child: pw.Text("This is a computer-generated invoice, no need any seals or stamps. The invoice is considered valid and official without any physical seals or stamps.",style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 8,color: PdfColors.black),)),
-          ],
-        ),
-      )
-    );
 
     widgets.add(pw.SizedBox(height: 30,),);
 
 
     pdf.addPage(
       pw.MultiPage(
+
+
         pageTheme: pw.PageTheme(
           buildBackground: (context){
             return pw.Container(
