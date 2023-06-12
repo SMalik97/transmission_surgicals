@@ -1374,6 +1374,17 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                         ],
                       ),
 
+
+                      SizedBox(height: 15,),
+
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(child: Text("This is a computer-generated invoice, no need any seals or stamps. The invoice is considered valid and official without any physical seals or stamps.",style: TextStyle(fontWeight: FontWeight.w500,fontSize: 10,color: Colors.black),)),
+                        ],
+                      ),
+
                       SizedBox(height: 80,),
                     ],
                   ),
@@ -2276,6 +2287,15 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
 
                         ],
                       ),
+                      SizedBox(height: 15,),
+
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(child: Text("This is a computer-generated invoice, no need any seals or stamps. The invoice is considered valid and official without any physical seals or stamps.",style: TextStyle(fontWeight: FontWeight.w500,fontSize: 10,color: Colors.black),)),
+                        ],
+                      ),
 
                       SizedBox(height: 80,),
                     ],
@@ -2835,6 +2855,20 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
           crossAxisAlignment: pw.CrossAxisAlignment.end,
           children: [
             pw.Text("THANK YOU FOR YOUR BUSINESS!",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 14,color:PdfColors.black),),
+          ],
+        ),
+      )
+    );
+
+    widgets.add(pw.SizedBox(height: 15,),);
+
+    widgets.add(
+      pw.Padding(
+        padding: pw.EdgeInsets.symmetric(horizontal: 15),
+        child : pw.Row(
+          mainAxisAlignment: pw.MainAxisAlignment.center,
+          children: [
+            pw.Expanded(child: pw.Text("This is a computer-generated invoice, no need any seals or stamps. The invoice is considered valid and official without any physical seals or stamps.",style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 8,color: PdfColors.black),)),
           ],
         ),
       )
