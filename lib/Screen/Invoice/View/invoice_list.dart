@@ -1625,12 +1625,11 @@ class _InvoiceListState extends State<InvoiceList> {
     );
 
 
-    widgets.add(pw.SizedBox(height: 5,),);
 
 
     widgets.add(
         pw.Padding(
-          padding: pw.EdgeInsets.symmetric(horizontal: 15),
+          padding: pw.EdgeInsets.symmetric(horizontal: 15, vertical: 5),
           child: pw.Row(
               mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
               crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -1832,7 +1831,7 @@ class _InvoiceListState extends State<InvoiceList> {
     );
 
 
-    widgets.add(pw.SizedBox(height: 30,),);
+    widgets.add(pw.SizedBox(height: 25,),);
     widgets.add(
         pw.Padding(
           padding: pw.EdgeInsets.symmetric(horizontal: 15),
