@@ -351,7 +351,6 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
         });
 
 
-
         for(int i =0; i<invoice_details_list.length; i++){
           editableInvoiceItem eii=editableInvoiceItem(description: invoice_details_list[i].description.toString(), quantity: int.parse(invoice_details_list[i].quantity.toString()), price: double.parse(invoice_details_list[i].price.toString()), gst: 0.0, gst_percentage: 0, sgst_percentage: 0.00, cgst_percentage: 0.00, totalAmount: double.parse(invoice_details_list[i].totalAmount.toString()),hsn:invoice_details_list[i].hsn.toString(), sgst: double.parse(invoice_details_list[i].sgst.toString()), cgst: double.parse(invoice_details_list[i].cgst.toString()), hsn_controller: TextEditingController() , des_controller: TextEditingController(), price_controller: TextEditingController(), quantity_controller: TextEditingController(), gst_controller: TextEditingController(), gst_percentage_controller: TextEditingController());
           invoice_data.add(eii);
@@ -359,6 +358,14 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
           invoice_data[i].price_controller!.text=invoice_details_list[i].price.toString();
           invoice_data[i].quantity_controller!.text=invoice_details_list[i].quantity.toString();
           invoice_data[i].hsn_controller!.text=invoice_details_list[i].hsn.toString();
+          invoice_data[i].gst_controller!.text=invoice_details_list[i].gst.toString();
+          invoice_data[i].gst=double.parse(invoice_details_list[i].gst.toString());
+          invoice_data[i].gst_percentage_controller!.text=invoice_details_list[i].gst_percentage.toString();
+          invoice_data[i].gst_percentage=double.parse(invoice_details_list[i].gst_percentage.toString());
+          invoice_data[i].cgst=double.parse(invoice_details_list[i].cgst.toString());
+          invoice_data[i].cgst_percentage=double.parse(invoice_details_list[i].cgst_percentage.toString());
+          invoice_data[i].sgst=double.parse(invoice_details_list[i].sgst.toString());
+          invoice_data[i].sgst_percentage=double.parse(invoice_details_list[i].sgst_percentage.toString());
         }
 
         setState(() {});
@@ -465,7 +472,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                     Text(" : ",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
                                     Container(
                                         width: 130,
-                                        child: Text("KOL/TS${DateFormat('yyyy').format(DateTime.now())}-$invoice_no",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),)),
+                                        child: Text("KOL/TS-$invoice_no",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),)),
                                   ],
                                 )
                                     : Row(
@@ -520,20 +527,6 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                   ],
                                 ),
 
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Container(
-                                        width: 100,
-                                        child: Text("GST",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),)),
-                                    Text(" : ",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
-                                    Container(
-                                        width: 130,
-                                        child: Text(gst_no,style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),)
-                                    ),
-                                  ],
-                                ),
 
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
@@ -1628,7 +1621,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                     Text(" : ",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
                                     Container(
                                         width: 130,
-                                        child: Text(invoice_number,style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),)),
+                                        child: Text("KOL/TS-"+invoice_number,style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),)),
                                   ],
                                 ),
 
@@ -1647,20 +1640,6 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                   ],
                                 ),
 
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Container(
-                                        width: 100,
-                                        child: Text("GST",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),)),
-                                    Text(" : ",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
-                                    Container(
-                                        width: 130,
-                                        child: Text(gst_no,style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),)
-                                    ),
-                                  ],
-                                ),
 
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
@@ -2413,7 +2392,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                                   pw.Text(" : ",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
                                 pw.Container(
                                   width: 100,
-                                  child: pw.Text("KOL/TS${DateFormat('yyyy').format(DateTime.now())}-$invoice_no",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),)),
+                                  child: pw.Text("KOL/TS-$invoice_no",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),)),
                             ],
                           ),
 
@@ -2432,20 +2411,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
                             ],
                           ),
 
-                          pw.Row(
-                            mainAxisAlignment: pw.MainAxisAlignment.start,
-                            mainAxisSize: pw.MainAxisSize.min,
-                            children: [
-                              pw.Container(
-                                  width: 80,
-                                  child: pw.Text("GST",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),)),
-                              pw.Text(" : ",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
-                              pw.Container(
-                                  width: 100,
-                                  child: pw.Text(gst_no,style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),)
-                              ),
-                            ],
-                          ),
+
 
                           pw.Row(
                             mainAxisAlignment: pw.MainAxisAlignment.start,

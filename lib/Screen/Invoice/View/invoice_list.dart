@@ -496,7 +496,7 @@ class _InvoiceListState extends State<InvoiceList> {
                                     Text(" : ",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
                                     Container(
                                         width: 130,
-                                        child: Text(invoice_number,style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),)),
+                                        child: Text("KOL/TS-"+invoice_number,style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),)),
                                   ],
                                 ),
 
@@ -511,21 +511,6 @@ class _InvoiceListState extends State<InvoiceList> {
                                     Container(
                                         width: 130,
                                         child: Text(DateFormat('dd/MM/yyyy').format(DateTime.now()),style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),)
-                                    ),
-                                  ],
-                                ),
-
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Container(
-                                        width: 100,
-                                        child: Text("GST",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),)),
-                                    Text(" : ",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
-                                    Container(
-                                        width: 130,
-                                        child: Text(gst_no,style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),)
                                     ),
                                   ],
                                 ),
@@ -927,7 +912,7 @@ class _InvoiceListState extends State<InvoiceList> {
                                         children: [
                                           Text(invoice_item_details[index].cgst.toString(),style: TextStyle(fontSize: 12, color: Colors.black,fontWeight: FontWeight.w500),),
                                           SizedBox(height: 3,),
-                                          Text("6%",style: TextStyle(fontSize: 12, color: Colors.black,fontWeight: FontWeight.w500),),
+                                          Text(invoice_item_details[index].cgst_percentage.toString()+"%",style: TextStyle(fontSize: 12, color: Colors.black,fontWeight: FontWeight.w500),),
                                         ],
                                       ),
                                     )),
@@ -951,7 +936,7 @@ class _InvoiceListState extends State<InvoiceList> {
                                         children: [
                                           Text(invoice_item_details[index].sgst.toString(),style: TextStyle(fontSize: 12, color: Colors.black,fontWeight: FontWeight.w500),),
                                           SizedBox(height: 3,),
-                                          Text("6%",style: TextStyle(fontSize: 12, color: Colors.black,fontWeight: FontWeight.w500),),
+                                          Text(invoice_item_details[index].sgst_percentage.toString()+"%",style: TextStyle(fontSize: 12, color: Colors.black,fontWeight: FontWeight.w500),),
                                         ],
                                       ),
                                     )),
@@ -1366,7 +1351,6 @@ class _InvoiceListState extends State<InvoiceList> {
     if(response.statusCode==200){
       String myData = response.body;
       var jsonData=jsonDecode(myData);
-      print(jsonData);
       if(jsonData['status']=="success"){
 
         setState(() {});
@@ -1491,20 +1475,6 @@ class _InvoiceListState extends State<InvoiceList> {
                                   ],
                                 ),
 
-                                pw.Row(
-                                  mainAxisAlignment: pw.MainAxisAlignment.start,
-                                  mainAxisSize: pw.MainAxisSize.min,
-                                  children: [
-                                    pw.Container(
-                                        width: 80,
-                                        child: pw.Text("GST",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),)),
-                                    pw.Text(" : ",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
-                                    pw.Container(
-                                        width: 100,
-                                        child: pw.Text(gst_no,style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),)
-                                    ),
-                                  ],
-                                ),
 
                                 pw.Row(
                                   mainAxisAlignment: pw.MainAxisAlignment.start,
@@ -1629,7 +1599,7 @@ class _InvoiceListState extends State<InvoiceList> {
 
     widgets.add(
         pw.Padding(
-          padding: pw.EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+          padding: pw.EdgeInsets.symmetric(horizontal: 15, vertical: 10),
           child: pw.Row(
               mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
               crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -1839,7 +1809,7 @@ class _InvoiceListState extends State<InvoiceList> {
             mainAxisAlignment: pw.MainAxisAlignment.end,
             children: [
               pw.Container(
-                  padding: pw.EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                  padding: pw.EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   color: PdfColors.grey200,
                   child: pw.Text("Total : "+amountToWords(double.parse(grand_total).round()), style: pw.TextStyle(fontSize: 9, fontWeight: pw.FontWeight.bold, color: PdfColors.grey900),)
               ),
@@ -1952,7 +1922,6 @@ class _InvoiceListState extends State<InvoiceList> {
 
 
 
-    widgets.add(pw.SizedBox(height: 30,),);
 
 
     pdf.addPage(
