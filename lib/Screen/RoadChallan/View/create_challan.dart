@@ -317,7 +317,7 @@ class _CreateChallanState extends State<CreateChallan> {
                                 decoration: BoxDecoration(
                                     border: Border.all(color: Colors.black.withOpacity(0.7), width: 0.5)
                                 ),
-                                child: Text("$address \nOffice : $office_phone\nMobile : $phone_number\nEmail : $email_id\nPAN Number : $pan_no\nGST : $gst_no\nWebsite : $website",style: TextStyle(fontWeight: FontWeight.w500,fontSize: 13,color: Colors.black),)),
+                                child: Text("$address \nOffice : $office_phone\nMobile : $phone_number\nEmail : $email_id\nPAN Number : $pan_no\nGST : $gst_no\nWebsite : $website",style: TextStyle(fontWeight: FontWeight.w500,fontSize: 13,color: Colors.black, height: 1.3),)),
                           ),
                           SizedBox(width: 100,),
                           Expanded(
@@ -530,7 +530,7 @@ class _CreateChallanState extends State<CreateChallan> {
                               )),
 
                           Expanded(
-                              flex: 3,
+                              flex: 2,
                               child: Container(
                                 width: 80,
                                 height: 30,
@@ -549,7 +549,7 @@ class _CreateChallanState extends State<CreateChallan> {
 
 
                           Expanded(
-                              flex: 3,
+                              flex: 2,
                               child: Container(
                                 width: 50,
                                 height: 30,
@@ -623,7 +623,7 @@ class _CreateChallanState extends State<CreateChallan> {
 
                                 ///HSN ..............
                                 Expanded(
-                                    flex: 3,
+                                    flex: 2,
                                     child: Container(
                                       padding: EdgeInsets.symmetric(horizontal: 7),
                                       width: 80,
@@ -653,7 +653,7 @@ class _CreateChallanState extends State<CreateChallan> {
 
                                 ///Quantity .......
                                 Expanded(
-                                    flex: 3,
+                                    flex: 2,
                                     child: Container(
                                       padding: EdgeInsets.symmetric(horizontal: 7),
                                       width: 50,
@@ -870,7 +870,7 @@ class _CreateChallanState extends State<CreateChallan> {
                                     border: Border.all(color: Colors.black.withOpacity(0.7), width: 0.5)
                                 ),
                               height: 150,
-                                child: Text("$address \nOffice : $office_phone\nMobile : $phone_number\nEmail : $email_id\nPAN Number : $pan_no\nGST : $gst_no\nWebsite : $website",style: TextStyle(fontWeight: FontWeight.w500,fontSize: 13,color: Colors.black),)),
+                                child: Text("$address \nOffice : $office_phone\nMobile : $phone_number\nEmail : $email_id\nPAN Number : $pan_no\nGST : $gst_no\nWebsite : $website",style: TextStyle(fontWeight: FontWeight.w500,fontSize: 13,color: Colors.black, height: 1.3),)),
                           ),
                           SizedBox(width: 50,),
                           Expanded(
@@ -890,6 +890,7 @@ class _CreateChallanState extends State<CreateChallan> {
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
                                       Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Text("Challan Number",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
                                           Text("Challan Date",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
@@ -897,11 +898,12 @@ class _CreateChallanState extends State<CreateChallan> {
                                       ),
                                       Column(
                                         children: [
-                                          Text(" : "+challan_no,style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
-                                          Text(" : ",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
+                                          Text("   :   ",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
+                                          Text("   :   ",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
                                         ],
                                       ),
                                       Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Text("Kol/TS-"+challan_no,style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
                                           Text(formattedDate(challan_date),style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
@@ -932,13 +934,84 @@ class _CreateChallanState extends State<CreateChallan> {
                                 Text("Delivery Challan for :",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15,color: Colors.black),),
                                 Text(recipient_details,style: TextStyle(fontWeight: FontWeight.w500,fontSize: 13,color: Colors.black),),
 
-                                SizedBox(height: 15,),
-                                Text("GSTIN : $gst_no",style: TextStyle(fontWeight: FontWeight.w500,fontSize: 14,color: Colors.black),),
-                                Text("Vehicle Number : $vehicle_no",style: TextStyle(fontWeight: FontWeight.w500,fontSize: 14,color: Colors.black),),
-                                Text("Place of Supply : $supply_place",style: TextStyle(fontWeight: FontWeight.w500,fontSize: 14,color: Colors.black),),
                               ],
                             ),
                           ),
+                        ],
+                      ),
+
+                      SizedBox(height: 15,),
+                      Row(
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+
+                              Text("GSTIN", style: GoogleFonts.roboto(fontWeight: FontWeight.w500, fontSize: 13, color: Colors.black),),
+                              SizedBox(height: 15,),
+                              Text("Vehicle Number", style: GoogleFonts.roboto(fontWeight: FontWeight.w500, fontSize: 13, color: Colors.black),),
+                              SizedBox(height: 15,),
+                              Text("Place of Supply", style: GoogleFonts.roboto(fontWeight: FontWeight.w500, fontSize: 13, color: Colors.black),),
+                            ],
+                          ),
+                          Column(
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 10),
+                                child: Text(" : ", style: GoogleFonts.roboto(fontWeight: FontWeight.w500, fontSize: 13, color: Colors.black),),
+                              ),
+                              SizedBox(height: 15,),
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 10),
+                                child: Text(" : ", style: GoogleFonts.roboto(fontWeight: FontWeight.w500, fontSize: 13, color: Colors.black),),
+                              ),
+                              SizedBox(height: 15,),
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 10),
+                                child: Text(" : ", style: GoogleFonts.roboto(fontWeight: FontWeight.w500, fontSize: 13, color: Colors.black),),
+                              ),
+                            ],
+                          ),
+                          Column(
+                            children: [
+                              Container(
+                                margin: EdgeInsets.only(top: 3),
+                                padding: EdgeInsets.symmetric(horizontal: 3, vertical: 5),
+                                decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.black87, width: 0.5),
+                                    borderRadius: BorderRadius.circular(2)
+                                ),
+                                width: 210,
+                                child: Text(gst_no,
+                                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),
+                                ),
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(top: 3),
+                                padding: EdgeInsets.symmetric(horizontal: 3, vertical: 5),
+                                decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.black87, width: 0.5),
+                                    borderRadius: BorderRadius.circular(2)
+                                ),
+                                width: 210,
+                                child: Text(vehicle_no,
+                                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),
+                                ),
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(top: 3),
+                                padding: EdgeInsets.symmetric(horizontal: 3, vertical: 5),
+                                decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.black87, width: 0.5),
+                                    borderRadius: BorderRadius.circular(2)
+                                ),
+                                width: 210,
+                                child: Text(supply_place,
+                                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),
+                                ),
+                              ),
+                            ],
+                          )
                         ],
                       ),
 
@@ -958,10 +1031,30 @@ class _CreateChallanState extends State<CreateChallan> {
                           ...challan_list.asMap().entries.map((item) {
                             return DataRow(
                               cells: [
-                                DataCell(Text((item.key + 1).toString() + ".")),
-                                DataCell(Text(item.value.description.toString())),
-                                DataCell(Text(item.value.hsn.toString())),
-                                DataCell(Text(item.value.quantity.toString())),
+                                DataCell(
+                                    SizedBox(
+                                        width: 50,
+                                        child: Text((item.key + 1).toString() + ".")
+                                    )
+                                ),
+                                DataCell(
+                                    SizedBox(
+                                        width: 300,
+                                        child: Text(item.value.description.toString())
+                                    )
+                                ),
+                                DataCell(
+                                    SizedBox(
+                                        width: 80,
+                                        child: Text(item.value.hsn.toString())
+                                    )
+                                ),
+                                DataCell(
+                                    SizedBox(
+                                        width: 80,
+                                        child: Text(item.value.quantity.toString())
+                                    )
+                                ),
                               ],
                             );
                           }).toList(),
@@ -997,6 +1090,7 @@ class _CreateChallanState extends State<CreateChallan> {
                           Container(
                               padding: EdgeInsets.symmetric(vertical: 6, horizontal: 8),
                               width: 300,
+                              height: 130,
                               decoration: BoxDecoration(
                                   border: Border.all(width: 0.5, color: Colors.black.withOpacity(0.7))
                               ),
@@ -1017,6 +1111,7 @@ class _CreateChallanState extends State<CreateChallan> {
                           Container(
                               padding: EdgeInsets.symmetric(vertical: 6, horizontal: 8),
                               width: 300,
+                              height: 130,
                               decoration: BoxDecoration(
                                   border: Border.all(width: 0.5, color: Colors.black.withOpacity(0.7))
                               ),
@@ -1181,7 +1276,7 @@ class _CreateChallanState extends State<CreateChallan> {
                         decoration: pw.BoxDecoration(
                             border: pw.Border.all(color: PdfColors.black, width: 0.5)
                         ),
-                        child:pw.Text("$address \nOffice : $office_phone\nMobile : $phone_number\nEmail : $email_id\nPAN Number : $pan_no\nGST : $gst_no\nWebsite : $website",style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 10,color: PdfColors.black),),
+                        child:pw.Text("$address \nOffice : $office_phone\nMobile : $phone_number\nEmail : $email_id\nPAN Number : $pan_no\nGST : $gst_no\nWebsite : $website",style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 10,color: PdfColors.black,height: 1.3),),
                       ),
                     ),
                    pw.SizedBox(width: 50),
@@ -1262,36 +1357,66 @@ class _CreateChallanState extends State<CreateChallan> {
 
     widgets.add(
         pw.Padding(
-          padding: pw.EdgeInsets.symmetric(horizontal: 15),
-          child: pw.Row(
-              mainAxisAlignment: pw.MainAxisAlignment.start,
-              children: [
-                pw.Column(
-                    crossAxisAlignment: pw.CrossAxisAlignment.start,
-                    children: [
-                      pw.Text("GSTIN", style: pw.TextStyle(fontSize: 10)),
-                      pw.Text("Vehicle Number", style: pw.TextStyle(fontSize: 10)),
-                      pw.Text("Place of Supply", style: pw.TextStyle(fontSize: 10)),
-                    ]
-                ),
-                pw.Column(
-                    crossAxisAlignment: pw.CrossAxisAlignment.start,
-                    children: [
-                      pw.Text(" : ", style: pw.TextStyle(fontSize: 10)),
-                      pw.Text(" : ", style: pw.TextStyle(fontSize: 10)),
-                      pw.Text(" : ", style: pw.TextStyle(fontSize: 10)),
-                    ]
-                ),
-                pw.Column(
-                    crossAxisAlignment: pw.CrossAxisAlignment.start,
-                    children: [
-                      pw.Text(gst_no, style: pw.TextStyle(fontSize: 10)),
-                      pw.Text(vehicle_no, style: pw.TextStyle(fontSize: 10)),
-                      pw.Text(supply_place, style: pw.TextStyle(fontSize: 10)),
-                    ]
-                )
-              ]
-          )
+            padding: pw.EdgeInsets.symmetric(horizontal: 15),
+            child: pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.start,
+                children: [
+                  pw.Column(
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        pw.Text("GSTIN", style: pw.TextStyle(fontSize: 10)),
+                        pw.SizedBox(height: 8),
+                        pw.Text("Vehicle Number", style: pw.TextStyle(fontSize: 10)),
+                        pw.SizedBox(height: 8),
+                        pw.Text("Place of Supply", style: pw.TextStyle(fontSize: 10)),
+                      ]
+                  ),
+                  pw.Column(
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        pw.Text(" : ", style: pw.TextStyle(fontSize: 10)),
+                        pw.SizedBox(height: 8),
+                        pw.Text(" : ", style: pw.TextStyle(fontSize: 10)),
+                        pw.SizedBox(height: 8),
+                        pw.Text(" : ", style: pw.TextStyle(fontSize: 10)),
+                      ]
+                  ),
+                  pw.Column(
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        pw.Container(
+                          width: 150,
+                          padding: pw.EdgeInsets.symmetric(horizontal: 3, vertical: 3),
+                          decoration: pw.BoxDecoration(
+                              borderRadius: pw.BorderRadius.circular(1),
+                              border: pw.Border.all(width: 0.5,color: PdfColors.black)
+                          ),
+                          child: pw.Text(gst_no, style: pw.TextStyle(fontSize: 10)),
+                        ),
+                        pw.SizedBox(height: 3),
+                        pw.Container(
+                          width: 150,
+                          padding: pw.EdgeInsets.symmetric(horizontal: 3, vertical: 3),
+                          decoration: pw.BoxDecoration(
+                              borderRadius: pw.BorderRadius.circular(1),
+                              border: pw.Border.all(width: 0.5,color: PdfColors.black)
+                          ),
+                          child: pw.Text(vehicle_no, style: pw.TextStyle(fontSize: 10)),
+                        ),
+                        pw.SizedBox(height: 3),
+                        pw.Container(
+                          width: 150,
+                          padding: pw.EdgeInsets.symmetric(horizontal: 3, vertical: 3),
+                          decoration: pw.BoxDecoration(
+                              borderRadius: pw.BorderRadius.circular(1),
+                              border: pw.Border.all(width: 0.5,color: PdfColors.black)
+                          ),
+                          child: pw.Text(supply_place, style: pw.TextStyle(fontSize: 10)),
+                        ),
+                      ]
+                  )
+                ]
+            )
         )
     );
 
@@ -1312,7 +1437,7 @@ class _CreateChallanState extends State<CreateChallan> {
                   item.value.quantity.toString(),
                 ]).toList(),
               ],
-              cellAlignment: pw.Alignment.centerRight,
+              cellAlignment: pw.Alignment.centerLeft,
               cellStyle: pw.TextStyle(fontWeight: pw.FontWeight.normal, fontSize: 9),
               headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: PdfColors.blue, fontSize: 9),
               border: pw.TableBorder.all(width: 1, color: PdfColors.blue),
@@ -1321,9 +1446,9 @@ class _CreateChallanState extends State<CreateChallan> {
               ),
               columnWidths: {
                 0:pw.FlexColumnWidth(1),
-                1:pw.FlexColumnWidth(4),
-                2:pw.FlexColumnWidth(3),
-                3:pw.FlexColumnWidth(3),
+                1:pw.FlexColumnWidth(7),
+                2:pw.FlexColumnWidth(2),
+                3:pw.FlexColumnWidth(2),
               }
           ),
         )
@@ -1365,6 +1490,7 @@ class _CreateChallanState extends State<CreateChallan> {
             children: [
               pw.Container(
                   width: 230,
+                  height: 100,
                 padding: pw.EdgeInsets.all(5),
                 decoration: pw.BoxDecoration(
                     border: pw.Border.all(color: PdfColors.black, width: 0.5)
@@ -1397,6 +1523,7 @@ class _CreateChallanState extends State<CreateChallan> {
             children: [
               pw.Container(
                   width: 230,
+                  height: 100,
                   padding: pw.EdgeInsets.all(5),
                   decoration: pw.BoxDecoration(
                       border: pw.Border.all(color: PdfColors.black, width: 0.5)
@@ -1417,11 +1544,10 @@ class _CreateChallanState extends State<CreateChallan> {
 
 
 
-    widgets.add(pw.SizedBox(height: 20,),);
 
     widgets.add(
         pw.Padding(
-          padding: pw.EdgeInsets.symmetric(horizontal: 15),
+          padding: pw.EdgeInsets.symmetric(horizontal: 15, vertical: 20),
           child: pw.Text("Thanks for your business!", style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
         )
     );
