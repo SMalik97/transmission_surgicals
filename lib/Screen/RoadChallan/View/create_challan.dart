@@ -371,126 +371,142 @@ class _CreateChallanState extends State<CreateChallan> {
                       ),
 
                       SizedBox(height: 30,),
-                      Text("Delivery Challan for :",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15,color: Colors.black),),
-                      SizedBox(height: 3,),
                       Row(
-                        children: [
-                          Container(
-                            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                            width:300,
-                            height: 150,
-                            constraints: BoxConstraints(
-                              minHeight: 100,
-                            ),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(1),
-                                border: Border.all(color: Colors.black.withOpacity(0.5),width: 1)
-                            ),
-                            child: TextField(
-                              controller: recipient_controller,
-                              decoration: InputDecoration(
-                                isDense: true,
-                                border: InputBorder.none,
-                                hintText: "Recipient Name\nRecipient Address\nRecipient Phone\nRecipient Email",
-                                hintStyle: TextStyle(fontSize: 14, color: Colors.grey),
-                              ),
-                              maxLines: null,
-                              style: TextStyle(height: 1.2, color: Colors.black, fontSize: 14, fontWeight: FontWeight.w500),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 20,),
-                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-
-                              Text("GSTIN", style: GoogleFonts.roboto(fontWeight: FontWeight.w500, fontSize: 13, color: Colors.black),),
-                              SizedBox(height: 15,),
-                              Text("Vehicle Number", style: GoogleFonts.roboto(fontWeight: FontWeight.w500, fontSize: 13, color: Colors.black),),
-                              SizedBox(height: 15,),
-                              Text("Place of Supply", style: GoogleFonts.roboto(fontWeight: FontWeight.w500, fontSize: 13, color: Colors.black),),
+                              Text("Delivery Challan for :",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15,color: Colors.black),),
+                              SizedBox(height: 3,),
+                              Row(
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                    width:300,
+                                    height: 150,
+                                    constraints: BoxConstraints(
+                                      minHeight: 100,
+                                    ),
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(1),
+                                        border: Border.all(color: Colors.black.withOpacity(0.5),width: 1)
+                                    ),
+                                    child: TextField(
+                                      controller: recipient_controller,
+                                      decoration: InputDecoration(
+                                        isDense: true,
+                                        border: InputBorder.none,
+                                        hintText: "Recipient Name\nRecipient Address\nRecipient Phone\nRecipient Email",
+                                        hintStyle: TextStyle(fontSize: 14, color: Colors.grey),
+                                      ),
+                                      maxLines: null,
+                                      style: TextStyle(height: 1.2, color: Colors.black, fontSize: 14, fontWeight: FontWeight.w500),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ],
                           ),
-                          Column(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 10),
-                                child: Text(" : ", style: GoogleFonts.roboto(fontWeight: FontWeight.w500, fontSize: 13, color: Colors.black),),
-                              ),
-                              SizedBox(height: 15,),
-                              Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 10),
-                                child: Text(" : ", style: GoogleFonts.roboto(fontWeight: FontWeight.w500, fontSize: 13, color: Colors.black),),
-                              ),
-                              SizedBox(height: 15,),
-                              Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 10),
-                                child: Text(" : ", style: GoogleFonts.roboto(fontWeight: FontWeight.w500, fontSize: 13, color: Colors.black),),
-                              ),
-                            ],
+                          SizedBox(width: 30,),
+                          Padding(
+                            padding: EdgeInsets.only(top: 20),
+                            child: Row(
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+
+                                    Text("GSTIN", style: GoogleFonts.roboto(fontWeight: FontWeight.w500, fontSize: 13, color: Colors.black),),
+                                    SizedBox(height: 15,),
+                                    Text("Vehicle Number", style: GoogleFonts.roboto(fontWeight: FontWeight.w500, fontSize: 13, color: Colors.black),),
+                                    SizedBox(height: 15,),
+                                    Text("Place of Supply", style: GoogleFonts.roboto(fontWeight: FontWeight.w500, fontSize: 13, color: Colors.black),),
+                                  ],
+                                ),
+                                Column(
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(horizontal: 10),
+                                      child: Text(" : ", style: GoogleFonts.roboto(fontWeight: FontWeight.w500, fontSize: 13, color: Colors.black),),
+                                    ),
+                                    SizedBox(height: 15,),
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(horizontal: 10),
+                                      child: Text(" : ", style: GoogleFonts.roboto(fontWeight: FontWeight.w500, fontSize: 13, color: Colors.black),),
+                                    ),
+                                    SizedBox(height: 15,),
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(horizontal: 10),
+                                      child: Text(" : ", style: GoogleFonts.roboto(fontWeight: FontWeight.w500, fontSize: 13, color: Colors.black),),
+                                    ),
+                                  ],
+                                ),
+                                Column(
+                                  children: [
+                                    Container(
+                                      margin: EdgeInsets.only(top: 3),
+                                      padding: EdgeInsets.symmetric(horizontal: 3),
+                                      decoration: BoxDecoration(
+                                          border: Border.all(color: Colors.black87, width: 0.5),
+                                          borderRadius: BorderRadius.circular(2)
+                                      ),
+                                      width: 210,
+                                      child: TextField(
+                                        controller: gst_no_controller,
+                                        decoration: InputDecoration(
+                                            isDense: true,
+                                            border: InputBorder.none
+                                        ),
+                                        style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),
+                                      ),
+                                    ),
+                                    Container(
+                                      margin: EdgeInsets.only(top: 3),
+                                      padding: EdgeInsets.symmetric(horizontal: 3),
+                                      decoration: BoxDecoration(
+                                          border: Border.all(color: Colors.black87, width: 0.5),
+                                          borderRadius: BorderRadius.circular(2)
+                                      ),
+                                      width: 210,
+                                      child: TextField(
+                                        controller: vehicle_no_controller,
+                                        decoration: InputDecoration(
+                                            isDense: true,
+                                            border: InputBorder.none
+                                        ),
+                                        style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),
+
+                                      ),
+                                    ),
+                                    Container(
+                                      margin: EdgeInsets.only(top: 3),
+                                      padding: EdgeInsets.symmetric(horizontal: 3),
+                                      decoration: BoxDecoration(
+                                          border: Border.all(color: Colors.black87, width: 0.5),
+                                          borderRadius: BorderRadius.circular(2)
+                                      ),
+                                      width: 210,
+                                      child: TextField(
+                                        controller: supply_place_controller,
+                                        decoration: InputDecoration(
+                                            isDense: true,
+                                            border: InputBorder.none
+                                        ),
+                                        style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: Colors.black),
+
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
                           ),
-                          Column(
-                            children: [
-                              Container(
-                                margin: EdgeInsets.only(top: 3),
-                                padding: EdgeInsets.symmetric(horizontal: 3),
-                                decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.black87, width: 0.5),
-                                    borderRadius: BorderRadius.circular(2)
-                                ),
-                                width: 210,
-                                child: TextField(
-                                  controller: gst_no_controller,
-                                  decoration: InputDecoration(
-                                      isDense: true,
-                                      border: InputBorder.none
-                                  ),
-                                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),
-                                ),
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(top: 3),
-                                padding: EdgeInsets.symmetric(horizontal: 3),
-                                decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.black87, width: 0.5),
-                                    borderRadius: BorderRadius.circular(2)
-                                ),
-                                width: 210,
-                                child: TextField(
-                                  controller: vehicle_no_controller,
-                                  decoration: InputDecoration(
-                                      isDense: true,
-                                      border: InputBorder.none
-                                  ),
-                                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),
-
-                                ),
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(top: 3),
-                                padding: EdgeInsets.symmetric(horizontal: 3),
-                                decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.black87, width: 0.5),
-                                    borderRadius: BorderRadius.circular(2)
-                                ),
-                                width: 210,
-                                child: TextField(
-                                  controller: supply_place_controller,
-                                  decoration: InputDecoration(
-                                      isDense: true,
-                                      border: InputBorder.none
-                                  ),
-                                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: Colors.black),
-
-                                ),
-                              ),
-                            ],
-                          )
                         ],
                       ),
+
+
 
                       SizedBox(height: 30,),
 
@@ -759,6 +775,7 @@ class _CreateChallanState extends State<CreateChallan> {
                       SizedBox(height: 15,),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -785,7 +802,7 @@ class _CreateChallanState extends State<CreateChallan> {
                                 ),
                               ),
                             ],
-                          )
+                          ),
                         ],
                       ),
                       SizedBox(height: 20,),
@@ -921,10 +938,13 @@ class _CreateChallanState extends State<CreateChallan> {
 
                       SizedBox(height: 20,),
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(
                             padding: EdgeInsets.symmetric(vertical: 6, horizontal: 8),
                             width: 300,
+                            height: 130,
                             decoration: BoxDecoration(
                               border: Border.all(width: 0.5, color: Colors.black.withOpacity(0.7))
                             ),
@@ -937,81 +957,80 @@ class _CreateChallanState extends State<CreateChallan> {
                               ],
                             ),
                           ),
-                        ],
-                      ),
-
-                      SizedBox(height: 15,),
-                      Row(
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                          SizedBox(width: 30,),
+                          Row(
                             children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
 
-                              Text("GSTIN", style: GoogleFonts.roboto(fontWeight: FontWeight.w500, fontSize: 13, color: Colors.black),),
-                              SizedBox(height: 15,),
-                              Text("Vehicle Number", style: GoogleFonts.roboto(fontWeight: FontWeight.w500, fontSize: 13, color: Colors.black),),
-                              SizedBox(height: 15,),
-                              Text("Place of Supply", style: GoogleFonts.roboto(fontWeight: FontWeight.w500, fontSize: 13, color: Colors.black),),
+                                  Text("GSTIN", style: GoogleFonts.roboto(fontWeight: FontWeight.w500, fontSize: 13, color: Colors.black),),
+                                  SizedBox(height: 15,),
+                                  Text("Vehicle Number", style: GoogleFonts.roboto(fontWeight: FontWeight.w500, fontSize: 13, color: Colors.black),),
+                                  SizedBox(height: 15,),
+                                  Text("Place of Supply", style: GoogleFonts.roboto(fontWeight: FontWeight.w500, fontSize: 13, color: Colors.black),),
+                                ],
+                              ),
+                              Column(
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(horizontal: 10),
+                                    child: Text(" : ", style: GoogleFonts.roboto(fontWeight: FontWeight.w500, fontSize: 13, color: Colors.black),),
+                                  ),
+                                  SizedBox(height: 15,),
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(horizontal: 10),
+                                    child: Text(" : ", style: GoogleFonts.roboto(fontWeight: FontWeight.w500, fontSize: 13, color: Colors.black),),
+                                  ),
+                                  SizedBox(height: 15,),
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(horizontal: 10),
+                                    child: Text(" : ", style: GoogleFonts.roboto(fontWeight: FontWeight.w500, fontSize: 13, color: Colors.black),),
+                                  ),
+                                ],
+                              ),
+                              Column(
+                                children: [
+                                  Container(
+                                    margin: EdgeInsets.only(top: 3),
+                                    padding: EdgeInsets.symmetric(horizontal: 3, vertical: 5),
+                                    decoration: BoxDecoration(
+                                        border: Border.all(color: Colors.black87, width: 0.5),
+                                        borderRadius: BorderRadius.circular(2)
+                                    ),
+                                    width: 210,
+                                    child: Text(gst_no,
+                                      style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(top: 3),
+                                    padding: EdgeInsets.symmetric(horizontal: 3, vertical: 5),
+                                    decoration: BoxDecoration(
+                                        border: Border.all(color: Colors.black87, width: 0.5),
+                                        borderRadius: BorderRadius.circular(2)
+                                    ),
+                                    width: 210,
+                                    child: Text(vehicle_no,
+                                      style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(top: 3),
+                                    padding: EdgeInsets.symmetric(horizontal: 3, vertical: 5),
+                                    decoration: BoxDecoration(
+                                        border: Border.all(color: Colors.black87, width: 0.5),
+                                        borderRadius: BorderRadius.circular(2)
+                                    ),
+                                    width: 210,
+                                    child: Text(supply_place,
+                                      style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),
+                                    ),
+                                  ),
+                                ],
+                              )
                             ],
                           ),
-                          Column(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 10),
-                                child: Text(" : ", style: GoogleFonts.roboto(fontWeight: FontWeight.w500, fontSize: 13, color: Colors.black),),
-                              ),
-                              SizedBox(height: 15,),
-                              Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 10),
-                                child: Text(" : ", style: GoogleFonts.roboto(fontWeight: FontWeight.w500, fontSize: 13, color: Colors.black),),
-                              ),
-                              SizedBox(height: 15,),
-                              Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 10),
-                                child: Text(" : ", style: GoogleFonts.roboto(fontWeight: FontWeight.w500, fontSize: 13, color: Colors.black),),
-                              ),
-                            ],
-                          ),
-                          Column(
-                            children: [
-                              Container(
-                                margin: EdgeInsets.only(top: 3),
-                                padding: EdgeInsets.symmetric(horizontal: 3, vertical: 5),
-                                decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.black87, width: 0.5),
-                                    borderRadius: BorderRadius.circular(2)
-                                ),
-                                width: 210,
-                                child: Text(gst_no,
-                                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),
-                                ),
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(top: 3),
-                                padding: EdgeInsets.symmetric(horizontal: 3, vertical: 5),
-                                decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.black87, width: 0.5),
-                                    borderRadius: BorderRadius.circular(2)
-                                ),
-                                width: 210,
-                                child: Text(vehicle_no,
-                                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),
-                                ),
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(top: 3),
-                                padding: EdgeInsets.symmetric(horizontal: 3, vertical: 5),
-                                decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.black87, width: 0.5),
-                                    borderRadius: BorderRadius.circular(2)
-                                ),
-                                width: 210,
-                                child: Text(supply_place,
-                                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),
-                                ),
-                              ),
-                            ],
-                          )
                         ],
                       ),
 
@@ -1122,7 +1141,8 @@ class _CreateChallanState extends State<CreateChallan> {
                                   SizedBox(height: 3,),
                                   Text(delivery_by,style: TextStyle(color: Colors.black,fontWeight: FontWeight.w500,fontSize: 14,)),
                                 ],
-                              ))
+                              )),
+
                         ],
                       ),
 
@@ -1271,7 +1291,7 @@ class _CreateChallanState extends State<CreateChallan> {
                   children: [
                     pw.Expanded(
                       child: pw.Container(
-                        height: 115,
+                        height: 120,
                         padding: pw.EdgeInsets.all(5),
                         decoration: pw.BoxDecoration(
                             border: pw.Border.all(color: PdfColors.black, width: 0.5)
@@ -1279,48 +1299,48 @@ class _CreateChallanState extends State<CreateChallan> {
                         child:pw.Text("$address \nOffice : $office_phone\nMobile : $phone_number\nEmail : $email_id\nPAN Number : $pan_no\nGST : $gst_no\nWebsite : $website",style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 10,color: PdfColors.black,height: 1.3),),
                       ),
                     ),
-                   pw.SizedBox(width: 50),
-                   pw.Expanded(
-                     child:  pw.Container(
-                       height: 115,
-                       padding: pw.EdgeInsets.all(5),
-                       decoration: pw.BoxDecoration(
-                           border: pw.Border.all(color: PdfColors.black, width: 0.5)
-                       ),
-                       child: pw.Column(
-                         mainAxisAlignment: pw.MainAxisAlignment.start,
-                         crossAxisAlignment: pw.CrossAxisAlignment.end,
-                         children: [
-                           pw.Text("Delivery Challan",style: pw.TextStyle(fontSize: 13,fontWeight:pw.FontWeight.bold,color: PdfColors.black),),
-                           pw.SizedBox(height: 5,),
-                           pw.Row(
-                             mainAxisAlignment: pw.MainAxisAlignment.end,
-                             children: [
-                               pw.Column(
-                                 children: [
-                                   pw.Text("Challan Number",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
-                                   pw.Text("Challan Date",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
-                                 ]
-                               ),
-                               pw.Column(
-                                   children: [
-                                     pw.Text(" : ",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
-                                     pw.Text(" : ",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
-                                   ]
-                               ),
-                               pw.Column(
-                                 crossAxisAlignment: pw.CrossAxisAlignment.start,
-                                   children: [
-                                     pw.Text("Kol/TS-$challan_no",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
-                                     pw.Text(challan_date,style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
-                                   ]
-                               )
-                             ]
-                           ),
-                                                    ],
-                       ),
-                     )
-                   )
+                    pw.SizedBox(width: 50),
+                    pw.Expanded(
+                        child:  pw.Container(
+                          height: 120,
+                          padding: pw.EdgeInsets.all(5),
+                          decoration: pw.BoxDecoration(
+                              border: pw.Border.all(color: PdfColors.black, width: 0.5)
+                          ),
+                          child: pw.Column(
+                            mainAxisAlignment: pw.MainAxisAlignment.start,
+                            crossAxisAlignment: pw.CrossAxisAlignment.end,
+                            children: [
+                              pw.Text("Delivery Challan",style: pw.TextStyle(fontSize: 13,fontWeight:pw.FontWeight.bold,color: PdfColors.black),),
+                              pw.SizedBox(height: 5,),
+                              pw.Row(
+                                  mainAxisAlignment: pw.MainAxisAlignment.end,
+                                  children: [
+                                    pw.Column(
+                                        children: [
+                                          pw.Text("Challan Number",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
+                                          pw.Text("Challan Date",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
+                                        ]
+                                    ),
+                                    pw.Column(
+                                        children: [
+                                          pw.Text(" : ",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
+                                          pw.Text(" : ",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
+                                        ]
+                                    ),
+                                    pw.Column(
+                                        crossAxisAlignment: pw.CrossAxisAlignment.start,
+                                        children: [
+                                          pw.Text("KOL/TS-$challan_no",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
+                                          pw.Text(challan_date,style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
+                                        ]
+                                    )
+                                  ]
+                              ),
+                            ],
+                          ),
+                        )
+                    )
                   ]
               )
 
@@ -1334,91 +1354,99 @@ class _CreateChallanState extends State<CreateChallan> {
     widgets.add( pw.SizedBox(height: 30,),);
 
     widgets.add(
-      pw.Container(
-        width: 230,
-        padding: pw.EdgeInsets.all(5),
-        margin: pw.EdgeInsets.only(left: 15),
-        decoration: pw.BoxDecoration(
-            border: pw.Border.all(color: PdfColors.black, width: 0.5)
-        ),
-        child: pw.Column(
-          crossAxisAlignment: pw.CrossAxisAlignment.start,
-          children: [
-            pw.Text("Delivery Challan For :",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 10,color: PdfColors.black),),
-            pw.Text(recipient_details,style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 10,color: PdfColors.black),),
-          ]
-        )
-      )
-    );
-
-
-
-    widgets.add(pw.SizedBox(height: 5,),);
-
-    widgets.add(
-        pw.Padding(
-            padding: pw.EdgeInsets.symmetric(horizontal: 15),
-            child: pw.Row(
-                mainAxisAlignment: pw.MainAxisAlignment.start,
-                children: [
-                  pw.Column(
-                      crossAxisAlignment: pw.CrossAxisAlignment.start,
-                      children: [
-                        pw.Text("GSTIN", style: pw.TextStyle(fontSize: 10)),
-                        pw.SizedBox(height: 8),
-                        pw.Text("Vehicle Number", style: pw.TextStyle(fontSize: 10)),
-                        pw.SizedBox(height: 8),
-                        pw.Text("Place of Supply", style: pw.TextStyle(fontSize: 10)),
-                      ]
+        pw.Row(
+            mainAxisAlignment: pw.MainAxisAlignment.start,
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Container(
+                  width: 230,
+                  height: 100,
+                  padding: pw.EdgeInsets.all(5),
+                  margin: pw.EdgeInsets.only(left: 15),
+                  decoration: pw.BoxDecoration(
+                      border: pw.Border.all(color: PdfColors.black, width: 0.5)
                   ),
-                  pw.Column(
+                  child: pw.Column(
                       crossAxisAlignment: pw.CrossAxisAlignment.start,
                       children: [
-                        pw.Text(" : ", style: pw.TextStyle(fontSize: 10)),
-                        pw.SizedBox(height: 8),
-                        pw.Text(" : ", style: pw.TextStyle(fontSize: 10)),
-                        pw.SizedBox(height: 8),
-                        pw.Text(" : ", style: pw.TextStyle(fontSize: 10)),
-                      ]
-                  ),
-                  pw.Column(
-                      crossAxisAlignment: pw.CrossAxisAlignment.start,
-                      children: [
-                        pw.Container(
-                          width: 150,
-                          padding: pw.EdgeInsets.symmetric(horizontal: 3, vertical: 3),
-                          decoration: pw.BoxDecoration(
-                              borderRadius: pw.BorderRadius.circular(1),
-                              border: pw.Border.all(width: 0.5,color: PdfColors.black)
-                          ),
-                          child: pw.Text(gst_no, style: pw.TextStyle(fontSize: 10)),
-                        ),
-                        pw.SizedBox(height: 3),
-                        pw.Container(
-                          width: 150,
-                          padding: pw.EdgeInsets.symmetric(horizontal: 3, vertical: 3),
-                          decoration: pw.BoxDecoration(
-                              borderRadius: pw.BorderRadius.circular(1),
-                              border: pw.Border.all(width: 0.5,color: PdfColors.black)
-                          ),
-                          child: pw.Text(vehicle_no, style: pw.TextStyle(fontSize: 10)),
-                        ),
-                        pw.SizedBox(height: 3),
-                        pw.Container(
-                          width: 150,
-                          padding: pw.EdgeInsets.symmetric(horizontal: 3, vertical: 3),
-                          decoration: pw.BoxDecoration(
-                              borderRadius: pw.BorderRadius.circular(1),
-                              border: pw.Border.all(width: 0.5,color: PdfColors.black)
-                          ),
-                          child: pw.Text(supply_place, style: pw.TextStyle(fontSize: 10)),
-                        ),
+                        pw.Text("Delivery Challan For :",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 10,color: PdfColors.black),),
+                        pw.Text(recipient_details,style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 10,color: PdfColors.black),),
                       ]
                   )
-                ]
-            )
+              ),
+
+              pw.Padding(
+                  padding: pw.EdgeInsets.symmetric(horizontal: 15),
+                  child: pw.Row(
+                      mainAxisAlignment: pw.MainAxisAlignment.start,
+                      children: [
+                        pw.Column(
+                            crossAxisAlignment: pw.CrossAxisAlignment.start,
+                            children: [
+                              pw.Text("GSTIN", style: pw.TextStyle(fontSize: 10)),
+                              pw.SizedBox(height: 9),
+                              pw.Text("Vehicle Number", style: pw.TextStyle(fontSize: 10)),
+                              pw.SizedBox(height: 9),
+                              pw.Text("Place of Supply", style: pw.TextStyle(fontSize: 10)),
+                            ]
+                        ),
+                        pw.Column(
+                            crossAxisAlignment: pw.CrossAxisAlignment.start,
+                            children: [
+                              pw.Text(" : ", style: pw.TextStyle(fontSize: 10)),
+                              pw.SizedBox(height: 9),
+                              pw.Text(" : ", style: pw.TextStyle(fontSize: 10)),
+                              pw.SizedBox(height: 9),
+                              pw.Text(" : ", style: pw.TextStyle(fontSize: 10)),
+                            ]
+                        ),
+                        pw.Column(
+                            crossAxisAlignment: pw.CrossAxisAlignment.start,
+                            children: [
+                              pw.Container(
+                                width: 150,
+                                height: 18,
+                                padding: pw.EdgeInsets.symmetric(horizontal: 3, vertical: 3),
+                                decoration: pw.BoxDecoration(
+                                    borderRadius: pw.BorderRadius.circular(1),
+                                    border: pw.Border.all(width: 0.5,color: PdfColors.black)
+                                ),
+                                child: pw.Text(gst_no, style: pw.TextStyle(fontSize: 9)),
+                              ),
+                              pw.SizedBox(height: 4),
+                              pw.Container(
+                                width: 150,
+                                height: 18,
+                                padding: pw.EdgeInsets.symmetric(horizontal: 3, vertical: 3),
+                                decoration: pw.BoxDecoration(
+                                    borderRadius: pw.BorderRadius.circular(1),
+                                    border: pw.Border.all(width: 0.5,color: PdfColors.black)
+                                ),
+                                child: pw.Text(vehicle_no, style: pw.TextStyle(fontSize: 9)),
+                              ),
+                              pw.SizedBox(height: 4),
+                              pw.Container(
+                                width: 150,
+                                height: 18,
+                                padding: pw.EdgeInsets.symmetric(horizontal: 3, vertical: 3),
+                                decoration: pw.BoxDecoration(
+                                    borderRadius: pw.BorderRadius.circular(1),
+                                    border: pw.Border.all(width: 0.5,color: PdfColors.black)
+                                ),
+                                child: pw.Text(supply_place, style: pw.TextStyle(fontSize: 9)),
+                              ),
+                            ]
+                        )
+                      ]
+                  )
+              )
+            ]
         )
+
+
     );
+
+
 
 
     widgets.add(pw.SizedBox(height: 20,),);
@@ -1491,19 +1519,19 @@ class _CreateChallanState extends State<CreateChallan> {
               pw.Container(
                   width: 230,
                   height: 100,
-                padding: pw.EdgeInsets.all(5),
-                decoration: pw.BoxDecoration(
-                    border: pw.Border.all(color: PdfColors.black, width: 0.5)
-                ),
-                child: pw.Column(
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                  children: [
-                    pw.Text("Received By:", style: pw.TextStyle(fontSize: 10,color: PdfColors.black,fontWeight: pw.FontWeight.bold),),
-                    pw.SizedBox(height: 3,),
-                    pw.Text(received_by,style: pw.TextStyle(color: PdfColors.black,fontWeight: pw.FontWeight.normal, fontSize: 10,),
-                    ),
-                  ],
-                )
+                  padding: pw.EdgeInsets.all(5),
+                  decoration: pw.BoxDecoration(
+                      border: pw.Border.all(color: PdfColors.black, width: 0.5)
+                  ),
+                  child: pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
+                    children: [
+                      pw.Text("Received By:", style: pw.TextStyle(fontSize: 10,color: PdfColors.black,fontWeight: pw.FontWeight.bold),),
+                      pw.SizedBox(height: 3,),
+                      pw.Text(received_by,style: pw.TextStyle(color: PdfColors.black,fontWeight: pw.FontWeight.normal, fontSize: 10,),
+                      ),
+                    ],
+                  )
               )
 
             ],
@@ -1528,14 +1556,14 @@ class _CreateChallanState extends State<CreateChallan> {
                   decoration: pw.BoxDecoration(
                       border: pw.Border.all(color: PdfColors.black, width: 0.5)
                   ),
-                child: pw.Column(
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                  children: [
-                    pw.Text("Delivery By:", style: pw.TextStyle(fontSize: 10,color: PdfColors.black,fontWeight: pw.FontWeight.bold),),
-                    pw.SizedBox(height: 3,),
-                    pw.Text(delivery_by,style: pw.TextStyle(color: PdfColors.black,fontWeight: pw.FontWeight.normal,fontSize: 10,)),
-                  ],
-                )
+                  child: pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
+                    children: [
+                      pw.Text("Delivery By:", style: pw.TextStyle(fontSize: 10,color: PdfColors.black,fontWeight: pw.FontWeight.bold),),
+                      pw.SizedBox(height: 3,),
+                      pw.Text(delivery_by,style: pw.TextStyle(color: PdfColors.black,fontWeight: pw.FontWeight.normal,fontSize: 10,)),
+                    ],
+                  )
               )
             ],
           ),
