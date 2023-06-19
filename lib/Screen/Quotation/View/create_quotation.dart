@@ -522,7 +522,7 @@ class _CreateQuotationState extends State<CreateQuotation> {
                                             Row(
                                               crossAxisAlignment: CrossAxisAlignment.center,
                                               children: [
-                                                Text("QUOTATION NO : ", style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w600),),
+                                                Text("QUOTATION NO : KOL/TS-", style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w600),),
                                                 Expanded(
                                                   child: TextField(
                                                       readOnly: true,
@@ -1343,9 +1343,9 @@ class _CreateQuotationState extends State<CreateQuotation> {
                                 children: [
                                   pw.Row(
                                       children: [
-                                        pw.Text("QUOTATION NO:",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 9,color: PdfColors.black.shade(200))),
+                                        pw.Text("QUOTATION NO: KOL/TS-",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 9,color: PdfColors.black.shade(200))),
                                         pw.SizedBox(height: 3),
-                                        pw.Text("KOL/TS-"+quotation_no,style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 9,color: PdfColors.black.shade(400)))
+                                        pw.Text(quotation_no,style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 9,color: PdfColors.black.shade(400)))
                                       ]
                                   ),
                                   pw.SizedBox(height: 5),
@@ -1947,10 +1947,10 @@ class _CreateQuotationState extends State<CreateQuotation> {
                                         Row(
                                           crossAxisAlignment: CrossAxisAlignment.center,
                                           children: [
-                                            Text("QUOTATION NO : ", style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w500),),
+                                            Text("QUOTATION NO : KOL/TS-", style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w500),),
                                             Expanded(
                                               child: Text(
-                                                  "KOL/TS-"+quotation_no,
+                                                  quotation_no,
                                                   style: TextStyle(color: Colors.black,fontSize: 14, fontWeight: FontWeight.w500)
                                               ),
                                             )
@@ -2692,7 +2692,7 @@ class _CreateQuotationState extends State<CreateQuotation> {
                                             Row(
                                               crossAxisAlignment: CrossAxisAlignment.center,
                                               children: [
-                                                Text("QUOTATION NO : ", style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w600),),
+                                                Text("QUOTATION NO : KOL/TS-", style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w600),),
                                                 Expanded(
                                                   child: TextField(
                                                       readOnly: true,
@@ -2789,12 +2789,11 @@ class _CreateQuotationState extends State<CreateQuotation> {
                           columnWidths: {
                             0: FlexColumnWidth(1),
                             1: FlexColumnWidth(5.2),
-                            2: FlexColumnWidth(3),
-                            3: FlexColumnWidth(5.5),
+                            2: FlexColumnWidth(5.5),
+                            3: FlexColumnWidth(2),
                             4: FlexColumnWidth(2),
                             5: FlexColumnWidth(2),
                             6: FlexColumnWidth(2),
-                            7: FlexColumnWidth(2),
                           },
                           children: [
                             TableRow(
@@ -2832,20 +2831,6 @@ class _CreateQuotationState extends State<CreateQuotation> {
                                     ),
                                   ),
 
-                                  TableCell(
-                                    verticalAlignment: TableCellVerticalAlignment.middle,
-                                    child: SizedBox(
-                                      height: 30,
-                                      child: Center(
-                                        child: Text(
-                                          "HSN Code",
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12,color: Colors.blue.shade700),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
 
                                   TableCell(
                                     verticalAlignment: TableCellVerticalAlignment.middle,
@@ -2945,12 +2930,11 @@ class _CreateQuotationState extends State<CreateQuotation> {
                                 columnWidths: {
                                   0: FlexColumnWidth(1),
                                   1: FlexColumnWidth(5.2),
-                                  2: FlexColumnWidth(3),
-                                  3: FlexColumnWidth(5.5),
+                                  2: FlexColumnWidth(5.5),
+                                  3: FlexColumnWidth(2),
                                   4: FlexColumnWidth(2),
                                   5: FlexColumnWidth(2),
-                                  6: FlexColumnWidth(2),
-                                  7: FlexColumnWidth(2)
+                                  6: FlexColumnWidth(2)
                                 },
                                 children: [
 
@@ -3000,29 +2984,6 @@ class _CreateQuotationState extends State<CreateQuotation> {
                                           ),
                                         ),
 
-
-                                        /// Cell - Hsn code -------------
-                                        TableCell(
-                                          verticalAlignment: TableCellVerticalAlignment.middle,
-                                          child: Container(
-                                            height: image_quotation_editable_list[index].isSelectImage == true ? 150 : 40,
-                                            child: Padding(
-                                              padding: EdgeInsets.symmetric(horizontal: 5, vertical: 3),
-                                              child: TextField(
-                                                controller: image_quotation_editable_list[index].hsn_controller,
-                                                decoration: InputDecoration(
-                                                  isDense: true,
-                                                  border: InputBorder.none,
-                                                ),
-                                                maxLines: null,
-                                                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14,),
-                                                onChanged: (v){
-                                                  image_quotation_editable_list[index].hsnCode = image_quotation_editable_list[index].hsn_controller!.text;
-                                                },
-                                              ),
-                                            ),
-                                          ),
-                                        ),
 
                                         /// Cell - Image  -----------------
                                         TableCell(
@@ -3675,10 +3636,10 @@ class _CreateQuotationState extends State<CreateQuotation> {
                           pw.Row(
                             crossAxisAlignment: pw.CrossAxisAlignment.center,
                             children: [
-                              pw.Text("QUOTATION NO : ", style: pw.TextStyle(color: PdfColors.black,fontSize: 9, fontWeight: pw.FontWeight.bold),),
+                              pw.Text("QUOTATION NO : KOL/TS-", style: pw.TextStyle(color: PdfColors.black,fontSize: 9, fontWeight: pw.FontWeight.bold),),
                               pw.Expanded(
                                 child: pw.Text(
-                                    "KOL/TS-"+quotation_no,
+                                    quotation_no,
                                     style: pw.TextStyle(color: PdfColors.black,fontSize: 9, fontWeight: pw.FontWeight.normal)
                                 ),
                               )
@@ -3776,12 +3737,11 @@ class _CreateQuotationState extends State<CreateQuotation> {
                      columnWidths: {
                        0: pw.FlexColumnWidth(0.7),
                        1: pw.FlexColumnWidth(4),
-                       2: pw.FlexColumnWidth(1.5),
-                       3: pw.FlexColumnWidth(2),
-                       4: pw.FlexColumnWidth(1),
+                       2: pw.FlexColumnWidth(2),
+                       3: pw.FlexColumnWidth(1),
+                       4: pw.FlexColumnWidth(2),
                        5: pw.FlexColumnWidth(2),
-                       6: pw.FlexColumnWidth(2),
-                       7: pw.FlexColumnWidth(1.5),
+                       6: pw.FlexColumnWidth(1.5),
                      },
                    children: [
                      pw.TableRow(
@@ -3804,16 +3764,6 @@ class _CreateQuotationState extends State<CreateQuotation> {
                                ),
                                child: pw.Center(
                                    child: pw.Text('Product Details',style: pw.TextStyle(fontSize: 10))
-                               )
-                           ),
-                           pw.Container(
-                               padding: pw.EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                               height: 30,
-                               decoration: pw.BoxDecoration(
-                                   color: PdfColors.blue100
-                               ),
-                               child: pw.Center(
-                                   child: pw.Text('HSN Code', style: pw.TextStyle(fontSize: 10,), textAlign: pw.TextAlign.center)
                                )
                            ),
                            pw.Container(
@@ -3882,12 +3832,11 @@ class _CreateQuotationState extends State<CreateQuotation> {
                       columnWidths: {
                         0: pw.FlexColumnWidth(0.7),
                         1: pw.FlexColumnWidth(4),
-                        2: pw.FlexColumnWidth(1.5),
-                        3: pw.FlexColumnWidth(2),
-                        4: pw.FlexColumnWidth(1),
+                        2: pw.FlexColumnWidth(2),
+                        3: pw.FlexColumnWidth(1),
+                        4: pw.FlexColumnWidth(2),
                         5: pw.FlexColumnWidth(2),
-                        6: pw.FlexColumnWidth(2),
-                       7: pw.FlexColumnWidth(1.5),
+                        6: pw.FlexColumnWidth(1.5),
                       },
                     children: [
                       pw.TableRow(
@@ -3914,17 +3863,8 @@ class _CreateQuotationState extends State<CreateQuotation> {
                                 // decoration: pw.BoxDecoration(
                                 //     border: pw.Border.all(color: PdfColors.blue, width: 0.7)
                                 // ),
-                                child: pw.Padding(
-                                    padding: pw.EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                                    child: pw.Text(item.value.hsnCode.toString(), style: pw.TextStyle(fontSize: 9,), textAlign: pw.TextAlign.left)
-                                )
-                            ),
-                            pw.Container(
-                                // decoration: pw.BoxDecoration(
-                                //     border: pw.Border.all(color: PdfColors.blue, width: 0.7)
-                                // ),
-                                child: pw.Row(
-                                  mainAxisAlignment: pw.MainAxisAlignment.center,
+                                child: pw.Column(
+                                  mainAxisAlignment: pw.MainAxisAlignment.start,
                                   children: [
                                     pw.Padding(
                                       padding: pw.EdgeInsets.symmetric(vertical: 5, horizontal: 5),
@@ -4618,10 +4558,10 @@ class _CreateQuotationState extends State<CreateQuotation> {
                                         Row(
                                           crossAxisAlignment: CrossAxisAlignment.center,
                                           children: [
-                                            Text("QUOTATION NO : ", style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.bold),),
+                                            Text("QUOTATION NO : KOL/TS-", style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.bold),),
                                             Expanded(
                                               child: Text(
-                                                  "KOL/TS-"+quotation_no,
+                                                  quotation_no,
                                                   style: TextStyle(color: Colors.black,fontSize: 14, fontWeight: FontWeight.w500)
                                               ),
                                             )
@@ -4707,12 +4647,11 @@ class _CreateQuotationState extends State<CreateQuotation> {
                       columnWidths: {
                         0: FlexColumnWidth(1),
                         1: FlexColumnWidth(5.2),
-                        2: FlexColumnWidth(3),
-                        3: FlexColumnWidth(5.5),
+                        2: FlexColumnWidth(5.5),
+                        3: FlexColumnWidth(2),
                         4: FlexColumnWidth(2),
                         5: FlexColumnWidth(2),
-                        6: FlexColumnWidth(2),
-                        7: FlexColumnWidth(2)
+                        6: FlexColumnWidth(2)
                       },
                       children: [
                         TableRow(
@@ -4750,20 +4689,6 @@ class _CreateQuotationState extends State<CreateQuotation> {
                                 ),
                               ),
 
-                              TableCell(
-                                verticalAlignment: TableCellVerticalAlignment.middle,
-                                child: SizedBox(
-                                  height: 30,
-                                  child: Center(
-                                    child: Text(
-                                      "HSN Code",
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14,color: Colors.blue.shade700),
-                                    ),
-                                  ),
-                                ),
-                              ),
 
                               TableCell(
                                 verticalAlignment: TableCellVerticalAlignment.middle,
@@ -4864,12 +4789,11 @@ class _CreateQuotationState extends State<CreateQuotation> {
                             columnWidths: {
                               0: FlexColumnWidth(1),
                               1: FlexColumnWidth(5.2),
-                              2: FlexColumnWidth(3),
-                              3: FlexColumnWidth(5.5),
+                              2: FlexColumnWidth(5.5),
+                              3: FlexColumnWidth(2),
                               4: FlexColumnWidth(2),
                               5: FlexColumnWidth(2),
                               6: FlexColumnWidth(2),
-                              7: FlexColumnWidth(2),
                             },
                             children: [
                               TableRow(
@@ -4901,19 +4825,6 @@ class _CreateQuotationState extends State<CreateQuotation> {
                                         ),
                                       ),
                                     ),
-
-                                    /// Cell - HSN code -----------------
-                                    TableCell(
-                                      verticalAlignment: TableCellVerticalAlignment.middle,
-                                      child: SizedBox(
-                                        height: 150,
-                                        child: Padding(
-                                          padding: EdgeInsets.symmetric(horizontal: 5, vertical: 3),
-                                          child: Text(quotation_item_list[index].hsnCode.toString(),style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14,)),
-                                        ),
-                                      ),
-                                    ),
-
 
 
                                     /// Cell - Picture -----------------
@@ -4982,7 +4893,8 @@ class _CreateQuotationState extends State<CreateQuotation> {
                                       verticalAlignment: TableCellVerticalAlignment.middle,
                                       child: SizedBox(
                                         height: 150,
-                                        child: Center(
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(horizontal: 5, vertical: 3),
                                           child: Text(quotation_item_list[index].amount.toString(), style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14,),),
                                         ),
                                       ),

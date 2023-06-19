@@ -264,7 +264,7 @@ class _QuotationListState extends State<QuotationList> {
                                             mainAxisAlignment: MainAxisAlignment
                                                 .spaceBetween,
                                             children: [
-                                              Text("Quotation No. #" +
+                                              Text("Quotation No. KOL/TS-" +
                                                   general_quotation_list[index]
                                                       .quotationNo.toString(),
                                                 style: TextStyle(
@@ -361,7 +361,7 @@ class _QuotationListState extends State<QuotationList> {
                                             mainAxisAlignment: MainAxisAlignment
                                                 .spaceBetween,
                                             children: [
-                                              Text("Quotation No. #" +
+                                              Text("Quotation No. KOL/TS-" +
                                                   image_quotation_list[index]
                                                       .imageQuotationId.toString(),
                                                 style: TextStyle(
@@ -531,7 +531,7 @@ class _QuotationListState extends State<QuotationList> {
                                       color: Color(0xff003366).withOpacity(0.1),
                                       borderRadius: BorderRadius.circular(5)
                                   ),
-                                  child: Text("Quotation #"+selectedQuotationNo, style: TextStyle(fontWeight: FontWeight.w600,color: Colors.black, fontSize: 14),)
+                                  child: Text("Quotation KOL/TS-"+selectedQuotationNo, style: TextStyle(fontWeight: FontWeight.w600,color: Colors.black, fontSize: 14),)
                               ),
                               SizedBox(width: 20,),
 
@@ -890,7 +890,7 @@ class _QuotationListState extends State<QuotationList> {
                                         Row(
                                           crossAxisAlignment: CrossAxisAlignment.center,
                                           children: [
-                                            Text("QUOTATION NO : ", style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w500),),
+                                            Text("QUOTATION NO : KOL/TS-", style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w500),),
                                             Expanded(
                                               child: Text(
                                                   quotation_no,
@@ -1558,7 +1558,7 @@ class _QuotationListState extends State<QuotationList> {
                                   children: [
                                     pw.Row(
                                         children: [
-                                          pw.Text("QUOTATION NO:",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 9,color: PdfColors.black.shade(200))),
+                                          pw.Text("QUOTATION NO : KOL/TS-",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 9,color: PdfColors.black.shade(200))),
                                           pw.SizedBox(height: 3),
                                           pw.Text(quotation_no,style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 9,color: PdfColors.black.shade(400)))
                                         ]
@@ -2318,7 +2318,7 @@ class _QuotationListState extends State<QuotationList> {
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  Text("QUOTATION NO : ", style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w600),),
+                                  Text("QUOTATION NO : KOL/TS-", style: TextStyle(color: Colors.black,fontSize: 12, fontWeight: FontWeight.w600),),
                                   Expanded(
                                     child: Text(quotation_no,style: TextStyle(color: Colors.black,fontSize: 14, fontWeight: FontWeight.w600)
                                     ),
@@ -2527,7 +2527,7 @@ class _QuotationListState extends State<QuotationList> {
                                   height: 30,
                                   child: Center(
                                     child: Text(
-                                      "HSN Code",
+                                      "Picture",
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14,color: Colors.blue.shade700),
@@ -2656,14 +2656,14 @@ class _QuotationListState extends State<QuotationList> {
                                       ),
                                     ),
 
-                                    /// Cell - HSN code -----------------
+                                    /// Cell - Image -----------------
                                     TableCell(
                                       verticalAlignment: TableCellVerticalAlignment.middle,
                                       child: SizedBox(
                                         height: 150,
                                         child: Padding(
                                             padding: EdgeInsets.symmetric(horizontal: 5, vertical: 3),
-                                            child: Image.network(product_image_base_path + quotation_item_list[index].ImageName.toString(), fit: BoxFit.fill,)
+                                            child: Image.network(product_image_base_path + quotation_item_list[index].ImageName.toString(),)
                                         ),
                                       ),
                                     ),

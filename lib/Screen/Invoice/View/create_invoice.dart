@@ -2415,6 +2415,7 @@ class _InvoiceCreateState extends State<InvoiceCreate> {
 
                           pw.Row(
                             mainAxisAlignment: pw.MainAxisAlignment.start,
+                            crossAxisAlignment: pw.CrossAxisAlignment.start,
                             mainAxisSize: pw.MainAxisSize.min,
                             children: [
                               pw.Container(
