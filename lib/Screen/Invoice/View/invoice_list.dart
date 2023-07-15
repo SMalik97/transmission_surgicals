@@ -510,7 +510,7 @@ class _InvoiceListState extends State<InvoiceList> {
                                     Text(" : ",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),),
                                     Container(
                                         width: 130,
-                                        child: Text(DateFormat('dd/MM/yyyy').format(DateTime.now()),style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),)
+                                        child: Text(formattedDate(selectedInvoiceDate),style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.black),)
                                     ),
                                   ],
                                 ),
@@ -1470,7 +1470,7 @@ class _InvoiceListState extends State<InvoiceList> {
                                     pw.Text(" : ",style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),),
                                     pw.Container(
                                         width: 100,
-                                        child: pw.Text(DateFormat('dd/MM/yyyy').format(DateTime.now()),style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),)
+                                        child: pw.Text(formattedDate(selectedInvoiceDate),style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.normal,color: PdfColors.black),)
                                     ),
                                   ],
                                 ),
