@@ -1874,7 +1874,7 @@ class _InvoiceListState extends State<InvoiceList> {
 
 
 
-    widgets.add(pw.SizedBox(height: 50,),);
+    widgets.add(pw.SizedBox(height: 40,),);
 
     widgets.add(
         pw.Column(
@@ -1884,14 +1884,14 @@ class _InvoiceListState extends State<InvoiceList> {
                   children: [
                     pw.Padding(
                       padding: pw.EdgeInsets.symmetric(horizontal: 15),
-                      child: pw.Text("COMMENTS OR SPECIAL INSTRUCTIONS:",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 10,color: PdfColors.black),),
+                      child: pw.Text("COMMENTS OR SPECIAL INSTRUCTIONS:",style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 8,color: PdfColors.black),),
                     ),
                   ]
               ),
               pw.SizedBox(height: 3,),
               pw.Padding(
                 padding: pw.EdgeInsets.symmetric(horizontal: 15),
-                child: pw.Text(comments,style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 11,color: PdfColors.black),),
+                child: pw.Text(comments,style: pw.TextStyle(fontWeight: pw.FontWeight.normal,fontSize: 9,color: PdfColors.black),),
               ),
               pw.SizedBox(height: 30,),
               pw.Padding(
